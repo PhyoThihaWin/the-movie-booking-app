@@ -19,4 +19,8 @@ extension StringFormat on String {
   String toAssetImage() {
     return "assets/images/$this";
   }
+
+  String toAssetIcon() {
+    return "assets/icons/$this";
+  }
 }

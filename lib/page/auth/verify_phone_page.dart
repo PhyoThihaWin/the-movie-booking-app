@@ -112,7 +112,7 @@ class ContinueGoogleButtonView extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Image.asset(
-              "google_icon.png".toAssetImage(),
+              "google_icon.png".toAssetIcon(),
               width: MARGIN_LARGE,
             ),
             SizedBox(width: MARGIN_MEDIUM_2),

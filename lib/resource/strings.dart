@@ -13,3 +13,12 @@ const ENTER_OTP_CODE = "Enter OTP Code";
 const DONT_RECEIVED_OTP_CODE_TEXT = "Don't receive OTP? ";
 const RESEND_OTP_CODE_TEXT = "Resend Code";
 const CONFIRM_OTP_TEXT = "Confirm OTP";
+
+const PICK_REGION_TEXT = "Pick Region";
+const SEARCH_YOUR_LOCATION = "Search your location";
+const CITIES_TITLE_TEXT = "Cities";
+
+const MENU_MOVIE_TEXT = "Movies";
+const MENU_CINEMA_TEXT = "Cinema";
+const MENU_TICKET_TEXT = "Ticket";
+const MENU_PROFILE_TEXT = "Profile";

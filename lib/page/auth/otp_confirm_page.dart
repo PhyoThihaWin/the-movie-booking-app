@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:moviebooking/page/pick_region_page.dart';
+import 'package:moviebooking/page/auth/pick_region_page.dart';
 import 'package:moviebooking/resource/colors.dart';
 import 'package:moviebooking/utils/ext.dart';
 import 'package:otp_text_field/otp_field.dart';
