@@ -22,3 +22,6 @@ const MENU_MOVIE_TEXT = "Movies";
 const MENU_CINEMA_TEXT = "Cinema";
 const MENU_TICKET_TEXT = "Ticket";
 const MENU_PROFILE_TEXT = "Profile";
+
+const MOVIE_NOW_SHOWING = "Now Showing";
+const MOVIE_COMING_SOON = "Coming Soon";

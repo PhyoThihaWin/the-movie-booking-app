@@ -1,6 +1,8 @@
 /// Generic Dimensions
 const MARGIN_SMALL = 4.0;
+const MARGIN_6 = 6.0;
 const MARGIN_MEDIUM = 8.0;
+const MARGIN_10 = 10.0;
 const MARGIN_CARD_MEDIUM_2 = 12.0;
 const MARGIN_MEDIUM_2 = 16.0;
 const MARGIN_MEDIUM_3 = 20.0;
