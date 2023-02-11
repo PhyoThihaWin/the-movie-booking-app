@@ -25,3 +25,5 @@ const MENU_PROFILE_TEXT = "Profile";
 
 const MOVIE_NOW_SHOWING = "Now Showing";
 const MOVIE_COMING_SOON = "Coming Soon";
+
+const MOVIE_STORY_LINE = "Story Line";

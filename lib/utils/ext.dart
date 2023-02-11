@@ -17,6 +17,10 @@ extension PageNavigator on BuildContext {
         (route) => false);
   }
 
+  void popBack() {
+    Navigator.pop(this);
+  }
+
   double getScreenHeightBy(double times) {
     return MediaQuery.of(this).size.height / times;
   }

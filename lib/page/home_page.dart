@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:moviebooking/page/item_page/cinema_page.dart';
-import 'package:moviebooking/page/item_page/movies_page.dart';
-import 'package:moviebooking/page/item_page/profile_page.dart';
-import 'package:moviebooking/page/item_page/ticket_page.dart';
+import 'package:moviebooking/page/nav_page/cinema_page.dart';
+import 'package:moviebooking/page/nav_page/movies_page.dart';
+import 'package:moviebooking/page/nav_page/profile_page.dart';
+import 'package:moviebooking/page/nav_page/ticket_page.dart';
 import 'package:moviebooking/resource/colors.dart';
 import 'package:moviebooking/resource/strings.dart';
 import 'package:moviebooking/utils/ext.dart';

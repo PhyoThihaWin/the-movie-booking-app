@@ -1,43 +1,48 @@
 import 'package:flutter/material.dart';
 import 'package:moviebooking/resource/colors.dart';
 import 'package:moviebooking/utils/ext.dart';
+import 'package:moviebooking/widget/ripple_effect.dart';
 
 import '../resource/dimens.dart';
 import 'gradient_view.dart';
 
 class MovieCardItemView extends StatelessWidget {
   final tabIndex;
+  final Function() onClickItem;
 
-  MovieCardItemView(this.tabIndex);
+  MovieCardItemView(this.tabIndex, this.onClickItem);
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      color: Colors.black,
-      clipBehavior: Clip.hardEdge,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(MARGIN_6),
-      ),
-      child: Column(
-        children: [
-          Expanded(
-            child: MovieImageView(tabIndex),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(
-              left: MARGIN_10,
-              right: MARGIN_10,
-              bottom: MARGIN_MEDIUM_2,
+    return RippleTap(
+      onTap: onClickItem,
+      child: Card(
+        color: Colors.black,
+        clipBehavior: Clip.hardEdge,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(MARGIN_6),
+        ),
+        child: Column(
+          children: [
+            Expanded(
+              child: MovieImageView(tabIndex),
             ),
-            child: Column(
-              children: [
-                MovieTitleAndImdbView(),
-                SizedBox(height: MARGIN_MEDIUM),
-                MovieResolutionTypeView()
-              ],
-            ),
-          )
-        ],
+            Padding(
+              padding: const EdgeInsets.only(
+                left: MARGIN_10,
+                right: MARGIN_10,
+                bottom: MARGIN_MEDIUM_2,
+              ),
+              child: Column(
+                children: [
+                  MovieTitleAndImdbView(),
+                  SizedBox(height: MARGIN_MEDIUM),
+                  MovieResolutionTypeView()
+                ],
+              ),
+            )
+          ],
+        ),
       ),
     );
   }

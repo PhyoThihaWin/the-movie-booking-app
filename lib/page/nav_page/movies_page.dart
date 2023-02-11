@@ -1,7 +1,9 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
+import 'package:moviebooking/page/movie_detail_page.dart';
 import 'package:moviebooking/resource/colors.dart';
+import 'package:moviebooking/utils/ext.dart';
 
 import '../../resource/dimens.dart';
 import '../../resource/strings.dart';
@@ -46,7 +48,9 @@ class _MoviesPageState extends State<MoviesPage> {
                     childAspectRatio: 0.7,
                     crossAxisSpacing: MARGIN_MEDIUM_3 / 2),
                 delegate: SliverChildBuilderDelegate((context, index) {
-                  return MovieCardItemView(_tabIndex);
+                  return MovieCardItemView(_tabIndex, () {
+                    context.next(MovieDetailPage());
+                  });
                 }, childCount: 10),
               ),
             ),
@@ -103,7 +107,7 @@ class _NowAndComingTabViewSectionState extends State<NowAndComingTabViewSection>
         controller: _tabController,
         labelStyle: TextStyle(
           fontWeight: FontWeight.w600,
-          fontSize: TEXT_REGULAR_2X,
+          fontSize: TEXT_REGULAR,
         ),
         labelColor: Colors.black,
         unselectedLabelColor: TEXT_GREY_COLOR,
