@@ -7,89 +7,243 @@ import 'package:moviebooking/widget/title_text.dart';
 
 import '../resource/dimens.dart';
 import '../resource/strings.dart';
-import '../widget/actor_item_view.dart';
+import '../viewitem/actor_item_view.dart';
 
 class MovieDetailPage extends StatelessWidget {
-  MovieDetailPage({Key? key}) : super(key: key);
   final List<String> genreList = ["Action", "Drama", "Adventure", "Comedy"];
+
+  final bool isUpComing;
+
+  MovieDetailPage(this.isUpComing);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
         color: HOME_SCREEN_BACKGROUND_COLOR,
-        child: CustomScrollView(
-          slivers: [
-            SliverAppBar(
-              title: SliverAppBarTitle(
-                child: const Text(
-                  "Spider-Man No Way Home",
-                  style: TextStyle(color: Colors.white),
-                ),
-              ),
-              centerTitle: true,
-              pinned: true,
-              backgroundColor: HOME_SCREEN_BACKGROUND_COLOR,
-              automaticallyImplyLeading: false,
-              expandedHeight: context.getScreenHeightBy(2.5),
-              flexibleSpace: FlexibleSpaceBar(
-                background: Stack(
-                  children: [
-                    FractionallySizedBox(
-                      heightFactor: 0.6,
-                      widthFactor: 1,
-                      child: MovieLandscapeVideoSection(),
+        child: Stack(
+          children: [
+            CustomScrollView(
+              slivers: [
+                SliverAppBar(
+                  title: SliverAppBarTitle(
+                    child: const Text(
+                      "Spider-Man No Way Home",
+                      style: TextStyle(color: Colors.white),
                     ),
-                    Positioned(
-                      bottom: MARGIN_MEDIUM,
-                      right: 0,
-                      left: 0,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: MARGIN_MEDIUM_3,
+                  ),
+                  centerTitle: true,
+                  pinned: true,
+                  backgroundColor: HOME_SCREEN_BACKGROUND_COLOR,
+                  automaticallyImplyLeading: false,
+                  expandedHeight: context.getScreenHeightBy(2.5),
+                  flexibleSpace: FlexibleSpaceBar(
+                    background: Stack(
+                      children: [
+                        FractionallySizedBox(
+                          heightFactor: 0.6,
+                          widthFactor: 1,
+                          child: MovieLandscapeVideoSection(),
                         ),
-                        child: MoviePortraitAndInfoViewSection(genreList),
-                      ),
-                    )
-                  ],
+                        Positioned(
+                          bottom: MARGIN_MEDIUM,
+                          right: 0,
+                          left: 0,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: MARGIN_MEDIUM_3,
+                            ),
+                            child: MoviePortraitAndInfoViewSection(genreList),
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
                 ),
-              ),
-            ),
-            SliverPadding(
-              padding: EdgeInsets.only(
-                left: MARGIN_MEDIUM_3,
-                right: MARGIN_MEDIUM_3,
-                top: MARGIN_MEDIUM_2,
-                bottom: MARGIN_XXLARGE,
-              ),
-              sliver: SliverList(
-                  delegate: SliverChildListDelegate(
-                [
-                  MovieDataViewSection(),
-                  SizedBox(height: MARGIN_LARGE),
-                  MovieStoryLineAndDescViewSection(),
-                  SizedBox(height: MARGIN_XLARGE),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      TitleText("Cast"),
-                      SizedBox(height: MARGIN_MEDIUM_2),
-                      SizedBox(
-                        height: 100,
-                        child: ListView.builder(
-                          itemCount: 10,
-                          scrollDirection: Axis.horizontal,
-                          itemBuilder: (context, index) => ActorItemView(),
-                        ),
-                      )
+                SliverPadding(
+                  padding: EdgeInsets.only(
+                    left: MARGIN_MEDIUM_3,
+                    right: MARGIN_MEDIUM_3,
+                    top: MARGIN_MEDIUM_2,
+                    bottom: MARGIN_XXLARGE,
+                  ),
+                  sliver: SliverList(
+                      delegate: SliverChildListDelegate(
+                    [
+                      MovieDataViewSection(),
+                      SizedBox(height: MARGIN_LARGE),
+                      Visibility(
+                        visible: this.isUpComing,
+                        child: SetNotificationViewSection(),
+                      ),
+                      SizedBox(height: MARGIN_LARGE),
+                      MovieStoryLineAndDescViewSection(),
+                      SizedBox(height: MARGIN_XLARGE),
+                      ActorListSection(),
+                      SizedBox(height: MARGIN_XXLARGE * 2)
                     ],
-                  )
-                ],
-              )),
+                  )),
+                ),
+              ],
+            ),
+            Positioned(
+              bottom: MARGIN_XXLARGE,
+              left: 0,
+              right: 0,
+              child: Visibility(
+                visible: !this.isUpComing,
+                child: BookingButtonView(),
+              ),
             )
           ],
         ),
       ),
+    );
+  }
+}
+
+class BookingButtonView extends StatelessWidget {
+  const BookingButtonView({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        Image.asset(
+          "bg_booking_btn.png".toAssetImage(),
+          scale: 2,
+        ),
+        Text(
+          "Booking",
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: TEXT_REGULAR_2X,
+            fontWeight: FontWeight.w700,
+          ),
+        )
+      ],
+    );
+  }
+}
+
+class SetNotificationViewSection extends StatelessWidget {
+  const SetNotificationViewSection({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        Positioned.fill(
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(MARGIN_CARD_MEDIUM_2),
+            child: Image.asset(
+              "bg_notify.png".toAssetImage(),
+              fit: BoxFit.cover,
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(MARGIN_MEDIUM_3),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "Releasin in 5 days",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: TEXT_REGULAR_2X,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              SizedBox(height: MARGIN_MEDIUM),
+              Text(
+                "Get notify as soon as movie\nbooking opens up in your city!",
+                style: TextStyle(
+                  color: TEXT_GREY_COLOR,
+                  fontSize: TEXT_REGULAR,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              SizedBox(height: MARGIN_MEDIUM_2),
+              SetNotificationBtnView()
+            ],
+          ),
+        ),
+        Positioned(
+          right: MARGIN_MEDIUM_3,
+          top: 0,
+          bottom: 0,
+          child: Image.asset(
+            "notify_person.png".toAssetImage(),
+            scale: 4,
+          ),
+        )
+      ],
+    );
+  }
+}
+
+class SetNotificationBtnView extends StatelessWidget {
+  const SetNotificationBtnView({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(
+        horizontal: MARGIN_MEDIUM_2,
+        vertical: MARGIN_MEDIUM,
+      ),
+      decoration: BoxDecoration(
+          color: PRIMARY_COLOR,
+          borderRadius: BorderRadius.circular(
+            MARGIN_MEDIUM,
+          )),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            Icons.notifications_active,
+            color: Colors.black,
+          ),
+          SizedBox(width: MARGIN_MEDIUM),
+          Text(
+            "Set Notification",
+            style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class ActorListSection extends StatelessWidget {
+  const ActorListSection({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        TitleText("Cast"),
+        SizedBox(height: MARGIN_MEDIUM_2),
+        SizedBox(
+          height: 100,
+          child: ListView.builder(
+            itemCount: 10,
+            scrollDirection: Axis.horizontal,
+            itemBuilder: (context, index) => ActorItemView(),
+          ),
+        )
+      ],
     );
   }
 }
@@ -149,7 +303,10 @@ class MovieDataCardView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Expanded(
       child: Container(
-        padding: EdgeInsets.all(MARGIN_MEDIUM_2),
+        padding: EdgeInsets.symmetric(
+          horizontal: MARGIN_MEDIUM,
+          vertical: MARGIN_MEDIUM_2,
+        ),
         decoration: BoxDecoration(
           color: Colors.black,
           borderRadius: BorderRadius.circular(

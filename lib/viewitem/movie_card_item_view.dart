@@ -4,18 +4,20 @@ import 'package:moviebooking/utils/ext.dart';
 import 'package:moviebooking/widget/ripple_effect.dart';
 
 import '../resource/dimens.dart';
-import 'gradient_view.dart';
+import '../widget/gradient_view.dart';
 
 class MovieCardItemView extends StatelessWidget {
   final tabIndex;
-  final Function() onClickItem;
+  final Function(bool isUpComing) onClickItem;
 
   MovieCardItemView(this.tabIndex, this.onClickItem);
 
   @override
   Widget build(BuildContext context) {
     return RippleTap(
-      onTap: onClickItem,
+      onTap: () {
+        onClickItem((tabIndex == 0) ? false : true);
+      },
       child: Card(
         color: Colors.black,
         clipBehavior: Clip.hardEdge,

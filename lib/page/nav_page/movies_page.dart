@@ -7,7 +7,7 @@ import 'package:moviebooking/utils/ext.dart';
 
 import '../../resource/dimens.dart';
 import '../../resource/strings.dart';
-import '../../widget/movie_card_item_view.dart';
+import '../../viewitem/movie_card_item_view.dart';
 
 class MoviesPage extends StatefulWidget {
   const MoviesPage({Key? key}) : super(key: key);
@@ -48,8 +48,8 @@ class _MoviesPageState extends State<MoviesPage> {
                     childAspectRatio: 0.7,
                     crossAxisSpacing: MARGIN_MEDIUM_3 / 2),
                 delegate: SliverChildBuilderDelegate((context, index) {
-                  return MovieCardItemView(_tabIndex, () {
-                    context.next(MovieDetailPage());
+                  return MovieCardItemView(_tabIndex, (isUpComing) {
+                    context.next(MovieDetailPage(isUpComing));
                   });
                 }, childCount: 10),
               ),

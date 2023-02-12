@@ -25,7 +25,7 @@ class MyApp extends StatelessWidget {
         primaryColor: PRIMARY_COLOR,
         primarySwatch: PRIMARY_COLOR_MATERIAL,
       ),
-      home: SplashPage(),
+      home: HomePage(),
     );
   }
 }
