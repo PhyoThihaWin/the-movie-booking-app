@@ -1,16 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:moviebooking/page/booking/booking_cinema_page.dart';
 import 'package:moviebooking/resource/colors.dart';
 import 'package:moviebooking/utils/ext.dart';
 import 'package:moviebooking/viewitem/sliver_app_bar_title.dart';
 import 'package:moviebooking/widget/ripple_effect.dart';
 import 'package:moviebooking/widget/title_text.dart';
 
-import '../resource/dimens.dart';
-import '../resource/strings.dart';
-import '../viewitem/actor_item_view.dart';
+import '../../resource/dimens.dart';
+import '../../resource/strings.dart';
+import '../../viewitem/actor_item_view.dart';
+import '../../widget/booking_button_view.dart';
 
 class MovieDetailPage extends StatelessWidget {
-  final List<String> genreList = ["Action", "Drama", "Adventure", "Comedy"];
+  final List<String> genreList = [
+    "Action",
+    "Drama",
+    "Si",
+    "Adventure",
+    "Comedy"
+  ];
 
   final bool isUpComing;
 
@@ -19,26 +27,16 @@ class MovieDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        color: HOME_SCREEN_BACKGROUND_COLOR,
+      backgroundColor: HOME_SCREEN_BACKGROUND_COLOR,
+      body: SafeArea(
         child: Stack(
           children: [
-            CustomScrollView(
-              slivers: [
-                SliverAppBar(
-                  title: SliverAppBarTitle(
-                    child: const Text(
-                      "Spider-Man No Way Home",
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
-                  centerTitle: true,
-                  pinned: true,
-                  backgroundColor: HOME_SCREEN_BACKGROUND_COLOR,
-                  automaticallyImplyLeading: false,
-                  expandedHeight: context.getScreenHeightBy(2.5),
-                  flexibleSpace: FlexibleSpaceBar(
-                    background: Stack(
+            SingleChildScrollView(
+              child: Column(
+                children: [
+                  Container(
+                    height: context.getScreenHeightBy(2.3),
+                    child: Stack(
                       children: [
                         FractionallySizedBox(
                           heightFactor: 0.6,
@@ -46,45 +44,39 @@ class MovieDetailPage extends StatelessWidget {
                           child: MovieLandscapeVideoSection(),
                         ),
                         Positioned(
-                          bottom: MARGIN_MEDIUM,
-                          right: 0,
-                          left: 0,
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: MARGIN_MEDIUM_3,
-                            ),
-                            child: MoviePortraitAndInfoViewSection(genreList),
-                          ),
+                          bottom: 0,
+                          right: MARGIN_MEDIUM_3,
+                          left: MARGIN_MEDIUM_3,
+                          child: MoviePortraitAndInfoViewSection(genreList),
                         )
                       ],
                     ),
                   ),
-                ),
-                SliverPadding(
-                  padding: EdgeInsets.only(
-                    left: MARGIN_MEDIUM_3,
-                    right: MARGIN_MEDIUM_3,
-                    top: MARGIN_MEDIUM_2,
-                    bottom: MARGIN_XXLARGE,
+                  Padding(
+                    padding: EdgeInsets.only(
+                      left: MARGIN_MEDIUM_3,
+                      right: MARGIN_MEDIUM_3,
+                      top: MARGIN_MEDIUM_2,
+                      bottom: MARGIN_XXLARGE,
+                    ),
+                    child: Column(
+                      children: [
+                        MovieDataViewSection(),
+                        SizedBox(height: MARGIN_LARGE),
+                        Visibility(
+                          visible: this.isUpComing,
+                          child: SetNotificationViewSection(),
+                        ),
+                        SizedBox(height: MARGIN_LARGE),
+                        MovieStoryLineAndDescViewSection(),
+                        SizedBox(height: MARGIN_XLARGE),
+                        ActorListSection(),
+                        SizedBox(height: MARGIN_XXLARGE * 2)
+                      ],
+                    ),
                   ),
-                  sliver: SliverList(
-                      delegate: SliverChildListDelegate(
-                    [
-                      MovieDataViewSection(),
-                      SizedBox(height: MARGIN_LARGE),
-                      Visibility(
-                        visible: this.isUpComing,
-                        child: SetNotificationViewSection(),
-                      ),
-                      SizedBox(height: MARGIN_LARGE),
-                      MovieStoryLineAndDescViewSection(),
-                      SizedBox(height: MARGIN_XLARGE),
-                      ActorListSection(),
-                      SizedBox(height: MARGIN_XXLARGE * 2)
-                    ],
-                  )),
-                ),
-              ],
+                ],
+              ),
             ),
             Positioned(
               bottom: MARGIN_XXLARGE,
@@ -92,39 +84,17 @@ class MovieDetailPage extends StatelessWidget {
               right: 0,
               child: Visibility(
                 visible: !this.isUpComing,
-                child: BookingButtonView(),
+                child: BookingButtonView(
+                  btnText: "Booking",
+                  btnClick: () {
+                    context.next(BookingCinemaPage());
+                  },
+                ),
               ),
             )
           ],
         ),
       ),
-    );
-  }
-}
-
-class BookingButtonView extends StatelessWidget {
-  const BookingButtonView({
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Stack(
-      alignment: Alignment.center,
-      children: [
-        Image.asset(
-          "bg_booking_btn.png".toAssetImage(),
-          scale: 2,
-        ),
-        Text(
-          "Booking",
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: TEXT_REGULAR_2X,
-            fontWeight: FontWeight.w700,
-          ),
-        )
-      ],
     );
   }
 }
@@ -358,10 +328,7 @@ class MovieLandscapeVideoSection extends StatelessWidget {
         Align(
           alignment: Alignment.topLeft,
           child: Padding(
-            padding: EdgeInsets.only(
-              left: MARGIN_MEDIUM_2,
-              top: MARGIN_XXLARGE + MARGIN_MEDIUM,
-            ),
+            padding: EdgeInsets.all(MARGIN_MEDIUM_2),
             child: RippleTap(
               onTap: () {
                 context.popBack();
@@ -376,10 +343,7 @@ class MovieLandscapeVideoSection extends StatelessWidget {
         const Align(
           alignment: Alignment.topRight,
           child: Padding(
-            padding: EdgeInsets.only(
-              right: MARGIN_MEDIUM_2,
-              top: MARGIN_XXLARGE + MARGIN_MEDIUM,
-            ),
+            padding: EdgeInsets.all(MARGIN_MEDIUM_2),
             child: Icon(
               Icons.share,
               color: Colors.white,

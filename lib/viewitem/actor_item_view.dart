@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:moviebooking/resource/colors.dart';
 
 import '../resource/dimens.dart';
 
@@ -19,6 +20,7 @@ class ActorItemView extends StatelessWidget {
             backgroundImage: NetworkImage(
               "https://www.pinkvilla.com/imageresize/tom_holland_10.jpg?width=752&t=pvorg",
             ),
+            backgroundColor: SEARCH_BOX_COLOR,
           ),
           Text(
             "Tom Holand Macthew",

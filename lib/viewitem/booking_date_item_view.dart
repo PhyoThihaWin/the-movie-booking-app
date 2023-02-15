@@ -7,31 +7,37 @@ import '../resource/dimens.dart';
 
 class BookingDateItemView extends StatelessWidget {
   final BookingDate bookingDate;
-  final int position;
+  final bool isSelected;
+  final Function() onClickItem;
 
-  BookingDateItemView(this.bookingDate, this.position);
+  BookingDateItemView(this.bookingDate, this.isSelected, this.onClickItem);
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: context.getScreenWidthBy(4.5),
-      margin: const EdgeInsets.only(
-        right: MARGIN_MEDIUM_2,
-      ),
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          Image.asset(
-            "bg_booking_date.png".toAssetImage(),
-            color: (position == 0) ? PRIMARY_COLOR : null,
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: MARGIN_MEDIUM,
+    return GestureDetector(
+      onTap: () {
+        onClickItem();
+      },
+      child: Container(
+        width: context.getScreenWidthBy(4.5),
+        margin: const EdgeInsets.only(
+          right: MARGIN_MEDIUM_2,
+        ),
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            Image.asset(
+              "bg_booking_date.png".toAssetImage(),
+              color: isSelected ? PRIMARY_COLOR : null,
             ),
-            child: DateDateColumnView(bookingDate: bookingDate),
-          ),
-        ],
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: MARGIN_MEDIUM,
+              ),
+              child: DateDateColumnView(bookingDate: bookingDate),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -62,7 +68,7 @@ class DateDateColumnView extends StatelessWidget {
             ),
           ),
         ),
-        SizedBox(height: MARGIN_SMALL),
+        SizedBox(height: MARGIN_6),
         Text(
           bookingDate.monthName,
           style: TextStyle(
@@ -71,12 +77,12 @@ class DateDateColumnView extends StatelessWidget {
             fontWeight: FontWeight.w700,
           ),
         ),
-        SizedBox(height: MARGIN_SMALL),
+        SizedBox(height: MARGIN_6),
         Text(
           bookingDate.date,
           style: TextStyle(
             color: Colors.black,
-            fontSize: TEXT_REGULAR_2X,
+            fontSize: TEXT_REGULAR_3X,
             fontWeight: FontWeight.w700,
           ),
         )

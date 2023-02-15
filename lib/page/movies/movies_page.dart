@@ -1,7 +1,7 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
-import 'package:moviebooking/page/movie_detail_page.dart';
+import 'package:moviebooking/page/movies/movie_detail_page.dart';
 import 'package:moviebooking/resource/colors.dart';
 import 'package:moviebooking/utils/ext.dart';
 
