@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:moviebooking/page/booking/booking_chair_page.dart';
 import 'package:moviebooking/page/booking/booking_cinema_page.dart';
+import 'package:moviebooking/page/booking/buy_snack_page.dart';
 import 'package:moviebooking/page/home_page.dart';
 import 'package:moviebooking/page/auth/pick_region_page.dart';
 import 'package:moviebooking/page/movies/movie_detail_page.dart';
@@ -27,7 +28,7 @@ class MyApp extends StatelessWidget {
         primaryColor: PRIMARY_COLOR,
         primarySwatch: PRIMARY_COLOR_MATERIAL,
       ),
-      home: HomePage(),
+      home: BuySnackPage(),
     );
   }
 }

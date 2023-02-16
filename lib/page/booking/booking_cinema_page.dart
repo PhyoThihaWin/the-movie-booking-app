@@ -8,6 +8,8 @@ import '../../resource/colors.dart';
 import '../../resource/dimens.dart';
 import '../../viewitem/booking_date_item_view.dart';
 import '../../viewitem/cinema_parent_item_view.dart';
+import '../../widget/appbar_action_icon_view.dart';
+import '../../widget/appbar_back_icon_view.dart';
 import '../../widget/booking_available_info_view.dart';
 import '../../widget/ripple_effect.dart';
 import '../home_page.dart';
@@ -34,16 +36,7 @@ class BookingCinemaPage extends StatelessWidget {
         elevation: 0,
         centerTitle: false,
         automaticallyImplyLeading: false,
-        leading: RippleTap(
-          onTap: () {
-            context.popBack();
-          },
-          isCircle: true,
-          child: Icon(
-            Icons.arrow_back_ios_new,
-            color: Colors.white,
-          ),
-        ),
+        leading: AppBarBackIconView(),
         actions: appBarActionIconList(),
       ),
       body: SingleChildScrollView(
@@ -87,26 +80,20 @@ class BookingCinemaPage extends StatelessWidget {
   }
 
   List<Widget> appBarActionIconList() {
-    return const [
+    return [
       AppBarCityTitleView(),
-      Padding(
-        padding: EdgeInsets.symmetric(
-          horizontal: MARGIN_MEDIUM_3,
-        ),
+      AppBarActionIconView(
         child: Icon(
           Icons.search,
           color: Colors.white,
         ),
       ),
-      Padding(
-        padding: EdgeInsets.only(
-          right: MARGIN_MEDIUM_3,
-        ),
+      AppBarActionIconView(
         child: Icon(
           Icons.filter_alt,
           color: Colors.white,
         ),
-      ),
+      )
     ];
   }
 }

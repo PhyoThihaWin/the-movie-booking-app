@@ -84,11 +84,16 @@ class MovieDetailPage extends StatelessWidget {
               right: 0,
               child: Visibility(
                 visible: !this.isUpComing,
-                child: BookingButtonView(
-                  btnText: "Booking",
-                  btnClick: () {
-                    context.next(BookingCinemaPage());
-                  },
+                child: Wrap(
+                  alignment: WrapAlignment.center,
+                  children: [
+                    BookingButtonView(
+                      btnText: "Booking",
+                      btnClick: () {
+                        context.next(BookingCinemaPage());
+                      },
+                    ),
+                  ],
                 ),
               ),
             )

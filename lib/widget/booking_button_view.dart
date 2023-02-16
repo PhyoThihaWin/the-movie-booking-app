@@ -12,27 +12,27 @@ class BookingButtonView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      alignment: Alignment.center,
-      children: [
-        RippleTap(
-          onTap: () {
-            btnClick();
-          },
-          child: Image.asset(
+    return RippleTap(
+      onTap: () {
+        btnClick();
+      },
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          Image.asset(
             "bg_booking_btn.png".toAssetImage(),
             scale: 2,
           ),
-        ),
-        Text(
-          btnText,
-          style: const TextStyle(
-            color: Colors.black,
-            fontSize: TEXT_REGULAR_2X,
-            fontWeight: FontWeight.w700,
-          ),
-        )
-      ],
+          Text(
+            btnText,
+            style: const TextStyle(
+              color: Colors.black,
+              fontSize: TEXT_REGULAR_2X,
+              fontWeight: FontWeight.w700,
+            ),
+          )
+        ],
+      ),
     );
   }
 }
