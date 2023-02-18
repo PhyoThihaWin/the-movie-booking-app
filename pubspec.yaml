@@ -39,6 +39,7 @@ dependencies:
   dots_indicator: ^2.1.0
   carousel_slider: ^4.2.1
   intl: ^0.18.0
+  country_calling_code_picker: ^2.0.1
 
 dev_dependencies:
   flutter_test:

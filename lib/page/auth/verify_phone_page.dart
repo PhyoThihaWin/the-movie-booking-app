@@ -1,8 +1,10 @@
+import 'package:country_calling_code_picker/picker.dart';
 import 'package:flutter/material.dart';
 import 'package:moviebooking/page/auth/otp_confirm_page.dart';
 import 'package:moviebooking/resource/colors.dart';
 import 'package:moviebooking/resource/strings.dart';
 import 'package:moviebooking/utils/ext.dart';
+import 'package:moviebooking/widget/ripple_effect.dart';
 
 import '../../resource/dimens.dart';
 import '../../widget/cinema_logo_view.dart';
@@ -58,29 +60,29 @@ class _InputContentSectionState extends State<InputContentSection> {
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisSize: MainAxisSize.max,
       children: [
-        SizedBox(height: MARGIN_LARGE),
+        const SizedBox(height: MARGIN_LARGE),
         CinemaLogoView(),
-        SizedBox(height: VERIFY_SCREEN_LOGO_TEXT_HEIGHT),
-        VerifyPhoneTitleView(),
-        SizedBox(
+        const SizedBox(height: VERIFY_SCREEN_LOGO_TEXT_HEIGHT),
+        const VerifyPhoneTitleView(),
+        const SizedBox(
           height: VERIFY_SCREEN_LOGO_TEXT_HEIGHT,
         ),
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: MARGIN_LARGE),
+          padding: const EdgeInsets.symmetric(horizontal: MARGIN_LARGE),
           child: PhoneNumberInputSection(_phoneController),
         ),
-        SizedBox(height: MARGIN_XXLARGE),
+        const SizedBox(height: MARGIN_XXLARGE),
         VerifyPhoneButtonView(() {
           if (_phoneController.value.text.isNotEmpty &&
               _phoneController.value.text.length > 9) {
-            context.next(OtpConfirmPage());
+            context.next(const OtpConfirmPage());
           }
         }),
-        SizedBox(height: MARGIN_MEDIUM_3),
-        DividerTextView(),
-        SizedBox(height: MARGIN_MEDIUM_3),
-        ContinueGoogleButtonView(),
-        SizedBox(height: MARGIN_MEDIUM_3),
+        const SizedBox(height: MARGIN_MEDIUM_3),
+        const DividerTextView(),
+        const SizedBox(height: MARGIN_MEDIUM_3),
+        const ContinueGoogleButtonView(),
+        const SizedBox(height: MARGIN_MEDIUM_3),
       ],
     );
   }
@@ -102,9 +104,9 @@ class ContinueGoogleButtonView extends StatelessWidget {
     return Container(
       width: double.maxFinite,
       height: VERIFY_BTN_HEIGHT,
-      margin: EdgeInsets.symmetric(horizontal: MARGIN_LARGE),
+      margin: const EdgeInsets.symmetric(horizontal: MARGIN_LARGE),
       child: ElevatedButton(
-        onPressed: () => context.next(OtpConfirmPage()),
+        onPressed: () => context.next(const OtpConfirmPage()),
         style: ButtonStyle(
           backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
         ),
@@ -115,10 +117,10 @@ class ContinueGoogleButtonView extends StatelessWidget {
               "google_icon.png".toAssetIcon(),
               width: MARGIN_LARGE,
             ),
-            SizedBox(width: MARGIN_MEDIUM_2),
-            Text(
+            const SizedBox(width: MARGIN_MEDIUM_2),
+            const Text(
               CONTINUE_WITH_GOOGLE_BTN_TEXT,
-              style: TextStyle(color: Colors.black),
+              style: const TextStyle(color: Colors.black),
             ),
           ],
         ),
@@ -177,12 +179,12 @@ class VerifyPhoneButtonView extends StatelessWidget {
     return Container(
       width: double.maxFinite,
       height: VERIFY_BTN_HEIGHT,
-      margin: EdgeInsets.symmetric(horizontal: MARGIN_LARGE),
+      margin: const EdgeInsets.symmetric(horizontal: MARGIN_LARGE),
       child: ElevatedButton(
         onPressed: verifyPhoneNumber,
-        child: Text(
+        child: const Text(
           VERIFY_PHONE_NUMBER_BUTTON_TEXT,
-          style: TextStyle(color: Colors.black),
+          style: const TextStyle(color: Colors.black),
         ),
         style: ButtonStyle(
           backgroundColor: MaterialStateProperty.all<Color>(PRIMARY_COLOR),
@@ -267,11 +269,31 @@ class MobileNumberView extends StatelessWidget {
   }
 }
 
-class CountryCodeView extends StatelessWidget {
+class CountryCodeView extends StatefulWidget {
+  @override
+  State<CountryCodeView> createState() => _CountryCodeViewState();
+}
+
+class _CountryCodeViewState extends State<CountryCodeView> {
+  String? _countryCode;
+
+  @override
+  void initState() {
+    initCountry();
+    super.initState();
+  }
+
+  void initCountry() async {
+    final country = await getCountryByCountryCode(context, "MM");
+    setState(() {
+      _countryCode = country?.callingCode;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     TextEditingController _controller = TextEditingController();
-    _controller.text = '+95 ';
+    _controller.text = '${_countryCode} ';
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -286,6 +308,7 @@ class CountryCodeView extends StatelessWidget {
         Container(
           width: MediaQuery.of(context).size.width / 5,
           child: TextField(
+            onTap: _showCountryPicker,
             readOnly: true,
             controller: _controller,
             style: const TextStyle(color: Colors.white),
@@ -310,5 +333,36 @@ class CountryCodeView extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  void _showCountryPicker() async {
+    final country = await showCountryPickerSheet(context,
+        title: const Text(
+          "Choose Country",
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: TEXT_HEADING_1X,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        cancelWidget: Align(
+          alignment: Alignment.topRight,
+          child: Padding(
+            padding: EdgeInsets.only(
+              right: MARGIN_MEDIUM_3,
+            ),
+            child: IconButton(
+              icon: Icon(Icons.close),
+              onPressed: () {
+                context.popBack();
+              },
+            ),
+          ),
+        ));
+    if (country != null) {
+      setState(() {
+        _countryCode = country.callingCode;
+      });
+    }
   }
 }

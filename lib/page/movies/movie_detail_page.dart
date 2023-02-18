@@ -57,7 +57,7 @@ class MovieDetailPage extends StatelessWidget {
                       left: MARGIN_MEDIUM_3,
                       right: MARGIN_MEDIUM_3,
                       top: MARGIN_MEDIUM_2,
-                      bottom: MARGIN_XXLARGE,
+                      bottom: MARGIN_XLARGE,
                     ),
                     child: Column(
                       children: [
@@ -79,7 +79,7 @@ class MovieDetailPage extends StatelessWidget {
               ),
             ),
             Positioned(
-              bottom: MARGIN_XXLARGE,
+              bottom: MARGIN_LARGE,
               left: 0,
               right: 0,
               child: Visibility(
@@ -111,54 +111,57 @@ class SetNotificationViewSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Positioned.fill(
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(MARGIN_CARD_MEDIUM_2),
-            child: Image.asset(
-              "bg_notify.png".toAssetImage(),
-              fit: BoxFit.cover,
+    return SizedBox(
+      width: double.maxFinite,
+      child: Stack(
+        children: [
+          Positioned.fill(
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(MARGIN_CARD_MEDIUM_2),
+              child: Image.asset(
+                "bg_notify.png".toAssetImage(),
+                fit: BoxFit.cover,
+              ),
             ),
           ),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(MARGIN_MEDIUM_3),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "Releasin in 5 days",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: TEXT_REGULAR_2X,
-                  fontWeight: FontWeight.w700,
+          Padding(
+            padding: const EdgeInsets.all(MARGIN_MEDIUM_3),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "Releasin in 5 days",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: TEXT_REGULAR_2X,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
-              ),
-              SizedBox(height: MARGIN_MEDIUM),
-              Text(
-                "Get notify as soon as movie\nbooking opens up in your city!",
-                style: TextStyle(
-                  color: TEXT_GREY_COLOR,
-                  fontSize: TEXT_REGULAR,
-                  fontWeight: FontWeight.w600,
+                SizedBox(height: MARGIN_MEDIUM),
+                Text(
+                  "Get notify as soon as movie\nbooking opens up in your city!",
+                  style: TextStyle(
+                    color: TEXT_GREY_COLOR,
+                    fontSize: TEXT_REGULAR,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
-              ),
-              SizedBox(height: MARGIN_MEDIUM_2),
-              SetNotificationBtnView()
-            ],
+                SizedBox(height: MARGIN_MEDIUM_2),
+                SetNotificationBtnView()
+              ],
+            ),
           ),
-        ),
-        Positioned(
-          right: MARGIN_MEDIUM_3,
-          top: 0,
-          bottom: 0,
-          child: Image.asset(
-            "notify_person.png".toAssetImage(),
-            scale: 4,
-          ),
-        )
-      ],
+          Positioned(
+            right: MARGIN_MEDIUM_3,
+            top: 0,
+            bottom: 0,
+            child: Image.asset(
+              "notify_person.png".toAssetImage(),
+              scale: 4,
+            ),
+          )
+        ],
+      ),
     );
   }
 }

@@ -54,7 +54,7 @@ class CityListBuilderView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-      itemCount: 10,
+      itemCount: 20,
       itemBuilder: (context, index) {
         return RegionItemView(() => context.next(const HomePage()));
       },

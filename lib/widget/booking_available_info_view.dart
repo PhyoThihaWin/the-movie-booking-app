@@ -12,14 +12,7 @@ class BookingAvailabilityInfoView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Container(
-          height: MARGIN_MEDIUM,
-          width: MARGIN_MEDIUM,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: itemColor,
-          ),
-        ),
+        CircleDotView(itemColor: itemColor),
         SizedBox(width: MARGIN_MEDIUM),
         Text(
           itemText,
@@ -30,6 +23,29 @@ class BookingAvailabilityInfoView extends StatelessWidget {
           ),
         )
       ],
+    );
+  }
+}
+
+class CircleDotView extends StatelessWidget {
+  final Color itemColor;
+  final double? size;
+  final Widget? child;
+  final double? padding;
+
+  CircleDotView({required this.itemColor, this.size, this.child, this.padding});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: child == null ? size ?? MARGIN_MEDIUM : null,
+      width: child == null ? size ?? MARGIN_MEDIUM : null,
+      padding: EdgeInsets.all(padding ?? 0),
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: itemColor,
+      ),
+      child: child,
     );
   }
 }
