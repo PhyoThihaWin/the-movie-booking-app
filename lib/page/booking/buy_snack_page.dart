@@ -41,7 +41,21 @@ class BuySnackPage extends StatelessWidget {
           Expanded(
             child: FoodDrinkGridView(),
           ),
-          FoodDrinkCartView(),
+          Container(
+            color: Colors.black,
+            padding: const EdgeInsets.symmetric(
+              horizontal: MARGIN_MEDIUM_3,
+              vertical: MARGIN_MEDIUM_2,
+            ),
+            child: RippleTap(
+                onTap: () {
+                  showModalBottomSheet(
+                      context: context,
+                      backgroundColor: Colors.transparent,
+                      builder: (context) => FoodDrinkCartView());
+                },
+                child: FoodDrinkCountAndTotalRowView(false)),
+          ),
           SizedBox(height: MARGIN_MEDIUM_3)
         ],
       ),
@@ -76,31 +90,27 @@ class FoodDrinkCartView extends StatefulWidget {
 }
 
 class _FoodDrinkCartViewState extends State<FoodDrinkCartView> {
-  bool _isExpand = false;
-
   @override
   Widget build(BuildContext context) {
     return Column(
+      mainAxisSize: MainAxisSize.min,
       children: [
-        Visibility(
-          visible: _isExpand,
-          child: Container(
-            padding: const EdgeInsets.symmetric(
-                horizontal: MARGIN_MEDIUM_3, vertical: MARGIN_MEDIUM_3),
-            decoration: BoxDecoration(
-                color: Colors.black,
-                borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(MARGIN_MEDIUM_2),
-                    topRight: Radius.circular(MARGIN_MEDIUM_2))),
-            child: Column(
-              children: [
-                FoodDrinkNamePriceRowView("Large Colaffff", 1700),
-                SizedBox(height: MARGIN_CARD_MEDIUM_2),
-                FoodDrinkNamePriceRowView("Large Colaffff", 1700),
-                SizedBox(height: MARGIN_CARD_MEDIUM_2),
-                FoodDrinkNamePriceRowView("Large Colaffff", 1700)
-              ],
-            ),
+        Container(
+          padding: const EdgeInsets.symmetric(
+              horizontal: MARGIN_MEDIUM_3, vertical: MARGIN_MEDIUM_3),
+          decoration: BoxDecoration(
+              color: Colors.black,
+              borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(MARGIN_MEDIUM_2),
+                  topRight: Radius.circular(MARGIN_MEDIUM_2))),
+          child: Column(
+            children: [
+              FoodDrinkNamePriceRowView("Large Colaffff", 1700),
+              SizedBox(height: MARGIN_CARD_MEDIUM_2),
+              FoodDrinkNamePriceRowView("Large Colaffff", 1700),
+              SizedBox(height: MARGIN_CARD_MEDIUM_2),
+              FoodDrinkNamePriceRowView("Large Colaffff", 1700)
+            ],
           ),
         ),
         Container(
@@ -109,77 +119,88 @@ class _FoodDrinkCartViewState extends State<FoodDrinkCartView> {
             horizontal: MARGIN_MEDIUM_3,
             vertical: MARGIN_MEDIUM_2,
           ),
-          child: FoodDrinkCountAndTotalRowView(() {
-            setState(() {
-              _isExpand = !_isExpand;
-            });
-          }),
+          child: RippleTap(
+              onTap: () {
+                context.popBack();
+              },
+              child: FoodDrinkCountAndTotalRowView(true)),
         ),
+        SizedBox(height: MARGIN_MEDIUM_3)
       ],
     );
   }
 }
 
 class FoodDrinkCountAndTotalRowView extends StatelessWidget {
-  final Function onExpand;
+  final bool isExpand;
 
-  FoodDrinkCountAndTotalRowView(this.onExpand);
+  FoodDrinkCountAndTotalRowView(this.isExpand);
 
   @override
   Widget build(BuildContext context) {
-    return RippleTap(
-      onTap: () {
-        onExpand();
-      },
-      child: Container(
-        padding: EdgeInsets.symmetric(vertical: MARGIN_SMALL),
-        decoration: BoxDecoration(
-            color: PRIMARY_COLOR,
-            borderRadius: BorderRadius.circular(MARGIN_MEDIUM)),
-        child: Row(
-          children: [
-            Stack(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: MARGIN_MEDIUM_2, vertical: MARGIN_MEDIUM),
-                  child: Image.asset(
-                    "ic_drink_food.png".toAssetIcon(),
-                    height: MARGIN_XLARGE,
-                    color: Colors.black,
-                  ),
-                ),
-                Positioned(
-                  right: MARGIN_SMALL,
-                  top: 0,
-                  child: CircleDotView(
-                    itemColor: Colors.red,
-                    padding: MARGIN_6,
-                    child: Text(
-                      "1",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: TEXT_REGULAR,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            Icon(Icons.keyboard_arrow_down_rounded),
-            Spacer(),
-            Text(
-              "2,000KS",
-              style: TextStyle(
-                  color: Colors.black,
-                  fontSize: TEXT_REGULAR_2X,
-                  fontWeight: FontWeight.w600),
-            ),
-            Icon(Icons.keyboard_arrow_right_rounded),
-            SizedBox(width: MARGIN_MEDIUM)
-          ],
-        ),
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: MARGIN_SMALL),
+      decoration: BoxDecoration(
+          color: PRIMARY_COLOR,
+          borderRadius: BorderRadius.circular(MARGIN_MEDIUM)),
+      child: Row(
+        children: [
+          FoodCountIconView(),
+          Icon(this.isExpand
+              ? Icons.keyboard_arrow_up_rounded
+              : Icons.keyboard_arrow_down_rounded),
+          Spacer(),
+          Text(
+            "2,000KS",
+            style: TextStyle(
+                color: Colors.black,
+                fontSize: TEXT_REGULAR_2X,
+                fontWeight: FontWeight.w600),
+          ),
+          Icon(Icons.keyboard_arrow_right_rounded),
+          SizedBox(width: MARGIN_MEDIUM)
+        ],
       ),
+    );
+  }
+}
+
+class FoodCountIconView extends StatelessWidget {
+  const FoodCountIconView({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: MARGIN_MEDIUM_2,
+            vertical: MARGIN_MEDIUM,
+          ),
+          child: Image.asset(
+            "ic_drink_food.png".toAssetIcon(),
+            height: MARGIN_XLARGE,
+            color: Colors.black,
+          ),
+        ),
+        Positioned(
+          right: MARGIN_SMALL,
+          top: 0,
+          child: CircleDotView(
+            itemColor: Colors.red,
+            padding: MARGIN_6,
+            child: Text(
+              "1",
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: TEXT_REGULAR,
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

@@ -23,33 +23,41 @@ class _CinemaParentItemViewState extends State<CinemaParentItemView> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Padding(
-          padding: EdgeInsets.only(
-            left: MARGIN_MEDIUM_3,
-            right: MARGIN_MEDIUM_3,
-            top: MARGIN_XLARGE,
+        RippleTap(
+          onTap: () {
+            setState(() {
+              _isExpand = !_isExpand;
+            });
+          },
+          child: Padding(
+            padding: EdgeInsets.only(
+              left: MARGIN_MEDIUM_3,
+              right: MARGIN_MEDIUM_3,
+              top: MARGIN_LARGE,
+            ),
+            child: Column(
+              children: [
+                CinemaTitleView(),
+                SizedBox(height: MARGIN_MEDIUM_2),
+                CinemaServicesRowView(),
+                SizedBox(height: MARGIN_LARGE),
+              ],
+            ),
           ),
+        ),
+        Visibility(
+          visible: _isExpand,
           child: Column(
             children: [
-              CinemaTitleView(() {
-                setState(() {
-                  (_isExpand) ? _isExpand = false : _isExpand = true;
-                });
-              }),
-              SizedBox(height: MARGIN_MEDIUM_2),
-              CinemaServicesRowView(),
+              CinemaScreenGridView(cinemaList: widget.cinemaList),
               SizedBox(height: MARGIN_LARGE),
-              Visibility(
-                visible: _isExpand,
-                child: Column(
-                  children: [
-                    CinemaScreenGridView(cinemaList: widget.cinemaList),
-                    SizedBox(height: MARGIN_LARGE),
-                    LongPressInfoTextView(),
-                    SizedBox(height: MARGIN_LARGE),
-                  ],
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: MARGIN_MEDIUM_3,
                 ),
-              )
+                child: LongPressInfoTextView(),
+              ),
+              SizedBox(height: MARGIN_LARGE),
             ],
           ),
         ),
@@ -76,6 +84,7 @@ class CinemaScreenGridView extends StatelessWidget {
         crossAxisSpacing: MARGIN_LARGE,
       ),
       itemCount: cinemaList.length,
+      padding: EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM_3),
       physics: NeverScrollableScrollPhysics(),
       shrinkWrap: true,
       itemBuilder: (context, index) => CinemaGridItemView(
@@ -89,10 +98,6 @@ class CinemaScreenGridView extends StatelessWidget {
 }
 
 class CinemaTitleView extends StatelessWidget {
-  final Function onTapDetail;
-
-  CinemaTitleView(this.onTapDetail);
-
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -106,17 +111,12 @@ class CinemaTitleView extends StatelessWidget {
             fontWeight: FontWeight.w700,
           ),
         ),
-        RippleTap(
-          onTap: () {
-            onTapDetail();
-          },
-          child: Text(
-            "See Details",
-            style: TextStyle(
-              color: PRIMARY_COLOR,
-              fontSize: TEXT_REGULAR,
-              decoration: TextDecoration.underline,
-            ),
+        Text(
+          "See Details",
+          style: TextStyle(
+            color: PRIMARY_COLOR,
+            fontSize: TEXT_REGULAR,
+            decoration: TextDecoration.underline,
           ),
         )
       ],

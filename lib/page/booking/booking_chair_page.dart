@@ -39,19 +39,24 @@ class BookingChairPage extends StatelessWidget {
                 children: [
                   Image.asset("cinema_screen.png".toAssetImage()),
                   ChairListViewSection(chairList),
-                  BookingAvailableInfoRowSection(),
-                  ZoomSeekBarView(),
                   SizedBox(height: MARGIN_LARGE),
                 ],
               ),
             ),
           ),
-          Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: MARGIN_MEDIUM_3,
-              vertical: MARGIN_XLARGE,
-            ),
-            child: BuyTicketViewSection(),
+          Column(
+            children: [
+              BookingAvailableInfoRowSection(),
+              ZoomSeekBarView(),
+              const Padding(
+                padding: EdgeInsets.only(
+                  left: MARGIN_MEDIUM_3,
+                  right: MARGIN_MEDIUM_3,
+                  bottom: MARGIN_XLARGE,
+                ),
+                child: BuyTicketViewSection(),
+              ),
+            ],
           )
         ],
       ),
@@ -183,40 +188,62 @@ class ChairListViewSection extends StatelessWidget {
       itemBuilder: (context, index) => (chairList[index] == 0)
           ? ChairPriceTextView()
           : (chairList[index] == 1)
-              ? Row(
-                  children: [
-                    SizedBox(width: MARGIN_MEDIUM),
-                    RowTitleTextView(),
-                    ChairSingleImageView(),
-                    ChairSingleImageView(),
-                    ChairSingleImageView(),
-                    ChairSingleImageView(),
-                    Spacer(),
-                    ChairSingleImageView(),
-                    ChairSingleImageView(),
-                    ChairSingleImageView(),
-                    ChairSingleImageView(),
-                    RowTitleTextView(),
-                    SizedBox(width: MARGIN_MEDIUM),
-                  ],
-                )
-              : Row(
-                  children: [
-                    SizedBox(width: MARGIN_MEDIUM),
-                    RowTitleTextView(),
-                    ChairCoupleImageView(),
-                    Spacer(),
-                    ChairSingleImageView(),
-                    ChairSingleImageView(),
-                    ChairSingleImageView(),
-                    ChairSingleImageView(),
-                    ChairSingleImageView(),
-                    Spacer(),
-                    ChairCoupleImageView(),
-                    RowTitleTextView(),
-                    SizedBox(width: MARGIN_MEDIUM),
-                  ],
-                ),
+              ? ChairSingleRowView()
+              : ChairMixRowView(),
+    );
+  }
+}
+
+class ChairMixRowView extends StatelessWidget {
+  const ChairMixRowView({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        SizedBox(width: MARGIN_MEDIUM),
+        RowTitleTextView(),
+        ChairCoupleImageView(),
+        Spacer(),
+        ChairSingleImageView(),
+        ChairSingleImageView(),
+        ChairSingleImageView(),
+        ChairSingleImageView(),
+        ChairSingleImageView(),
+        Spacer(),
+        ChairCoupleImageView(),
+        RowTitleTextView(),
+        SizedBox(width: MARGIN_MEDIUM),
+      ],
+    );
+  }
+}
+
+class ChairSingleRowView extends StatelessWidget {
+  const ChairSingleRowView({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        SizedBox(width: MARGIN_MEDIUM),
+        RowTitleTextView(),
+        ChairSingleImageView(),
+        ChairSingleImageView(),
+        ChairSingleImageView(),
+        ChairSingleImageView(),
+        Spacer(),
+        ChairSingleImageView(),
+        ChairSingleImageView(),
+        ChairSingleImageView(),
+        ChairSingleImageView(),
+        RowTitleTextView(),
+        SizedBox(width: MARGIN_MEDIUM),
+      ],
     );
   }
 }
