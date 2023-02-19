@@ -8,7 +8,9 @@ import 'package:moviebooking/page/home_page.dart';
 import 'package:moviebooking/page/auth/pick_region_page.dart';
 import 'package:moviebooking/page/movies/movie_detail_page.dart';
 import 'package:moviebooking/page/movies/movies_page.dart';
+import 'package:moviebooking/page/payment/payment_page.dart';
 import 'package:moviebooking/page/splash_page.dart';
+import 'package:moviebooking/page/ticket/ticket_page.dart';
 import 'package:moviebooking/resource/colors.dart';
 
 void main() {
@@ -30,7 +32,7 @@ class MyApp extends StatelessWidget {
         primaryColor: PRIMARY_COLOR,
         primarySwatch: PRIMARY_COLOR_MATERIAL,
       ),
-      home: HomePage(),
+      home: PaymentPage(),
     );
   }
 }

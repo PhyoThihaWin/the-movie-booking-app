@@ -1,10 +1,16 @@
 import 'package:dotted_line/dotted_line.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:moviebooking/page/booking/buy_snack_page.dart';
+import 'package:moviebooking/page/payment/payment_page.dart';
 import 'package:moviebooking/resource/colors.dart';
 import 'package:moviebooking/resource/dimens.dart';
 import 'package:moviebooking/utils/ext.dart';
 import 'package:moviebooking/widget/appbar_back_icon_view.dart';
+import 'package:moviebooking/widget/booking_button_view.dart';
+import 'package:moviebooking/widget/ripple_effect.dart';
+
+import '../../widget/appbar_title_view.dart';
+import '../../widget/dialog/ticket_cancellation_dialog.dart';
 
 class BookingCheckoutPage extends StatelessWidget {
   const BookingCheckoutPage({Key? key}) : super(key: key);
@@ -23,98 +29,170 @@ class BookingCheckoutPage extends StatelessWidget {
         ),
         leading: AppBarBackIconView(),
       ),
-      body: Column(
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            const InvoiceWholeViewSection(),
+            const SizedBox(height: MARGIN_MEDIUM_3),
+            BookingButtonView(
+              btnText: "Continue",
+              btnClick: () {
+                context.next(const PaymentPage());
+              },
+            ),
+            const SizedBox(height: MARGIN_XLARGE),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class InvoiceWholeViewSection extends StatelessWidget {
+  const InvoiceWholeViewSection({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.maxFinite,
+      margin: const EdgeInsets.symmetric(
+        horizontal: MARGIN_MEDIUM_3,
+        vertical: MARGIN_MEDIUM_2,
+      ),
+      child: Stack(
         children: [
-          Container(
-            width: double.maxFinite,
-            margin: EdgeInsets.symmetric(
-              horizontal: MARGIN_MEDIUM_3,
-              vertical: MARGIN_MEDIUM_2,
-            ),
-            child: Stack(
-              children: [
-                Positioned.fill(
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(MARGIN_MEDIUM),
-                    child: Image.asset(
-                      "bg_checkout_invoice.png".toAssetImage(),
-                      fit: BoxFit.cover,
-                    ),
-                  ),
+          const Positioned.fill(
+            child: InvoiceBackgroundImageView(),
+          ),
+          Column(
+            children: const [
+              Padding(
+                padding: EdgeInsets.only(
+                    left: MARGIN_MEDIUM_3,
+                    right: MARGIN_MEDIUM_3,
+                    top: MARGIN_MEDIUM_3,
+                    bottom: MARGIN_MEDIUM_2),
+                child: InvoiceUpperViewSection(),
+              ),
+              InvoiceCircleSlipView(),
+              Padding(
+                padding: EdgeInsets.all(
+                  MARGIN_MEDIUM_3,
                 ),
-                Column(
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.only(
-                          left: MARGIN_MEDIUM_3,
-                          right: MARGIN_MEDIUM_3,
-                          top: MARGIN_MEDIUM_3,
-                          bottom: MARGIN_MEDIUM_2),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          CheckoutMovieTitleView(),
-                          SizedBox(height: MARGIN_MEDIUM),
-                          CheckoutCinemaTextView(),
-                          SizedBox(height: MARGIN_LARGE),
-                          MovieCinemaInfoSection(),
-                          SizedBox(height: MARGIN_LARGE),
-                          TicketCountRichTextView(),
-                          SizedBox(height: MARGIN_10),
-                          TicketNumberAndPriceRowView(),
-                          SizedBox(height: MARGIN_MEDIUM_2),
-                          Divider(color: Colors.white),
-                          SizedBox(height: MARGIN_MEDIUM_2),
-                          CheckoutSnackColumnListView(),
-                        ],
-                      ),
-                    ),
-                    InvoiceCircleSlipView(),
-                    Padding(
-                      padding: EdgeInsets.all(
-                        MARGIN_MEDIUM_3,
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          ConvenienceFeeView(),
-                          const SizedBox(height: MARGIN_MEDIUM_3),
-                          TicketCancelPolicyView(),
-                          SizedBox(height: MARGIN_LARGE),
-                          Divider(color: Colors.white),
-                          SizedBox(height: MARGIN_MEDIUM_3),
-                          Row(
-                            children: [
-                              Text(
-                                "Total",
-                                style: TextStyle(
-                                  color: PRIMARY_COLOR,
-                                  fontSize: TEXT_REGULAR_3X,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              Spacer(),
-                              Text(
-                                "22,500Ks",
-                                style: TextStyle(
-                                  color: PRIMARY_COLOR,
-                                  fontSize: TEXT_REGULAR_3X,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: MARGIN_SMALL),
-                        ],
-                      ),
-                    )
-                  ],
-                )
-              ],
-            ),
+                child: InvoiceLowerViewSection(),
+              )
+            ],
           )
         ],
       ),
+    );
+  }
+}
+
+class InvoiceBackgroundImageView extends StatelessWidget {
+  const InvoiceBackgroundImageView({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(MARGIN_MEDIUM),
+      child: Image.asset(
+        "bg_checkout_invoice.png".toAssetImage(),
+        fit: BoxFit.cover,
+      ),
+    );
+  }
+}
+
+class InvoiceLowerViewSection extends StatelessWidget {
+  const InvoiceLowerViewSection({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const ConvenienceFeeView(),
+        const SizedBox(height: MARGIN_MEDIUM_3),
+        RippleTap(
+            onTap: () {
+              showDialog(
+                context: context,
+                builder: (context) => const TicketCancellationDialog(),
+              );
+            },
+            child: const TicketCancelPolicyView()),
+        const SizedBox(height: MARGIN_LARGE),
+        const Divider(color: Colors.white),
+        const SizedBox(height: MARGIN_MEDIUM_3),
+        const InvoiceTotalRowView(),
+        const SizedBox(height: MARGIN_SMALL),
+      ],
+    );
+  }
+}
+
+class InvoiceUpperViewSection extends StatelessWidget {
+  const InvoiceUpperViewSection({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const CheckoutMovieTitleView(),
+        const SizedBox(height: MARGIN_MEDIUM),
+        const CheckoutCinemaTextView(),
+        const SizedBox(height: MARGIN_LARGE),
+        const MovieCinemaInfoSection(),
+        const SizedBox(height: MARGIN_LARGE),
+        TicketCountRichTextView(),
+        const SizedBox(height: MARGIN_10),
+        const TicketNumberAndPriceRowView(),
+        const SizedBox(height: MARGIN_MEDIUM_2),
+        const Divider(color: Colors.white),
+        const SizedBox(height: MARGIN_MEDIUM_2),
+        CheckoutSnackColumnListView(),
+      ],
+    );
+  }
+}
+
+class InvoiceTotalRowView extends StatelessWidget {
+  const InvoiceTotalRowView({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: const [
+        Text(
+          "Total",
+          style: TextStyle(
+            color: PRIMARY_COLOR,
+            fontSize: TEXT_REGULAR_3X,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        Spacer(),
+        Text(
+          "22,500Ks",
+          style: TextStyle(
+            color: PRIMARY_COLOR,
+            fontSize: TEXT_REGULAR_3X,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ],
     );
   }
 }
@@ -131,14 +209,14 @@ class TicketCancelPolicyView extends StatelessWidget {
         borderRadius: BorderRadius.circular(MARGIN_MEDIUM_3),
         color: Colors.deepOrange,
       ),
-      padding: EdgeInsets.symmetric(
+      padding: const EdgeInsets.symmetric(
         horizontal: MARGIN_MEDIUM_2,
-        vertical: MARGIN_SMALL,
+        vertical: MARGIN_6,
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
+        children: const [
           Icon(
             Icons.info_outline,
             color: Colors.white,
@@ -167,7 +245,7 @@ class ConvenienceFeeView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
+      children: const [
         Text(
           "Convenience Fee",
           style: TextStyle(
@@ -207,14 +285,14 @@ class InvoiceCircleSlipView extends StatelessWidget {
           isLeft: true,
           size: MARGIN_XXLARGE,
         ),
-        SizedBox(width: MARGIN_SMALL),
+        const SizedBox(width: MARGIN_SMALL),
         Expanded(
             child: DottedLine(
           dashLength: MARGIN_10,
           dashColor: TEXT_GREY_COLOR.withOpacity(0.4),
           dashGapLength: MARGIN_SMALL,
         )),
-        SizedBox(width: MARGIN_SMALL),
+        const SizedBox(width: MARGIN_SMALL),
         CustomHalfCircleView(
           isLeft: false,
           size: MARGIN_XXLARGE,
@@ -277,8 +355,8 @@ class _CheckoutSnackColumnViewState extends State<CheckoutSnackColumnListView> {
                 color: Colors.white,
                 scale: 2.2,
               ),
-              SizedBox(width: MARGIN_SMALL),
-              Text(
+              const SizedBox(width: MARGIN_SMALL),
+              const Text(
                 "Food And Beverage",
                 style: TextStyle(
                   color: Colors.white,
@@ -298,8 +376,8 @@ class _CheckoutSnackColumnViewState extends State<CheckoutSnackColumnListView> {
                   color: Colors.white,
                 ),
               ),
-              Spacer(),
-              Text(
+              const Spacer(),
+              const Text(
                 "2,000Ks",
                 style: TextStyle(
                   color: Colors.white,
@@ -315,8 +393,8 @@ class _CheckoutSnackColumnViewState extends State<CheckoutSnackColumnListView> {
           child: ListView.builder(
             itemCount: 3,
             shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
-            padding: EdgeInsets.only(top: MARGIN_MEDIUM_3),
+            physics: const NeverScrollableScrollPhysics(),
+            padding: const EdgeInsets.only(top: MARGIN_MEDIUM_3),
             itemBuilder: (context, index) => Padding(
               padding: const EdgeInsets.only(bottom: MARGIN_CARD_MEDIUM_2),
               child: Row(
@@ -325,8 +403,8 @@ class _CheckoutSnackColumnViewState extends State<CheckoutSnackColumnListView> {
                     "ic_remove_snack.png".toAssetIcon(),
                     scale: 3,
                   ),
-                  SizedBox(width: MARGIN_MEDIUM),
-                  Text(
+                  const SizedBox(width: MARGIN_MEDIUM),
+                  const Text(
                     "Potato Chips (Qt. 1)",
                     style: TextStyle(
                       color: TEXT_GREY_COLOR,
@@ -334,8 +412,8 @@ class _CheckoutSnackColumnViewState extends State<CheckoutSnackColumnListView> {
                       fontWeight: FontWeight.w500,
                     ),
                   ),
-                  Spacer(),
-                  Text(
+                  const Spacer(),
+                  const Text(
                     "1,000Ks",
                     style: TextStyle(
                       color: TEXT_GREY_COLOR,
@@ -361,7 +439,7 @@ class TicketNumberAndPriceRowView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      children: [
+      children: const [
         Text(
           "Gold-G4,G5",
           style: TextStyle(
@@ -388,14 +466,14 @@ class TicketCountRichTextView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return RichText(
-      text: TextSpan(
+      text: const TextSpan(
         text: 'M-Ticket(',
         style: TextStyle(
           color: TEXT_GREY_COLOR,
           fontSize: TEXT_REGULAR_2X,
           fontWeight: FontWeight.w700,
         ),
-        children: const <TextSpan>[
+        children: <TextSpan>[
           TextSpan(
               text: '2',
               style: TextStyle(
@@ -459,7 +537,7 @@ class MovieCinemaInfoView extends StatelessWidget {
         Text(
           itemString,
           textAlign: TextAlign.center,
-          style: TextStyle(
+          style: const TextStyle(
             color: Colors.white,
             fontSize: TEXT_REGULAR,
             fontWeight: FontWeight.w300,
@@ -478,7 +556,7 @@ class CheckoutCinemaTextView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      children: [
+      children: const [
         Text(
           "JCGV : Junction City",
           style: TextStyle(
@@ -507,7 +585,7 @@ class CheckoutMovieTitleView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      children: [
+      children: const [
         Text(
           "Black Window",
           style: TextStyle(

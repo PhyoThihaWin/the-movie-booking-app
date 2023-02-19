@@ -20,7 +20,7 @@ class PickRegionPage extends StatelessWidget {
         elevation: 0,
         centerTitle: true,
         automaticallyImplyLeading: false,
-        title: AppBarTitleView(),
+        title: _AppBarTitleView(),
       ),
       body: Container(
         width: double.maxFinite,
@@ -99,8 +99,8 @@ class BuildingImageView extends StatelessWidget {
   }
 }
 
-class AppBarTitleView extends StatelessWidget {
-  const AppBarTitleView({
+class _AppBarTitleView extends StatelessWidget {
+  const _AppBarTitleView({
     Key? key,
   }) : super(key: key);
 

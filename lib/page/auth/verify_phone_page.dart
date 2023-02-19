@@ -8,6 +8,7 @@ import 'package:moviebooking/widget/ripple_effect.dart';
 
 import '../../resource/dimens.dart';
 import '../../widget/cinema_logo_view.dart';
+import '../../widget/common_button_view.dart';
 import '../../widget/policy_text_btm_view.dart';
 
 class VerifyPhonePage extends StatelessWidget {
@@ -72,12 +73,23 @@ class _InputContentSectionState extends State<InputContentSection> {
           child: PhoneNumberInputSection(_phoneController),
         ),
         const SizedBox(height: MARGIN_XXLARGE),
-        VerifyPhoneButtonView(() {
-          if (_phoneController.value.text.isNotEmpty &&
-              _phoneController.value.text.length > 9) {
-            context.next(const OtpConfirmPage());
-          }
-        }),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: MARGIN_LARGE),
+          child: CommonButtonView(
+              child: const Text(
+                VERIFY_PHONE_NUMBER_BUTTON_TEXT,
+                style: TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              onTap: () {
+                if (_phoneController.value.text.isNotEmpty &&
+                    _phoneController.value.text.length > 9) {
+                  context.next(const OtpConfirmPage());
+                }
+              }),
+        ),
         const SizedBox(height: MARGIN_MEDIUM_3),
         const DividerTextView(),
         const SizedBox(height: MARGIN_MEDIUM_3),
@@ -109,6 +121,11 @@ class ContinueGoogleButtonView extends StatelessWidget {
         onPressed: () => context.next(const OtpConfirmPage()),
         style: ButtonStyle(
           backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
+          shape: MaterialStateProperty.all(
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(MARGIN_10),
+            ),
+          ),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -165,31 +182,6 @@ class DividerTextView extends StatelessWidget {
           ),
         )
       ],
-    );
-  }
-}
-
-class VerifyPhoneButtonView extends StatelessWidget {
-  final void Function() verifyPhoneNumber;
-
-  VerifyPhoneButtonView(this.verifyPhoneNumber);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.maxFinite,
-      height: VERIFY_BTN_HEIGHT,
-      margin: const EdgeInsets.symmetric(horizontal: MARGIN_LARGE),
-      child: ElevatedButton(
-        onPressed: verifyPhoneNumber,
-        child: const Text(
-          VERIFY_PHONE_NUMBER_BUTTON_TEXT,
-          style: const TextStyle(color: Colors.black),
-        ),
-        style: ButtonStyle(
-          backgroundColor: MaterialStateProperty.all<Color>(PRIMARY_COLOR),
-        ),
-      ),
     );
   }
 }
