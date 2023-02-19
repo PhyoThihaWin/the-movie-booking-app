@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:moviebooking/page/booking/booking_checkout_page.dart';
 import 'package:moviebooking/resource/colors.dart';
 import 'package:moviebooking/resource/dimens.dart';
 import 'package:moviebooking/utils/ext.dart';
@@ -8,6 +9,7 @@ import '../../viewitem/food_drink_item_view.dart';
 import '../../widget/appbar_action_icon_view.dart';
 import '../../widget/appbar_back_icon_view.dart';
 import '../../widget/booking_available_info_view.dart';
+import '../../widget/quantity_control_view.dart';
 
 class BuySnackPage extends StatelessWidget {
   final List<String> tabList = [
@@ -30,7 +32,7 @@ class BuySnackPage extends StatelessWidget {
         elevation: 0,
         title: AppBarTitleView("Grab a bite!"),
         leading: AppBarBackIconView(),
-        actions: appBarActionIconList(),
+        actions: appBarActionIconList(context),
       ),
       body: Column(
         children: [
@@ -47,22 +49,19 @@ class BuySnackPage extends StatelessWidget {
               horizontal: MARGIN_MEDIUM_3,
               vertical: MARGIN_MEDIUM_2,
             ),
-            child: RippleTap(
+            child: GestureDetector(
                 onTap: () {
-                  showModalBottomSheet(
-                      context: context,
-                      backgroundColor: Colors.transparent,
-                      builder: (context) => FoodDrinkCartView());
+                  context.next(BookingCheckoutPage());
                 },
                 child: FoodDrinkCountAndTotalRowView(false)),
           ),
-          SizedBox(height: MARGIN_MEDIUM_3)
+          const SizedBox(height: MARGIN_MEDIUM_3)
         ],
       ),
     );
   }
 
-  List<Widget> appBarActionIconList() {
+  List<Widget> appBarActionIconList(BuildContext context) {
     return [
       AppBarActionIconView(
         child: const Icon(
@@ -71,9 +70,12 @@ class BuySnackPage extends StatelessWidget {
         ),
       ),
       AppBarActionIconView(
+        onTap: () {
+          context.next(const BookingCheckoutPage());
+        },
         child: const Text(
           "SKIP",
-          style: const TextStyle(
+          style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.w600,
             fontSize: TEXT_REGULAR_3X,
@@ -98,7 +100,7 @@ class _FoodDrinkCartViewState extends State<FoodDrinkCartView> {
         Container(
           padding: const EdgeInsets.symmetric(
               horizontal: MARGIN_MEDIUM_3, vertical: MARGIN_MEDIUM_3),
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
               color: Colors.black,
               borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(MARGIN_MEDIUM_2),
@@ -106,26 +108,26 @@ class _FoodDrinkCartViewState extends State<FoodDrinkCartView> {
           child: Column(
             children: [
               FoodDrinkNamePriceRowView("Large Colaffff", 1700),
-              SizedBox(height: MARGIN_CARD_MEDIUM_2),
+              const SizedBox(height: MARGIN_CARD_MEDIUM_2),
               FoodDrinkNamePriceRowView("Large Colaffff", 1700),
-              SizedBox(height: MARGIN_CARD_MEDIUM_2),
+              const SizedBox(height: MARGIN_CARD_MEDIUM_2),
               FoodDrinkNamePriceRowView("Large Colaffff", 1700)
             ],
           ),
         ),
         Container(
           color: Colors.black,
-          padding: EdgeInsets.symmetric(
+          padding: const EdgeInsets.symmetric(
             horizontal: MARGIN_MEDIUM_3,
             vertical: MARGIN_MEDIUM_2,
           ),
-          child: RippleTap(
+          child: GestureDetector(
               onTap: () {
-                context.popBack();
+                context.next(const BookingCheckoutPage());
               },
               child: FoodDrinkCountAndTotalRowView(true)),
         ),
-        SizedBox(height: MARGIN_MEDIUM_3)
+        const SizedBox(height: MARGIN_MEDIUM_3)
       ],
     );
   }
@@ -139,28 +141,56 @@ class FoodDrinkCountAndTotalRowView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: MARGIN_SMALL),
+      padding: const EdgeInsets.symmetric(vertical: MARGIN_SMALL),
       decoration: BoxDecoration(
           color: PRIMARY_COLOR,
           borderRadius: BorderRadius.circular(MARGIN_MEDIUM)),
       child: Row(
         children: [
-          FoodCountIconView(),
-          Icon(this.isExpand
-              ? Icons.keyboard_arrow_up_rounded
-              : Icons.keyboard_arrow_down_rounded),
-          Spacer(),
-          Text(
+          RippleTap(
+            onTap: () {
+              isExpand
+                  ? context.popBack()
+                  : showModalBottomSheet(
+                      context: context,
+                      backgroundColor: Colors.transparent,
+                      builder: (context) => FoodDrinkCartView());
+            },
+            child: FoodCountIconArrowView(isExpand: isExpand),
+          ),
+          const Spacer(),
+          const Text(
             "2,000KS",
             style: TextStyle(
                 color: Colors.black,
                 fontSize: TEXT_REGULAR_2X,
                 fontWeight: FontWeight.w600),
           ),
-          Icon(Icons.keyboard_arrow_right_rounded),
-          SizedBox(width: MARGIN_MEDIUM)
+          const Icon(Icons.keyboard_arrow_right_rounded),
+          const SizedBox(width: MARGIN_MEDIUM)
         ],
       ),
+    );
+  }
+}
+
+class FoodCountIconArrowView extends StatelessWidget {
+  const FoodCountIconArrowView({
+    Key? key,
+    required this.isExpand,
+  }) : super(key: key);
+
+  final bool isExpand;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        const FoodCountIconView(),
+        Icon(this.isExpand
+            ? Icons.keyboard_arrow_up_rounded
+            : Icons.keyboard_arrow_down_rounded),
+      ],
     );
   }
 }
@@ -191,7 +221,7 @@ class FoodCountIconView extends StatelessWidget {
           child: CircleDotView(
             itemColor: Colors.red,
             padding: MARGIN_6,
-            child: Text(
+            child: const Text(
               "1",
               style: TextStyle(
                 color: Colors.white,
@@ -218,7 +248,7 @@ class FoodDrinkNamePriceRowView extends StatelessWidget {
         Expanded(
           child: Text(
             itemName,
-            style: TextStyle(
+            style: const TextStyle(
               color: Colors.white,
               fontSize: TEXT_REGULAR,
               fontWeight: FontWeight.w600,
@@ -233,50 +263,13 @@ class FoodDrinkNamePriceRowView extends StatelessWidget {
           child: Text(
             "${itemPrice} Ks",
             textAlign: TextAlign.right,
-            style: TextStyle(
+            style: const TextStyle(
               color: Colors.white,
               fontSize: TEXT_REGULAR,
               fontWeight: FontWeight.w800,
             ),
           ),
         ),
-      ],
-    );
-  }
-}
-
-class QuantityControlView extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        CircleDotView(
-          itemColor: PRIMARY_COLOR,
-          padding: MARGIN_SMALL,
-          child: Icon(
-            Icons.add,
-            size: MARGIN_MEDIUM_2,
-          ),
-        ),
-        SizedBox(width: MARGIN_CARD_MEDIUM_2),
-        Text(
-          "1",
-          style: TextStyle(
-            color: PRIMARY_COLOR,
-            fontSize: TEXT_REGULAR,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-        SizedBox(width: MARGIN_CARD_MEDIUM_2),
-        CircleDotView(
-          itemColor: PRIMARY_COLOR,
-          padding: MARGIN_SMALL,
-          child: Icon(
-            Icons.remove,
-            size: MARGIN_MEDIUM_2,
-          ),
-        )
       ],
     );
   }
@@ -336,16 +329,17 @@ class FoodDrinkGridView extends StatelessWidget {
 
 class AppBarTitleView extends StatelessWidget {
   final String titleText;
+  final double fontSize;
 
-  AppBarTitleView(this.titleText);
+  AppBarTitleView(this.titleText, {this.fontSize = TEXT_REGULAR_2X});
 
   @override
   Widget build(BuildContext context) {
     return Text(
       titleText,
-      style: const TextStyle(
+      style: TextStyle(
         color: Colors.white,
-        fontSize: TEXT_REGULAR_2X,
+        fontSize: fontSize,
         fontWeight: FontWeight.w600,
       ),
     );

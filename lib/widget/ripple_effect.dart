@@ -5,12 +5,12 @@ import 'package:moviebooking/resource/dimens.dart';
 class RippleTap extends StatelessWidget {
   final Widget child;
   final bool isCircle;
-  final void Function() onTap;
+  final Function? onTap;
 
   const RippleTap({
     Key? key,
     required this.child,
-    required this.onTap,
+    this.onTap,
     this.isCircle = false,
   }) : super(key: key);
 
@@ -28,7 +28,11 @@ class RippleTap extends StatelessWidget {
                 Radius.circular(MARGIN_SMALL),
               ),
               customBorder: isCircle ? const CircleBorder() : null,
-              onTap: onTap,
+              onTap: onTap == null
+                  ? null
+                  : () {
+                      onTap?.call();
+                    },
             ),
           ),
         ),
