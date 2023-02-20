@@ -10,7 +10,11 @@ import 'package:moviebooking/widget/booking_button_view.dart';
 import 'package:moviebooking/widget/ripple_effect.dart';
 
 import '../../widget/appbar_title_view.dart';
+import '../../widget/checkout_movie_cinema_info_view.dart';
 import '../../widget/dialog/ticket_cancellation_dialog.dart';
+import '../../widget/invoice_background_view.dart';
+import '../../widget/invoice_circle_slip_view.dart';
+import '../../widget/ticket_count_richtext_view.dart';
 
 class BookingCheckoutPage extends StatelessWidget {
   const BookingCheckoutPage({Key? key}) : super(key: key);
@@ -91,23 +95,6 @@ class InvoiceWholeViewSection extends StatelessWidget {
   }
 }
 
-class InvoiceBackgroundImageView extends StatelessWidget {
-  const InvoiceBackgroundImageView({
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(MARGIN_MEDIUM),
-      child: Image.asset(
-        "bg_checkout_invoice.png".toAssetImage(),
-        fit: BoxFit.cover,
-      ),
-    );
-  }
-}
-
 class InvoiceLowerViewSection extends StatelessWidget {
   const InvoiceLowerViewSection({
     Key? key,
@@ -152,7 +139,7 @@ class InvoiceUpperViewSection extends StatelessWidget {
         const SizedBox(height: MARGIN_MEDIUM),
         const CheckoutCinemaTextView(),
         const SizedBox(height: MARGIN_LARGE),
-        const MovieCinemaInfoSection(),
+        CheckoutMovieCinemaInfoView(),
         const SizedBox(height: MARGIN_LARGE),
         TicketCountRichTextView(),
         const SizedBox(height: MARGIN_10),
@@ -266,36 +253,6 @@ class ConvenienceFeeView extends StatelessWidget {
             fontSize: TEXT_REGULAR_2X,
             fontWeight: FontWeight.bold,
           ),
-        ),
-      ],
-    );
-  }
-}
-
-class InvoiceCircleSlipView extends StatelessWidget {
-  const InvoiceCircleSlipView({
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        CustomHalfCircleView(
-          isLeft: true,
-          size: MARGIN_XXLARGE,
-        ),
-        const SizedBox(width: MARGIN_SMALL),
-        Expanded(
-            child: DottedLine(
-          dashLength: MARGIN_10,
-          dashColor: TEXT_GREY_COLOR.withOpacity(0.4),
-          dashGapLength: MARGIN_SMALL,
-        )),
-        const SizedBox(width: MARGIN_SMALL),
-        CustomHalfCircleView(
-          isLeft: false,
-          size: MARGIN_XXLARGE,
         ),
       ],
     );
@@ -457,92 +414,6 @@ class TicketNumberAndPriceRowView extends StatelessWidget {
             fontWeight: FontWeight.bold,
           ),
         ),
-      ],
-    );
-  }
-}
-
-class TicketCountRichTextView extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return RichText(
-      text: const TextSpan(
-        text: 'M-Ticket(',
-        style: TextStyle(
-          color: TEXT_GREY_COLOR,
-          fontSize: TEXT_REGULAR_2X,
-          fontWeight: FontWeight.w700,
-        ),
-        children: <TextSpan>[
-          TextSpan(
-              text: '2',
-              style: TextStyle(
-                color: PRIMARY_COLOR,
-                fontWeight: FontWeight.bold,
-              )),
-          TextSpan(text: ')'),
-        ],
-      ),
-    );
-  }
-}
-
-class MovieCinemaInfoSection extends StatelessWidget {
-  const MovieCinemaInfoSection({
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Expanded(
-          child: MovieCinemaInfoView(
-            "ic_calendar.png",
-            "Sat, 18 Jun, 2022",
-          ),
-        ),
-        Expanded(
-            child: MovieCinemaInfoView(
-          "ic_time.png",
-          "3:30PM",
-        )),
-        Expanded(
-            child: MovieCinemaInfoView(
-          "ic_location.png",
-          "Baho St, BuTarYone Lann Bus stop, Hlaing",
-        )),
-      ],
-    );
-  }
-}
-
-class MovieCinemaInfoView extends StatelessWidget {
-  final String iconPath;
-  final String itemString;
-
-  MovieCinemaInfoView(this.iconPath, this.itemString);
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Image.asset(
-          iconPath.toAssetIcon(),
-          height: MARGIN_MEDIUM_3,
-          width: MARGIN_MEDIUM_3,
-        ),
-        const SizedBox(height: MARGIN_10),
-        Text(
-          itemString,
-          textAlign: TextAlign.center,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: TEXT_REGULAR,
-            fontWeight: FontWeight.w300,
-          ),
-        )
       ],
     );
   }
