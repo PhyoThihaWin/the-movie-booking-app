@@ -1,10 +1,11 @@
+import 'package:flick_video_player/flick_video_player.dart';
 import 'package:flutter/material.dart';
 import 'package:moviebooking/page/booking/booking_cinema_page.dart';
 import 'package:moviebooking/resource/colors.dart';
 import 'package:moviebooking/utils/ext.dart';
-import 'package:moviebooking/viewitem/sliver_app_bar_title.dart';
 import 'package:moviebooking/widget/ripple_effect.dart';
 import 'package:moviebooking/widget/title_text.dart';
+import 'package:video_player/video_player.dart';
 
 import '../../resource/dimens.dart';
 import '../../resource/strings.dart';
@@ -326,11 +327,13 @@ class MovieLandscapeVideoSection extends StatelessWidget {
     return Stack(
       children: [
         const Positioned.fill(
-          child: MovieLandscapeImageView(),
+          child: _MovieLandscapeVideoView(),
         ),
-        Positioned.fill(
-          child: Container(
-            color: Colors.black54,
+        IgnorePointer(
+          child: Positioned.fill(
+            child: Container(
+              color: Colors.black26,
+            ),
           ),
         ),
         Align(
@@ -358,28 +361,67 @@ class MovieLandscapeVideoSection extends StatelessWidget {
             ),
           ),
         ),
-        Align(
-          alignment: Alignment.center,
-          child: Image.asset(
-            "ic_play_button.png".toAssetIcon(),
-            scale: 3,
-          ),
-        )
+        // Align(
+        //   alignment: Alignment.center,
+        //   child: Image.asset(
+        //     "ic_play_button.png".toAssetIcon(),
+        //     scale: 3,
+        //   ),
+        // )
       ],
     );
   }
 }
 
-class MovieLandscapeImageView extends StatelessWidget {
-  const MovieLandscapeImageView({
+class _MovieLandscapeVideoView extends StatefulWidget {
+  const _MovieLandscapeVideoView({
     Key? key,
   }) : super(key: key);
 
   @override
+  State<_MovieLandscapeVideoView> createState() =>
+      _MovieLandscapeVideoViewState();
+}
+
+class _MovieLandscapeVideoViewState extends State<_MovieLandscapeVideoView> {
+  late FlickManager flickManager;
+
+  @override
+  void initState() {
+    super.initState();
+    var videoController = VideoPlayerController.network(
+      "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+    );
+    flickManager = FlickManager(
+      autoPlay: false,
+      videoPlayerController: videoController,
+    );
+    // flickManager.flickVideoManager?.addListener(_videoPlayingListener);
+  }
+
+  _videoPlayingListener() async {
+    if (flickManager.flickVideoManager?.isVideoInitialized ?? false) {
+      flickManager.flickControlManager?.seekTo(const Duration(seconds: 10));
+    }
+  }
+
+  @override
+  void dispose() {
+    flickManager.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Image.network(
-      "https://images.thedirect.com/media/article_full/spider-man-no-way-home-poster-doc-ock.jpg",
-      fit: BoxFit.cover,
+    return FlickVideoPlayer(
+      flickManager: flickManager,
+      flickVideoWithControls: const FlickVideoWithControls(
+        closedCaptionTextStyle: TextStyle(fontSize: 8),
+        controls: FlickPortraitControls(),
+      ),
+      flickVideoWithControlsFullscreen: const FlickVideoWithControls(
+        controls: FlickLandscapeControls(),
+      ),
     );
   }
 }

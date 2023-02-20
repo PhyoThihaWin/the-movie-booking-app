@@ -41,6 +41,8 @@ dependencies:
   intl: ^0.18.0
   country_calling_code_picker: ^2.0.1
   dotted_line: ^3.1.0
+  video_player: ^2.5.1
+  flick_video_player: ^0.5.0
 
 dev_dependencies:
   flutter_test:
