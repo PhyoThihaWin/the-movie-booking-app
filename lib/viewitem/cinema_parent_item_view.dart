@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:moviebooking/page/booking/booking_chair_page.dart';
+import 'package:moviebooking/page/cinema/cinema_detail_page.dart';
 import 'package:moviebooking/utils/ext.dart';
 import 'package:moviebooking/widget/ripple_effect.dart';
 
 import '../resource/colors.dart';
 import '../resource/dimens.dart';
+import 'cinema_facility_item_view.dart';
 import 'cinema_grid_item_view.dart';
 
 class CinemaParentItemView extends StatefulWidget {
@@ -23,14 +25,14 @@ class _CinemaParentItemViewState extends State<CinemaParentItemView> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        RippleTap(
+        InkWell(
           onTap: () {
             setState(() {
               _isExpand = !_isExpand;
             });
           },
           child: Padding(
-            padding: EdgeInsets.only(
+            padding: const EdgeInsets.only(
               left: MARGIN_MEDIUM_3,
               right: MARGIN_MEDIUM_3,
               top: MARGIN_LARGE,
@@ -38,9 +40,9 @@ class _CinemaParentItemViewState extends State<CinemaParentItemView> {
             child: Column(
               children: [
                 CinemaTitleView(),
-                SizedBox(height: MARGIN_MEDIUM_2),
-                CinemaServicesRowView(),
-                SizedBox(height: MARGIN_LARGE),
+                const SizedBox(height: MARGIN_MEDIUM_2),
+                const CinemaServicesRowView(),
+                const SizedBox(height: MARGIN_LARGE),
               ],
             ),
           ),
@@ -50,18 +52,18 @@ class _CinemaParentItemViewState extends State<CinemaParentItemView> {
           child: Column(
             children: [
               CinemaScreenGridView(cinemaList: widget.cinemaList),
-              SizedBox(height: MARGIN_LARGE),
-              Padding(
-                padding: const EdgeInsets.symmetric(
+              const SizedBox(height: MARGIN_LARGE),
+              const Padding(
+                padding: EdgeInsets.symmetric(
                   horizontal: MARGIN_MEDIUM_3,
                 ),
-                child: LongPressInfoTextView(),
+                child: const LongPressInfoTextView(),
               ),
-              SizedBox(height: MARGIN_LARGE),
+              const SizedBox(height: MARGIN_LARGE),
             ],
           ),
         ),
-        Divider(color: Colors.white),
+        const Divider(color: Colors.white),
       ],
     );
   }
@@ -84,8 +86,8 @@ class CinemaScreenGridView extends StatelessWidget {
         crossAxisSpacing: MARGIN_LARGE,
       ),
       itemCount: cinemaList.length,
-      padding: EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM_3),
-      physics: NeverScrollableScrollPhysics(),
+      padding: const EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM_3),
+      physics: const NeverScrollableScrollPhysics(),
       shrinkWrap: true,
       itemBuilder: (context, index) => CinemaGridItemView(
         cinemaList[index],
@@ -103,7 +105,7 @@ class CinemaTitleView extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(
+        const Text(
           "JCGV : Junction City",
           style: TextStyle(
             color: Colors.white,
@@ -111,12 +113,18 @@ class CinemaTitleView extends StatelessWidget {
             fontWeight: FontWeight.w700,
           ),
         ),
-        Text(
-          "See Details",
-          style: TextStyle(
-            color: PRIMARY_COLOR,
-            fontSize: TEXT_REGULAR,
-            decoration: TextDecoration.underline,
+        GestureDetector(
+          onTap: () {
+            context.next(const CinemaDetailPage());
+            print("Reached!!");
+          },
+          child: const Text(
+            "See Details",
+            style: TextStyle(
+              color: PRIMARY_COLOR,
+              fontSize: TEXT_REGULAR,
+              decoration: TextDecoration.underline,
+            ),
           ),
         )
       ],
@@ -133,48 +141,18 @@ class CinemaServicesRowView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        CinemaServiceItemView(
+        CinemaFacilityItemView(
           "Parking",
           "ic_parking.png".toAssetIcon(),
         ),
-        CinemaServiceItemView(
+        CinemaFacilityItemView(
           "Online Food",
           "ic_drink_food.png".toAssetIcon(),
         ),
-        CinemaServiceItemView(
+        CinemaFacilityItemView(
           "Wheek Chair",
           "ic_wheel_chair.png".toAssetIcon(),
         )
-      ],
-    );
-  }
-}
-
-class CinemaServiceItemView extends StatelessWidget {
-  final String imagePath;
-  final String serviceName;
-
-  CinemaServiceItemView(this.serviceName, this.imagePath);
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Image.asset(
-          imagePath,
-          color: TEXT_GREY_COLOR,
-          height: MARGIN_MEDIUM_3,
-          width: MARGIN_MEDIUM_3,
-        ),
-        SizedBox(width: MARGIN_6),
-        Text(
-          serviceName,
-          style: TextStyle(
-              color: TEXT_GREY_COLOR,
-              fontSize: TEXT_REGULAR,
-              fontWeight: FontWeight.w500),
-        ),
-        SizedBox(width: MARGIN_MEDIUM_2),
       ],
     );
   }
@@ -188,7 +166,7 @@ class LongPressInfoTextView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      children: [
+      children: const [
         Icon(
           Icons.info,
           color: TEXT_GREY_COLOR,

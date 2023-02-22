@@ -19,10 +19,10 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int pageIndex = 0;
-  final _pageBody = const <Widget>[
-    MoviesPage(),
+  final _pageBody = <Widget>[
+    const MoviesPage(),
     CinemaPage(),
-    TicketPage(),
+    const TicketPage(),
     ProfilePage(),
   ];
 
@@ -130,16 +130,16 @@ class AppBarCityTitleView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        SizedBox(width: MARGIN_MEDIUM_2),
+        const SizedBox(width: MARGIN_MEDIUM_2),
         SvgPicture.asset(
           "ic_navigate.svg".toAssetIcon(),
           color: Colors.white,
           width: MARGIN_MEDIUM_3,
         ),
-        SizedBox(width: MARGIN_MEDIUM),
-        Text(
+        const SizedBox(width: MARGIN_MEDIUM),
+        const Text(
           "Yangon",
-          style: TextStyle(
+          style: const TextStyle(
             color: Colors.white,
             fontSize: TEXT_REGULAR_3X,
             fontStyle: FontStyle.italic,

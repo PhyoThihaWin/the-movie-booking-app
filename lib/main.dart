@@ -1,16 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:moviebooking/page/auth/verify_phone_page.dart';
-import 'package:moviebooking/page/booking/booking_chair_page.dart';
-import 'package:moviebooking/page/booking/booking_checkout_page.dart';
-import 'package:moviebooking/page/booking/booking_cinema_page.dart';
-import 'package:moviebooking/page/booking/buy_snack_page.dart';
+import 'package:moviebooking/page/cinema/cinema_detail_page.dart';
 import 'package:moviebooking/page/home_page.dart';
-import 'package:moviebooking/page/auth/pick_region_page.dart';
-import 'package:moviebooking/page/movies/movie_detail_page.dart';
-import 'package:moviebooking/page/movies/movies_page.dart';
-import 'package:moviebooking/page/payment/payment_page.dart';
 import 'package:moviebooking/page/payment/ticket_confirmation_page.dart';
-import 'package:moviebooking/page/splash_page.dart';
+import 'package:moviebooking/page/ticket/ticket_detail_page.dart';
 import 'package:moviebooking/page/ticket/ticket_page.dart';
 import 'package:moviebooking/resource/colors.dart';
 

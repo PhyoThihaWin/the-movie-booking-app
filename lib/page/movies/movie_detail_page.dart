@@ -54,7 +54,7 @@ class MovieDetailPage extends StatelessWidget {
                     ),
                   ),
                   Padding(
-                    padding: EdgeInsets.only(
+                    padding: const EdgeInsets.only(
                       left: MARGIN_MEDIUM_3,
                       right: MARGIN_MEDIUM_3,
                       top: MARGIN_MEDIUM_2,
@@ -62,17 +62,17 @@ class MovieDetailPage extends StatelessWidget {
                     ),
                     child: Column(
                       children: [
-                        MovieDataViewSection(),
-                        SizedBox(height: MARGIN_LARGE),
+                        const MovieDataViewSection(),
+                        const SizedBox(height: MARGIN_LARGE),
                         Visibility(
                           visible: this.isUpComing,
-                          child: SetNotificationViewSection(),
+                          child: const SetNotificationViewSection(),
                         ),
-                        SizedBox(height: MARGIN_LARGE),
-                        MovieStoryLineAndDescViewSection(),
-                        SizedBox(height: MARGIN_XLARGE),
-                        ActorListSection(),
-                        SizedBox(height: MARGIN_XXLARGE * 2)
+                        const SizedBox(height: MARGIN_LARGE),
+                        const MovieStoryLineAndDescViewSection(),
+                        const SizedBox(height: MARGIN_XLARGE),
+                        const ActorListSection(),
+                        const SizedBox(height: MARGIN_XXLARGE * 2)
                       ],
                     ),
                   ),
@@ -84,7 +84,7 @@ class MovieDetailPage extends StatelessWidget {
               left: 0,
               right: 0,
               child: Visibility(
-                visible: !this.isUpComing,
+                visible: !isUpComing,
                 child: Wrap(
                   alignment: WrapAlignment.center,
                   children: [
@@ -129,7 +129,7 @@ class SetNotificationViewSection extends StatelessWidget {
             padding: const EdgeInsets.all(MARGIN_MEDIUM_3),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+              children: const [
                 Text(
                   "Releasin in 5 days",
                   style: TextStyle(
@@ -175,7 +175,7 @@ class SetNotificationBtnView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(
+      padding: const EdgeInsets.symmetric(
         horizontal: MARGIN_MEDIUM_2,
         vertical: MARGIN_MEDIUM,
       ),
@@ -186,7 +186,7 @@ class SetNotificationBtnView extends StatelessWidget {
           )),
       child: Row(
         mainAxisSize: MainAxisSize.min,
-        children: [
+        children: const [
           Icon(
             Icons.notifications_active,
             color: Colors.black,
@@ -213,13 +213,13 @@ class ActorListSection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         TitleText("Cast"),
-        SizedBox(height: MARGIN_MEDIUM_2),
+        const SizedBox(height: MARGIN_MEDIUM_2),
         SizedBox(
           height: 100,
           child: ListView.builder(
             itemCount: 10,
             scrollDirection: Axis.horizontal,
-            itemBuilder: (context, index) => ActorItemView(),
+            itemBuilder: (context, index) => const ActorItemView(),
           ),
         )
       ],
@@ -238,8 +238,8 @@ class MovieStoryLineAndDescViewSection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         TitleText(MOVIE_STORY_LINE),
-        SizedBox(height: MARGIN_MEDIUM_2),
-        Text(
+        const SizedBox(height: MARGIN_MEDIUM_2),
+        const Text(
           "Story Line In the 1970s, young Gru tries to join a group of supervillains called the Vicious 6 after they oust their leader -- the legendary fighter Wild Knuckles. When the interview turns disastrous, Gru and his Minions go on the run with the Vicious 6 hot on their tails. Luckily, he finds an unlikely source for guidance -- Wild Knuckles himself -- and soon discovers that even bad guys need a little help from their friends.",
           style: TextStyle(
             color: Colors.white,
@@ -263,9 +263,9 @@ class MovieDataViewSection extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
         MovieDataCardView("Censor Rating", "U/A"),
-        SizedBox(width: MARGIN_MEDIUM),
+        const SizedBox(width: MARGIN_MEDIUM),
         MovieDataCardView("Release Date", "May 8th, 2022"),
-        SizedBox(width: MARGIN_MEDIUM),
+        const SizedBox(width: MARGIN_MEDIUM),
         MovieDataCardView("Duration", "2hr 50min"),
       ],
     );
@@ -282,7 +282,7 @@ class MovieDataCardView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Expanded(
       child: Container(
-        padding: EdgeInsets.symmetric(
+        padding: const EdgeInsets.symmetric(
           horizontal: MARGIN_MEDIUM,
           vertical: MARGIN_MEDIUM_2,
         ),
@@ -298,17 +298,17 @@ class MovieDataCardView extends StatelessWidget {
             Text(
               title,
               textAlign: TextAlign.center,
-              style: TextStyle(
+              style: const TextStyle(
                 color: Colors.white,
                 fontSize: TEXT_SMALL,
                 fontWeight: FontWeight.w600,
               ),
             ),
-            SizedBox(height: MARGIN_MEDIUM),
+            const SizedBox(height: MARGIN_MEDIUM),
             Text(
               value,
               textAlign: TextAlign.center,
-              style: TextStyle(
+              style: const TextStyle(
                 color: Colors.white,
                 fontSize: TEXT_REGULAR,
                 fontWeight: FontWeight.w700,
@@ -339,12 +339,12 @@ class MovieLandscapeVideoSection extends StatelessWidget {
         Align(
           alignment: Alignment.topLeft,
           child: Padding(
-            padding: EdgeInsets.all(MARGIN_MEDIUM_2),
+            padding: const EdgeInsets.all(MARGIN_MEDIUM_2),
             child: RippleTap(
               onTap: () {
                 context.popBack();
               },
-              child: Icon(
+              child: const Icon(
                 Icons.arrow_back_ios_new,
                 color: Colors.white,
               ),
