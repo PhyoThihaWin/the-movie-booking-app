@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:moviebooking/page/cinema/cinema_page.dart';
+import 'package:moviebooking/page/movies/movie_search_page.dart';
 import 'package:moviebooking/page/movies/movies_page.dart';
 import 'package:moviebooking/page/profile/profile_page.dart';
 import 'package:moviebooking/page/ticket/ticket_page.dart';
 import 'package:moviebooking/resource/colors.dart';
 import 'package:moviebooking/resource/strings.dart';
 import 'package:moviebooking/utils/ext.dart';
+import 'package:moviebooking/widget/ripple_effect.dart';
 
 import '../resource/dimens.dart';
 
@@ -19,8 +21,13 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int pageIndex = 0;
-  final _pageBody = <Widget>[
-    const MoviesPage(),
+  int _tabIndex = 0;
+
+  late final List<Widget> _pageBody = [
+    MoviesPage((index) {
+      _tabIndex = index;
+      print("Fyckk");
+    }),
     CinemaPage(),
     const TicketPage(),
     ProfilePage(),
@@ -88,14 +95,19 @@ class _HomePageState extends State<HomePage> {
   }
 
   List<Widget> appBarActionIconList() {
-    return const [
-      Padding(
-        padding: EdgeInsets.all(
-          MARGIN_CARD_MEDIUM_2,
-        ),
-        child: Icon(
-          Icons.search,
-          color: Colors.white,
+    return [
+      RippleTap(
+        onTap: () {
+          context.next(MovieSearchPage(_tabIndex));
+        },
+        child: Padding(
+          padding: EdgeInsets.all(
+            MARGIN_CARD_MEDIUM_2,
+          ),
+          child: Icon(
+            Icons.search,
+            color: Colors.white,
+          ),
         ),
       ),
       Padding(

@@ -10,7 +10,9 @@ import '../../resource/strings.dart';
 import '../../viewitem/movie_card_item_view.dart';
 
 class MoviesPage extends StatefulWidget {
-  const MoviesPage({Key? key}) : super(key: key);
+  final Function(int) onTabChanged;
+
+  MoviesPage(this.onTabChanged);
 
   @override
   State<MoviesPage> createState() => _MoviesPageState();
@@ -32,6 +34,7 @@ class _MoviesPageState extends State<MoviesPage> {
                   NowAndComingTabViewSection(
                     (index) => setState(() {
                       _tabIndex = index;
+                      widget.onTabChanged(index);
                     }),
                   ),
                 ],
