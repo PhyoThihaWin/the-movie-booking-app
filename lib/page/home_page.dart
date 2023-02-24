@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:moviebooking/page/cinema/cinema_page.dart';
+import 'package:moviebooking/page/cinema/cinema_search_page.dart';
 import 'package:moviebooking/page/movies/movie_search_page.dart';
 import 'package:moviebooking/page/movies/movies_page.dart';
 import 'package:moviebooking/page/profile/profile_page.dart';
@@ -26,7 +27,6 @@ class _HomePageState extends State<HomePage> {
   late final List<Widget> _pageBody = [
     MoviesPage((index) {
       _tabIndex = index;
-      print("Fyckk");
     }),
     CinemaPage(),
     const TicketPage(),
@@ -98,15 +98,20 @@ class _HomePageState extends State<HomePage> {
     return [
       RippleTap(
         onTap: () {
-          context.next(MovieSearchPage(_tabIndex));
+          pageIndex == 0
+              ? context.next(MovieSearchPage(_tabIndex))
+              : context.next(CinemaSearchPage());
         },
-        child: Padding(
-          padding: EdgeInsets.all(
-            MARGIN_CARD_MEDIUM_2,
-          ),
-          child: Icon(
-            Icons.search,
-            color: Colors.white,
+        child: Visibility(
+          visible: pageIndex == 0 || pageIndex == 1,
+          child: Padding(
+            padding: EdgeInsets.all(
+              MARGIN_CARD_MEDIUM_2,
+            ),
+            child: Icon(
+              Icons.search,
+              color: Colors.white,
+            ),
           ),
         ),
       ),

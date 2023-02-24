@@ -8,8 +8,9 @@ import '../widget/ripple_effect.dart';
 
 class SettingItemView extends StatelessWidget {
   final Setting setting;
+  final bool last;
 
-  SettingItemView(this.setting);
+  SettingItemView(this.setting, this.last);
 
   @override
   Widget build(BuildContext context) {
@@ -48,9 +49,12 @@ class SettingItemView extends StatelessWidget {
               ],
             ),
             const SizedBox(height: MARGIN_LARGE),
-            const Divider(
-              color: TEXT_GREY_COLOR,
-              height: 2,
+            Visibility(
+              visible: !last,
+              child: const Divider(
+                color: TEXT_GREY_COLOR,
+                height: 2,
+              ),
             )
           ],
         ),

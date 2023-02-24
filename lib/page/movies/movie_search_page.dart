@@ -5,6 +5,8 @@ import '../../resource/colors.dart';
 import '../../resource/dimens.dart';
 import '../../viewitem/movie_card_item_view.dart';
 import '../../widget/appbar_back_icon_view.dart';
+import '../../widget/appbar_search_view.dart';
+import '../../widget/filter_dropdown_view.dart';
 import 'movie_detail_page.dart';
 
 class MovieSearchPage extends StatelessWidget {
@@ -20,7 +22,7 @@ class MovieSearchPage extends StatelessWidget {
         backgroundColor: HOME_SCREEN_BACKGROUND_COLOR,
         centerTitle: false,
         elevation: 0,
-        title: _AppBarSearchView(),
+        title: AppBarSearchView(),
         leading: AppBarBackIconView(),
         actions: [
           IconButton(
@@ -42,17 +44,22 @@ class MovieSearchPage extends StatelessWidget {
             ),
             child: Row(
               children: [
-                _FilterDropDownView("Genres"),
-                SizedBox(width: MARGIN_MEDIUM_2),
-                _FilterDropDownView("Format"),
-                SizedBox(width: MARGIN_MEDIUM_2),
-                _FilterDropDownView("Month"),
+                FilterDropDownView("Genres"),
+                FilterDropDownView("Format"),
+                Visibility(
+                  visible: tabIndex == 1,
+                  child: FilterDropDownView("Month"),
+                ),
               ],
             ),
           ),
           Expanded(
             child: GridView.builder(
               itemCount: 3,
+              padding: EdgeInsets.symmetric(
+                horizontal: MARGIN_MEDIUM_2,
+                vertical: MARGIN_MEDIUM_2,
+              ),
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
                   childAspectRatio: 0.7,
@@ -65,73 +72,6 @@ class MovieSearchPage extends StatelessWidget {
           )
         ],
       ),
-    );
-  }
-}
-
-class _FilterDropDownView extends StatelessWidget {
-  final String text;
-
-  _FilterDropDownView(this.text);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(MARGIN_SMALL),
-      ),
-      padding: EdgeInsets.all(MARGIN_SMALL),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          SizedBox(width: MARGIN_SMALL),
-          Text(
-            text,
-            style: TextStyle(
-              color: Colors.black,
-              fontSize: TEXT_REGULAR,
-            ),
-          ),
-          Icon(
-            Icons.keyboard_arrow_down,
-            color: TEXT_GREY_COLOR,
-          )
-        ],
-      ),
-    );
-  }
-}
-
-class _AppBarSearchView extends StatelessWidget {
-  const _AppBarSearchView({
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: const [
-        Icon(Icons.search, color: Colors.white),
-        Flexible(
-          child: TextField(
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: TEXT_REGULAR_2X,
-            ),
-            decoration: InputDecoration(
-                filled: true,
-                fillColor: HOME_SCREEN_BACKGROUND_COLOR,
-                hintText: "Search the movie",
-                hintStyle: TextStyle(
-                  color: TEXT_GREY_COLOR,
-                  fontSize: TEXT_REGULAR_2X,
-                ),
-                border: InputBorder.none),
-          ),
-        )
-      ],
     );
   }
 }

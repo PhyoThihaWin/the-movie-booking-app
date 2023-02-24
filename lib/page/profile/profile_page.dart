@@ -9,14 +9,13 @@ import '../../viewitem/setting_item_view.dart';
 
 class ProfilePage extends StatelessWidget {
   final List<Setting> settingList = [
-    Setting(name: "Purchase History", image: "ic_calendar.png"),
-    Setting(name: "Gift Card", image: "ic_gift_payment.png"),
-    Setting(name: "Purchase History", image: "ic_calendar.png"),
-    Setting(name: "Gift Card", image: "ic_gift_payment.png"),
-    Setting(name: "Purchase History", image: "ic_calendar.png"),
-    Setting(name: "Gift Card", image: "ic_gift_payment.png"),
-    Setting(name: "Purchase History", image: "ic_calendar.png"),
-    Setting(name: "Gift Card", image: "ic_gift_payment.png"),
+    Setting(name: "Purchase History", image: "ic_purchase_history.png"),
+    Setting(name: "Offer", image: "ic_offer.png"),
+    Setting(name: "Gift Card", image: "ic_gift_card_fill.png"),
+    Setting(name: "Location", image: "ic_location_setting.png"),
+    Setting(name: "Payment", image: "ic_payment.png"),
+    Setting(name: "Help and Support", image: "ic_support.png"),
+    Setting(name: "Logout", image: "ic_logout.png"),
   ];
 
   @override
@@ -33,8 +32,8 @@ class ProfilePage extends StatelessWidget {
               padding: EdgeInsets.symmetric(vertical: MARGIN_MEDIUM_2),
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
-              itemBuilder: (context, index) =>
-                  SettingItemView(settingList[index]),
+              itemBuilder: (context, index) => SettingItemView(
+                  settingList[index], index == settingList.length - 1),
             )
           ],
         ),

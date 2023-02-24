@@ -277,10 +277,7 @@ class FoodDrinkNamePriceRowView extends StatelessWidget {
 }
 
 class FoodTypeTabBarView extends StatelessWidget {
-  const FoodTypeTabBarView({
-    Key? key,
-    required this.tabList,
-  }) : super(key: key);
+  FoodTypeTabBarView({required this.tabList});
 
   final List<String> tabList;
 
