@@ -29,7 +29,7 @@ class BookingButtonView extends StatelessWidget {
           Image.asset(
             "bg_booking_btn.png".toAssetImage(),
             color: btnColor,
-            scale: 2,
+            scale: 2.2,
           ),
           Text(
             btnText,

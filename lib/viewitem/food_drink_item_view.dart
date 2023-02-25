@@ -36,7 +36,7 @@ class _FoodDrinkItemViewState extends State<FoodDrinkItemView> {
               Center(
                 child: Image.asset(
                   "dummy_food.png".toAssetImage(),
-                  scale: 4,
+                  scale: 5,
                 ),
               ),
               const SizedBox(height: MARGIN_MEDIUM_2),

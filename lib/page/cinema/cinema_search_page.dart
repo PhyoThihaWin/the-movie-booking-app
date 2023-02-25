@@ -7,9 +7,18 @@ import '../../resource/strings.dart';
 import '../../viewitem/cinema_parent_item_view.dart';
 import '../../widget/appbar_back_icon_view.dart';
 import '../../widget/appbar_search_view.dart';
+import '../../widget/empty_data_view.dart';
 import '../../widget/filter_dropdown_view.dart';
 
-class CinemaSearchPage extends StatelessWidget {
+class CinemaSearchPage extends StatefulWidget {
+
+  bool _searchState = false;
+
+  @override
+  State<CinemaSearchPage> createState() => _CinemaSearchPageState();
+}
+
+class _CinemaSearchPageState extends State<CinemaSearchPage> {
   List<String> cinemaList = [
     CINEMA_SOLD_OUT,
     CINEMA_SOLD_OUT,
@@ -23,13 +32,18 @@ class CinemaSearchPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       backgroundColor: HOME_SCREEN_BACKGROUND_COLOR,
       appBar: AppBar(
         backgroundColor: HOME_SCREEN_BACKGROUND_COLOR,
         centerTitle: false,
         elevation: 0,
-        title: const AppBarSearchView(),
+        title: AppBarSearchView("Search the cinema", () {
+          setState(() {
+            widget._searchState = true;
+          });
+        }),
         leading: AppBarBackIconView(),
         actions: const [
           ActionBtnFilterView(),
@@ -50,48 +64,50 @@ class CinemaSearchPage extends StatelessWidget {
               ],
             ),
           ),
-          Flexible(
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  const SizedBox(height: MARGIN_MEDIUM_2),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: MARGIN_MEDIUM_3,
-                      vertical: MARGIN_MEDIUM_2,
-                    ),
-                    child: PriceRangeSliderViewSection(
-                      title: "Price Range",
-                      suffix: "Ks",
-                      minValue: 3500,
-                      maxValue: 29500,
-                      currentValue: 12000,
+          widget._searchState
+              ? Flexible(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        const SizedBox(height: MARGIN_MEDIUM_2),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: MARGIN_MEDIUM_3,
+                            vertical: MARGIN_MEDIUM_2,
+                          ),
+                          child: PriceRangeSliderViewSection(
+                            title: "Price Range",
+                            suffix: "Ks",
+                            minValue: 3500,
+                            maxValue: 29500,
+                            currentValue: 12000,
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: MARGIN_MEDIUM_3,
+                            vertical: MARGIN_MEDIUM_2,
+                          ),
+                          child: PriceRangeSliderViewSection(
+                            title: "Show Times",
+                            suffix: "AM",
+                            minValue: 8,
+                            maxValue: 12,
+                            currentValue: 10,
+                          ),
+                        ),
+                        ListView.builder(
+                          itemCount: 3,
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemBuilder: (context, index) =>
+                              CinemaParentItemView(cinemaList),
+                        )
+                      ],
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: MARGIN_MEDIUM_3,
-                      vertical: MARGIN_MEDIUM_2,
-                    ),
-                    child: PriceRangeSliderViewSection(
-                      title: "Show Times",
-                      suffix: "AM",
-                      minValue: 8,
-                      maxValue: 12,
-                      currentValue: 10,
-                    ),
-                  ),
-                  ListView.builder(
-                    itemCount: 3,
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemBuilder: (context, index) =>
-                        CinemaParentItemView(cinemaList),
-                  )
-                ],
-              ),
-            ),
-          )
+                )
+              : EmptyDataView()
         ],
       ),
     );
