@@ -5,12 +5,34 @@ import 'package:moviebooking/page/home_page.dart';
 import 'package:moviebooking/resource/dimens.dart';
 import 'package:moviebooking/utils/ext.dart';
 
+import '../../data/model/movie_booking_model.dart';
+import '../../data/model/movie_booking_model_impl.dart';
+import '../../data/model/vos/city_vo.dart';
 import '../../resource/colors.dart';
 import '../../resource/strings.dart';
 import '../../viewitem/region_item_view.dart';
 
-class PickRegionPage extends StatelessWidget {
+class PickRegionPage extends StatefulWidget {
   const PickRegionPage({Key? key}) : super(key: key);
+
+  @override
+  State<PickRegionPage> createState() => _PickRegionPageState();
+}
+
+class _PickRegionPageState extends State<PickRegionPage> {
+  final MovieBookingModel movieBookingModel = MovieBookingModelImpl();
+  List<CityVo?>? cities;
+
+  @override
+  void initState() {
+    movieBookingModel.getCities().then((value) {
+      setState(() {
+        cities = value;
+      });
+    }).catchError((error) => debugPrint(error.toString()));
+
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +63,7 @@ class PickRegionPage extends StatelessWidget {
             ),
             RegionListHeaderView(),
             Expanded(
-              child: CityListBuilderView(),
+              child: CityListBuilderView(cities.orEmptyBoth()),
             )
           ],
         ),
@@ -51,12 +73,19 @@ class PickRegionPage extends StatelessWidget {
 }
 
 class CityListBuilderView extends StatelessWidget {
+  final List<CityVo> cities;
+
+  CityListBuilderView(this.cities);
+
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-      itemCount: 20,
+      itemCount: cities.length,
       itemBuilder: (context, index) {
-        return RegionItemView(() => context.next(const HomePage()));
+        return RegionItemView(
+          city: cities[index],
+          onTapRegion: () => context.next(const HomePage()),
+        );
       },
     );
   }

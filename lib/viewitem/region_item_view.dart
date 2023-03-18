@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:moviebooking/resource/colors.dart';
+import 'package:moviebooking/utils/ext.dart';
 import 'package:moviebooking/widget/ripple_effect.dart';
 
+import '../data/model/vos/city_vo.dart';
 import '../resource/dimens.dart';
 
 class RegionItemView extends StatelessWidget {
   final void Function() onTapRegion;
+  final CityVo city;
 
-  RegionItemView(this.onTapRegion);
+  RegionItemView({required this.city, required this.onTapRegion});
 
   @override
   Widget build(BuildContext context) {
@@ -17,22 +20,22 @@ class RegionItemView extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
-          children: const [
+          children: [
             Padding(
-              padding: EdgeInsets.symmetric(
+              padding: const EdgeInsets.symmetric(
                 horizontal: MARGIN_MEDIUM_3,
                 vertical: MARGIN_MEDIUM_3,
               ),
               child: Text(
-                "Yangon",
-                style: TextStyle(
+                city.name.orEmpty(),
+                style: const TextStyle(
                   color: Colors.white,
                   fontSize: TEXT_REGULAR_2X,
                   fontWeight: FontWeight.w500,
                 ),
               ),
             ),
-            Divider(
+            const Divider(
               height: 1,
               color: Colors.white,
             )

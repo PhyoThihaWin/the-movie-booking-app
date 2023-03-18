@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:moviebooking/page/cinema/cinema_detail_page.dart';
-import 'package:moviebooking/page/home_page.dart';
-import 'package:moviebooking/page/payment/ticket_confirmation_page.dart';
-import 'package:moviebooking/page/ticket/ticket_detail_page.dart';
-import 'package:moviebooking/page/ticket/ticket_page.dart';
+import 'package:moviebooking/data/model/movie_booking_model_impl.dart';
+import 'package:moviebooking/page/auth/verify_phone_page.dart';
 import 'package:moviebooking/resource/colors.dart';
 
 void main() {
@@ -25,7 +22,7 @@ class MyApp extends StatelessWidget {
         primaryColor: PRIMARY_COLOR,
         primarySwatch: PRIMARY_COLOR_MATERIAL,
       ),
-      home: HomePage(),
+      home: VerifyPhonePage(),
     );
   }
 }

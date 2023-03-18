@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:moviebooking/model/setting.dart';
 import 'package:moviebooking/resource/colors.dart';
 import 'package:moviebooking/resource/dimens.dart';
 import 'package:moviebooking/utils/ext.dart';
-import 'package:moviebooking/widget/ripple_effect.dart';
 
+import '../../data/model/vos/setting.dart';
 import '../../viewitem/setting_item_view.dart';
 
 class ProfilePage extends StatelessWidget {

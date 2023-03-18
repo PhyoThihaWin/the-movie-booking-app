@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:moviebooking/model/setting.dart';
 import 'package:moviebooking/utils/ext.dart';
 
+import '../data/model/vos/setting.dart';
 import '../resource/colors.dart';
 import '../resource/dimens.dart';
 import '../widget/ripple_effect.dart';

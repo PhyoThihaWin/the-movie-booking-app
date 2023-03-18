@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:moviebooking/model/booking_date.dart';
 import 'package:moviebooking/resource/strings.dart';
 import 'package:moviebooking/utils/ext.dart';
 
+import '../../data/model/vos/booking_date.dart';
 import '../../resource/colors.dart';
 import '../../resource/dimens.dart';
 import '../../viewitem/booking_date_item_view.dart';
@@ -11,7 +11,6 @@ import '../../viewitem/cinema_parent_item_view.dart';
 import '../../widget/appbar_action_icon_view.dart';
 import '../../widget/appbar_back_icon_view.dart';
 import '../../widget/booking_available_info_view.dart';
-import '../../widget/ripple_effect.dart';
 import '../home_page.dart';
 
 class BookingCinemaPage extends StatelessWidget {

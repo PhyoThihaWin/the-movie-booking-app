@@ -8,13 +8,18 @@ import 'package:otp_text_field/otp_field.dart';
 import 'package:otp_text_field/otp_text_field.dart';
 import 'package:otp_text_field/style.dart';
 
+import '../../data/model/movie_booking_model.dart';
+import '../../data/model/movie_booking_model_impl.dart';
 import '../../resource/dimens.dart';
 import '../../resource/strings.dart';
 import '../../widget/cinema_logo_view.dart';
 import '../../widget/policy_text_btm_view.dart';
 
 class OtpConfirmPage extends StatelessWidget {
-  const OtpConfirmPage({Key? key}) : super(key: key);
+  final MovieBookingModel movieBookingModel = MovieBookingModelImpl();
+  final String phoneNumber;
+
+  OtpConfirmPage({required this.phoneNumber});
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +32,20 @@ class OtpConfirmPage extends StatelessWidget {
             children: [
               Expanded(
                 child: SingleChildScrollView(
-                  child: OtpConfirmContentSection(),
+                  child: OtpConfirmContentSection(onClick: (otpCode) {
+                    if (otpCode.length == 6) {
+                      context.showLoaderDialog();
+                      movieBookingModel
+                          .signInWithPhone(phoneNumber, otpCode)
+                          .then((value) {
+                        Navigator.pop(context);
+                        if (value != null) context.next(PickRegionPage());
+                      }).catchError((error) {
+                        Navigator.pop(context);
+                        debugPrint(error.toString());
+                      });
+                    }
+                  }),
                 ),
               ),
               const Padding(
@@ -48,6 +66,9 @@ class OtpConfirmPage extends StatelessWidget {
 class OtpConfirmContentSection extends StatelessWidget {
   final OtpFieldController otpController = OtpFieldController();
   String? otpCode;
+  final Function(String) onClick;
+
+  OtpConfirmContentSection({required this.onClick});
 
   @override
   Widget build(BuildContext context) {
@@ -70,10 +91,7 @@ class OtpConfirmContentSection extends StatelessWidget {
         ResendOtpCodeView(),
         SizedBox(height: MARGIN_XLARGE + MARGIN_MEDIUM),
         ConfirmOtpBtnView(() {
-          print("OTP code is $otpCode");
-          if (otpCode != null && otpCode?.length == 6) {
-            context.next(PickRegionPage());
-          }
+          onClick(otpCode.orEmpty());
         }),
       ],
     );
@@ -81,7 +99,7 @@ class OtpConfirmContentSection extends StatelessWidget {
 }
 
 class ConfirmOtpBtnView extends StatelessWidget {
-  final void Function() confirmOTP;
+  final Function confirmOTP;
 
   ConfirmOtpBtnView(this.confirmOTP);
 
@@ -92,7 +110,9 @@ class ConfirmOtpBtnView extends StatelessWidget {
       height: VERIFY_BTN_HEIGHT,
       margin: EdgeInsets.symmetric(horizontal: MARGIN_LARGE),
       child: ElevatedButton(
-        onPressed: confirmOTP,
+        onPressed: () {
+          confirmOTP.call();
+        },
         child: Text(
           CONFIRM_OTP_TEXT,
           style: TextStyle(color: Colors.black),

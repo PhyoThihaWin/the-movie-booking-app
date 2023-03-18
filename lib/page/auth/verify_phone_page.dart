@@ -1,5 +1,7 @@
 import 'package:country_calling_code_picker/picker.dart';
 import 'package:flutter/material.dart';
+import 'package:moviebooking/data/model/movie_booking_model.dart';
+import 'package:moviebooking/data/model/movie_booking_model_impl.dart';
 import 'package:moviebooking/page/auth/otp_confirm_page.dart';
 import 'package:moviebooking/resource/colors.dart';
 import 'package:moviebooking/resource/strings.dart';
@@ -11,8 +13,20 @@ import '../../widget/cinema_logo_view.dart';
 import '../../widget/common_button_view.dart';
 import '../../widget/policy_text_btm_view.dart';
 
-class VerifyPhonePage extends StatelessWidget {
+class VerifyPhonePage extends StatefulWidget {
   const VerifyPhonePage({Key? key}) : super(key: key);
+
+  @override
+  State<VerifyPhonePage> createState() => _VerifyPhonePageState();
+}
+
+class _VerifyPhonePageState extends State<VerifyPhonePage> {
+  final MovieBookingModel movieBookingModel = MovieBookingModelImpl();
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,10 +36,22 @@ class VerifyPhonePage extends StatelessWidget {
           width: double.maxFinite,
           color: HOME_SCREEN_BACKGROUND_COLOR,
           child: Column(
-            children: const [
+            children: [
               Expanded(
                 child: SingleChildScrollView(
-                  child: InputContentSection(),
+                  child: InputContentSection(
+                    onClickVerify: (phoneNumber) {
+                      context.showLoaderDialog();
+                      movieBookingModel.getOTP("95$phoneNumber").then((value) {
+                        Navigator.pop(context);
+                        context.next(
+                            OtpConfirmPage(phoneNumber: "95$phoneNumber"));
+                      }).catchError((error) {
+                        Navigator.pop(context);
+                        debugPrint(error.toString());
+                      });
+                    },
+                  ),
                 ),
               ),
               Padding(
@@ -44,9 +70,9 @@ class VerifyPhonePage extends StatelessWidget {
 }
 
 class InputContentSection extends StatefulWidget {
-  const InputContentSection({
-    Key? key,
-  }) : super(key: key);
+  final Function(String) onClickVerify;
+
+  InputContentSection({required this.onClickVerify});
 
   @override
   State<InputContentSection> createState() => _InputContentSectionState();
@@ -86,7 +112,7 @@ class _InputContentSectionState extends State<InputContentSection> {
               onTap: () {
                 if (_phoneController.value.text.isNotEmpty &&
                     _phoneController.value.text.length > 9) {
-                  context.next(const OtpConfirmPage());
+                  widget.onClickVerify.call(_phoneController.text);
                 }
               }),
         ),
@@ -118,7 +144,7 @@ class ContinueGoogleButtonView extends StatelessWidget {
       height: VERIFY_BTN_HEIGHT,
       margin: const EdgeInsets.symmetric(horizontal: MARGIN_LARGE),
       child: ElevatedButton(
-        onPressed: () => context.next(const OtpConfirmPage()),
+        onPressed: null,
         style: ButtonStyle(
           backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
           shape: MaterialStateProperty.all(

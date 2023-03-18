@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:moviebooking/resource/colors.dart';
 import 'package:moviebooking/utils/ext.dart';
 
-import '../model/booking_date.dart';
+import '../data/model/vos/booking_date.dart';
 import '../resource/dimens.dart';
 
 class BookingDateItemView extends StatelessWidget {
