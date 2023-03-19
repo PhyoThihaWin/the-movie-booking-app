@@ -1,6 +1,8 @@
 import 'package:moviebooking/data/model/movie_booking_model.dart';
+import 'package:moviebooking/data/model/vos/actor_vo.dart';
 import 'package:moviebooking/data/model/vos/banner_vo.dart';
 import 'package:moviebooking/data/model/vos/city_vo.dart';
+import 'package:moviebooking/data/model/vos/movie_detail_vo.dart';
 import 'package:moviebooking/data/model/vos/movie_vo.dart';
 import 'package:moviebooking/data/model/vos/user_data_vo.dart';
 import 'package:moviebooking/network/movie_booking_data_agent.dart';
@@ -65,6 +67,16 @@ class MovieBookingModelImpl extends MovieBookingModel {
       movieDao.saveAllMovies(list.orEmptyObject);
       return Future.value(value);
     });
+  }
+
+  @override
+  Future<MovieDetailVo> getMovieDetails(int movieId) {
+    return movieBookingDataAgent.getMovieDetails(movieId);
+  }
+
+  @override
+  Future<List<ActorVo>> getCreditsByMovie(int movieId) {
+    return movieBookingDataAgent.getCreditsByMovie(movieId);
   }
 
   /// From Database

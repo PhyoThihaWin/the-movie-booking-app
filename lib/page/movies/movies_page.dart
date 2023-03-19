@@ -111,7 +111,10 @@ class _MoviesPageState extends State<MoviesPage> {
                   return MovieCardItemView(
                       movie: movieList![index],
                       onClickItem: (isUpComing) {
-                        context.next(MovieDetailPage(isUpComing));
+                        context.next(MovieDetailPage(
+                          movieId: movieList![index].id.orZero,
+                          isUpComing: isUpComing,
+                        ));
                       });
                 }, childCount: movieList.orEmpty.length),
               ),
@@ -149,7 +152,6 @@ class _NowAndComingTabViewSectionState extends State<NowAndComingTabViewSection>
 
   @override
   void dispose() {
-    // TODO: implement dispose
     _tabController.dispose();
     super.dispose();
   }

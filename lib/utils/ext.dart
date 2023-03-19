@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:moviebooking/resource/dimens.dart';
 
 /// Context Extension
@@ -53,10 +54,20 @@ extension PageNavigator on BuildContext {
 }
 
 /// String Extension
-extension StringFormat on String? {
+extension StringFormat on String {
   String toAssetImage() => "assets/images/$this";
 
   String toAssetIcon() => "assets/icons/$this";
+
+  String formatDate({
+    String parseFormat = "yyyy-MM-dd",
+    required String format,
+  }) {
+    DateTime parseDate = DateFormat(parseFormat).parse(this);
+    var resultFormat = DateFormat(format);
+    return resultFormat.format(parseDate);
+  }
+
 }
 
 extension NullIntExtension on int? {

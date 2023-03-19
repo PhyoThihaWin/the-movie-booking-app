@@ -79,7 +79,8 @@ class _MovieSearchPageState extends State<MovieSearchPage> {
                     itemBuilder: (context, index) => MovieCardItemView(
                         movie: null,
                         onClickItem: (isUpComing) {
-                          context.next(MovieDetailPage(isUpComing));
+                          context.next(MovieDetailPage(
+                              movieId: 0, isUpComing: isUpComing));
                         }),
                   ),
                 )

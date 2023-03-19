@@ -40,7 +40,7 @@ class MovieCardItemView extends StatelessWidget {
               ),
               child: Column(
                 children: [
-                  const MovieTitleAndImdbView(),
+                  movie == null ? Container() : MovieTitleAndImdbView(movie!),
                   const SizedBox(height: MARGIN_MEDIUM),
                   const MovieResolutionTypeView()
                 ],
@@ -91,35 +91,41 @@ class MovieResolutionTypeView extends StatelessWidget {
 }
 
 class MovieTitleAndImdbView extends StatelessWidget {
-  const MovieTitleAndImdbView({
-    Key? key,
-  }) : super(key: key);
+  final MovieVo movie;
+
+  MovieTitleAndImdbView(this.movie);
 
   @override
   Widget build(BuildContext context) {
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          "Moana II",
-          style: TextStyle(
-              color: Colors.white,
-              fontSize: TEXT_REGULAR,
-              fontWeight: FontWeight.w500),
+        Expanded(
+          child: Text(
+            movie.originalTitle.orEmpty,
+            style: const TextStyle(
+                color: Colors.white,
+                fontSize: TEXT_REGULAR,
+                fontWeight: FontWeight.w500),
+          ),
         ),
-        const Spacer(),
-        Image.asset(
-          "imdb_logo.png".toAssetImage(),
-          height: MARGIN_XLARGE,
-        ),
-        const SizedBox(width: 2),
-        const Text(
-          "9.0",
-          style: TextStyle(
-              color: Colors.white,
-              fontSize: TEXT_REGULAR,
-              fontWeight: FontWeight.bold,
-              fontStyle: FontStyle.italic),
-        ),
+        Row(
+          children: [
+            Image.asset(
+              "imdb_logo.png".toAssetImage(),
+              height: MARGIN_LARGE,
+            ),
+            const SizedBox(width: 2),
+            const Text(
+              "9.0",
+              style: TextStyle(
+                  color: Colors.white,
+                  fontSize: TEXT_SMALL,
+                  fontWeight: FontWeight.bold,
+                  fontStyle: FontStyle.italic),
+            ),
+          ],
+        )
       ],
     );
   }
@@ -160,7 +166,7 @@ class MovieImageView extends StatelessWidget {
                   borderRadius: BorderRadius.circular(MARGIN_MEDIUM),
                   color: PRIMARY_COLOR),
               child: Text(
-                (movie?.releaseDate).orEmpty,
+                (movie?.releaseDate).orEmpty.formatDate(format: "MMM dd"),
                 style: const TextStyle(
                   color: Colors.black,
                   fontSize: TEXT_SMALL,

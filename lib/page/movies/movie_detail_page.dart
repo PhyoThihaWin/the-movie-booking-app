@@ -1,5 +1,8 @@
+import 'package:dart_extensions/dart_extensions.dart';
 import 'package:flick_video_player/flick_video_player.dart';
 import 'package:flutter/material.dart';
+import 'package:moviebooking/data/model/vos/movie_detail_vo.dart';
+import 'package:moviebooking/network/api_constants.dart';
 import 'package:moviebooking/page/booking/booking_cinema_page.dart';
 import 'package:moviebooking/resource/colors.dart';
 import 'package:moviebooking/utils/ext.dart';
@@ -7,23 +10,45 @@ import 'package:moviebooking/widget/ripple_effect.dart';
 import 'package:moviebooking/widget/title_text.dart';
 import 'package:video_player/video_player.dart';
 
+import '../../data/model/movie_booking_model.dart';
+import '../../data/model/movie_booking_model_impl.dart';
+import '../../data/model/vos/actor_vo.dart';
 import '../../resource/dimens.dart';
 import '../../resource/strings.dart';
 import '../../viewitem/actor_item_view.dart';
 import '../../widget/booking_button_view.dart';
 
-class MovieDetailPage extends StatelessWidget {
-  final List<String> genreList = [
-    "Action",
-    "Drama",
-    "Si",
-    "Adventure",
-    "Comedy"
-  ];
-
+class MovieDetailPage extends StatefulWidget {
+  final int movieId;
   final bool isUpComing;
 
-  MovieDetailPage(this.isUpComing);
+  MovieDetailPage({required this.movieId, required this.isUpComing});
+
+  @override
+  State<MovieDetailPage> createState() => _MovieDetailPageState();
+}
+
+class _MovieDetailPageState extends State<MovieDetailPage> {
+  final MovieBookingModel movieBookingModel = MovieBookingModelImpl();
+  MovieDetailVo? movieDetail;
+  List<ActorVo>? actorList;
+
+  @override
+  void initState() {
+    movieBookingModel.getMovieDetails(widget.movieId).then((value) {
+      setState(() {
+        movieDetail = value;
+      });
+    }).catchError((error) => debugPrint(error.toString()));
+
+    movieBookingModel.getCreditsByMovie(widget.movieId).then((value) {
+      setState(() {
+        actorList = value;
+      });
+    }).catchError((error) => debugPrint(error.toString()));
+
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,11 +70,13 @@ class MovieDetailPage extends StatelessWidget {
                           child: MovieLandscapeVideoSection(),
                         ),
                         Positioned(
-                          bottom: 0,
-                          right: MARGIN_MEDIUM_3,
-                          left: MARGIN_MEDIUM_3,
-                          child: MoviePortraitAndInfoViewSection(genreList),
-                        )
+                            bottom: 0,
+                            right: MARGIN_MEDIUM_3,
+                            left: MARGIN_MEDIUM_3,
+                            child: movieDetail == null
+                                ? const Center(
+                                    child: CircularProgressIndicator())
+                                : MoviePortraitAndInfoViewSection(movieDetail!))
                       ],
                     ),
                   ),
@@ -65,13 +92,16 @@ class MovieDetailPage extends StatelessWidget {
                         const MovieDataViewSection(),
                         const SizedBox(height: MARGIN_LARGE),
                         Visibility(
-                          visible: this.isUpComing,
+                          visible: this.widget.isUpComing,
                           child: const SetNotificationViewSection(),
                         ),
                         const SizedBox(height: MARGIN_LARGE),
-                        const MovieStoryLineAndDescViewSection(),
+                        MovieStoryLineAndDescViewSection(
+                            (movieDetail?.overview).orEmpty),
                         const SizedBox(height: MARGIN_XLARGE),
-                        const ActorListSection(),
+                        actorList == null
+                            ? CircularProgressIndicator()
+                            : ActorListSection(actorList!),
                         const SizedBox(height: MARGIN_XXLARGE * 2)
                       ],
                     ),
@@ -84,7 +114,7 @@ class MovieDetailPage extends StatelessWidget {
               left: 0,
               right: 0,
               child: Visibility(
-                visible: !isUpComing,
+                visible: !widget.isUpComing,
                 child: Wrap(
                   alignment: WrapAlignment.center,
                   children: [
@@ -203,9 +233,9 @@ class SetNotificationBtnView extends StatelessWidget {
 }
 
 class ActorListSection extends StatelessWidget {
-  const ActorListSection({
-    Key? key,
-  }) : super(key: key);
+  List<ActorVo> actorList;
+
+  ActorListSection(this.actorList);
 
   @override
   Widget build(BuildContext context) {
@@ -217,9 +247,9 @@ class ActorListSection extends StatelessWidget {
         SizedBox(
           height: 100,
           child: ListView.builder(
-            itemCount: 10,
+            itemCount: actorList.length,
             scrollDirection: Axis.horizontal,
-            itemBuilder: (context, index) => const ActorItemView(),
+            itemBuilder: (context, index) => ActorItemView(actorList[index]),
           ),
         )
       ],
@@ -228,9 +258,9 @@ class ActorListSection extends StatelessWidget {
 }
 
 class MovieStoryLineAndDescViewSection extends StatelessWidget {
-  const MovieStoryLineAndDescViewSection({
-    Key? key,
-  }) : super(key: key);
+  final String storyLine;
+
+  MovieStoryLineAndDescViewSection(this.storyLine);
 
   @override
   Widget build(BuildContext context) {
@@ -239,9 +269,9 @@ class MovieStoryLineAndDescViewSection extends StatelessWidget {
       children: [
         TitleText(MOVIE_STORY_LINE),
         const SizedBox(height: MARGIN_MEDIUM_2),
-        const Text(
-          "Story Line In the 1970s, young Gru tries to join a group of supervillains called the Vicious 6 after they oust their leader -- the legendary fighter Wild Knuckles. When the interview turns disastrous, Gru and his Minions go on the run with the Vicious 6 hot on their tails. Luckily, he finds an unlikely source for guidance -- Wild Knuckles himself -- and soon discovers that even bad guys need a little help from their friends.",
-          style: TextStyle(
+        Text(
+          storyLine,
+          style: const TextStyle(
             color: Colors.white,
             fontSize: TEXT_REGULAR,
             fontWeight: FontWeight.w400,
@@ -393,7 +423,7 @@ class _MovieLandscapeVideoViewState extends State<_MovieLandscapeVideoView> {
       "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
     );
     flickManager = FlickManager(
-      autoPlay: false,
+      autoPlay: true,
       videoPlayerController: videoController,
     );
     // flickManager.flickVideoManager?.addListener(_videoPlayingListener);
@@ -427,37 +457,39 @@ class _MovieLandscapeVideoViewState extends State<_MovieLandscapeVideoView> {
 }
 
 class MoviePortraitAndInfoViewSection extends StatelessWidget {
-  MoviePortraitAndInfoViewSection(this.genreList);
+  final MovieDetailVo movieDetail;
 
-  final List<String> genreList;
+  MoviePortraitAndInfoViewSection(this.movieDetail);
 
   @override
   Widget build(BuildContext context) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
-        const MoviePortraitImageView(),
+        MoviePortraitImageView("$IMAGE_BASE_URL${movieDetail.posterPath}"),
         const SizedBox(width: MARGIN_MEDIUM_2),
         Expanded(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              MovieTitleAndImdbView(),
+              MovieTitleAndImdbView(movieDetail),
               const SizedBox(height: MARGIN_MEDIUM),
               const Text(
                 "2D, 3D, 3D IMAX, 3D DBOX",
                 style: TextStyle(
                     color: Colors.white,
-                    fontSize: TEXT_REGULAR,
+                    fontSize: TEXT_SMALL,
                     fontWeight: FontWeight.w600),
               ),
               const SizedBox(height: MARGIN_MEDIUM),
               Wrap(
                 runSpacing: -MARGIN_MEDIUM,
                 spacing: MARGIN_MEDIUM,
-                children:
-                    genreList.map((genre) => GenreChipView(genre)).toList(),
+                children: (movieDetail.genres
+                        ?.map((e) => GenreChipView(e.name.orEmpty))
+                        .toList())
+                    .orEmptyObject,
               ),
             ],
           ),
@@ -468,14 +500,14 @@ class MoviePortraitAndInfoViewSection extends StatelessWidget {
 }
 
 class MoviePortraitImageView extends StatelessWidget {
-  const MoviePortraitImageView({
-    Key? key,
-  }) : super(key: key);
+  final String imageUrl;
+
+  MoviePortraitImageView(this.imageUrl);
 
   @override
   Widget build(BuildContext context) {
     return Image.network(
-      "https://mir-s3-cdn-cf.behance.net/project_modules/2800_opt_1/18db74131665207.619a758319dcd.jpg",
+      imageUrl,
       fit: BoxFit.cover,
       width: context.getScreenWidthBy(3),
       height: context.getScreenHeightBy(5),
@@ -495,6 +527,7 @@ class GenreChipView extends StatelessWidget {
       label: Text(
         genreText,
         style: const TextStyle(
+          fontSize: TEXT_SMALL,
           color: Colors.black,
           fontWeight: FontWeight.bold,
         ),
@@ -504,31 +537,42 @@ class GenreChipView extends StatelessWidget {
 }
 
 class MovieTitleAndImdbView extends StatelessWidget {
+  final MovieDetailVo movieDetail;
+
+  MovieTitleAndImdbView(this.movieDetail);
+
   @override
   Widget build(BuildContext context) {
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          "Moana II",
-          style: TextStyle(
-              color: Colors.white,
-              fontSize: TEXT_REGULAR_2X,
-              fontWeight: FontWeight.w600),
+        Expanded(
+          child: Text(
+            movieDetail.title.orEmpty,
+            style: const TextStyle(
+                color: Colors.white,
+                fontSize: TEXT_REGULAR_2X,
+                fontWeight: FontWeight.w600),
+          ),
         ),
-        const SizedBox(width: MARGIN_MEDIUM_2),
-        Image.asset(
-          "imdb_logo.png".toAssetImage(),
-          height: MARGIN_XLARGE,
-        ),
-        const SizedBox(width: 2),
-        const Text(
-          "9.0",
-          style: TextStyle(
-              color: Colors.white,
-              fontSize: TEXT_REGULAR,
-              fontWeight: FontWeight.bold,
-              fontStyle: FontStyle.italic),
-        ),
+        Row(
+          children: [
+            const SizedBox(width: MARGIN_MEDIUM_2),
+            Image.asset(
+              "imdb_logo.png".toAssetImage(),
+              height: MARGIN_LARGE + MARGIN_SMALL,
+            ),
+            const SizedBox(width: 2),
+            Text(
+              movieDetail.voteAverage.orZero.roundToDouble().toString(),
+              style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: TEXT_REGULAR,
+                  fontWeight: FontWeight.bold,
+                  fontStyle: FontStyle.italic),
+            ),
+          ],
+        )
       ],
     );
   }

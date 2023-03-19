@@ -1,12 +1,15 @@
+import 'package:dart_extensions/dart_extensions.dart';
 import 'package:flutter/material.dart';
+import 'package:moviebooking/data/model/vos/actor_vo.dart';
+import 'package:moviebooking/network/api_constants.dart';
 import 'package:moviebooking/resource/colors.dart';
 
 import '../resource/dimens.dart';
 
 class ActorItemView extends StatelessWidget {
-  const ActorItemView({
-    Key? key,
-  }) : super(key: key);
+  final ActorVo actor;
+
+  ActorItemView(this.actor);
 
   @override
   Widget build(BuildContext context) {
@@ -17,13 +20,12 @@ class ActorItemView extends StatelessWidget {
         children: [
           CircleAvatar(
             radius: MARGIN_XLARGE,
-            backgroundImage: NetworkImage(
-              "https://www.pinkvilla.com/imageresize/tom_holland_10.jpg?width=752&t=pvorg",
-            ),
+            backgroundImage:
+                NetworkImage("$IMAGE_BASE_URL${actor.profilePath}"),
             backgroundColor: SEARCH_BOX_COLOR,
           ),
           Text(
-            "Tom Holand Macthew",
+            actor.name.orEmpty,
             textAlign: TextAlign.center,
             style: TextStyle(
               color: Colors.white,
