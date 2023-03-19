@@ -1,10 +1,17 @@
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:dart_extensions/dart_extensions.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
+import 'package:moviebooking/network/api_constants.dart';
 import 'package:moviebooking/page/movies/movie_detail_page.dart';
 import 'package:moviebooking/resource/colors.dart';
+import 'package:moviebooking/utils/app_constants.dart';
 import 'package:moviebooking/utils/ext.dart';
 
+import '../../data/model/movie_booking_model.dart';
+import '../../data/model/movie_booking_model_impl.dart';
+import '../../data/model/vos/banner_vo.dart';
+import '../../data/model/vos/movie_vo.dart';
 import '../../resource/dimens.dart';
 import '../../resource/strings.dart';
 import '../../viewitem/movie_card_item_view.dart';
@@ -19,7 +26,55 @@ class MoviesPage extends StatefulWidget {
 }
 
 class _MoviesPageState extends State<MoviesPage> {
-  int _tabIndex = 0;
+  List<BannerVo?>? bannerList;
+  List<MovieVo>? movieList;
+
+  final MovieBookingModel movieBookingModel = MovieBookingModelImpl();
+
+  @override
+  void initState() {
+    /// Banner
+    movieBookingModel.getBanners().then((list) {
+      setState(() {
+        bannerList = list;
+      });
+    }).catchError((error) {
+      debugPrint(error.toString());
+    });
+
+    /// Banner From Db
+    movieBookingModel.getBannersFromDb().then((list) {
+      setState(() {
+        bannerList = list;
+      });
+    }).catchError((error) {
+      debugPrint(error.toString());
+    });
+
+    getMovieByStatus(PARAM_MOVIE_CURRENT);
+
+    super.initState();
+  }
+
+  void getMovieByStatus(String status) {
+    /// Movie
+    movieBookingModel.getMovies(status).then((list) {
+      setState(() {
+        movieList = list.orEmptyObject;
+      });
+    }).catchError((error) {
+      debugPrint(error.toString());
+    });
+
+    /// Movie From Db
+    movieBookingModel.getMoviesFromDb(status).then((list) {
+      setState(() {
+        movieList = list.orEmptyObject;
+      });
+    }).catchError((error) {
+      debugPrint(error.toString());
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,31 +85,35 @@ class _MoviesPageState extends State<MoviesPage> {
             SliverList(
               delegate: SliverChildListDelegate(
                 [
-                  CarouselSliderViewSection(),
+                  CarouselSliderViewSection(bannerList.orEmptyObject),
                   NowAndComingTabViewSection(
                     (index) => setState(() {
-                      _tabIndex = index;
                       widget.onTabChanged(index);
+                      getMovieByStatus(index == 0
+                          ? PARAM_MOVIE_CURRENT
+                          : PARAM_MOVIE_COMING_SOON);
                     }),
                   ),
                 ],
               ),
             ),
             SliverPadding(
-              padding: EdgeInsets.symmetric(
+              padding: const EdgeInsets.symmetric(
                 horizontal: MARGIN_MEDIUM_3,
                 vertical: MARGIN_MEDIUM,
               ),
               sliver: SliverGrid(
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
                     childAspectRatio: 0.7,
                     crossAxisSpacing: MARGIN_MEDIUM_3 / 2),
                 delegate: SliverChildBuilderDelegate((context, index) {
-                  return MovieCardItemView(_tabIndex, (isUpComing) {
-                    context.next(MovieDetailPage(isUpComing));
-                  });
-                }, childCount: 10),
+                  return MovieCardItemView(
+                      movie: movieList![index],
+                      onClickItem: (isUpComing) {
+                        context.next(MovieDetailPage(isUpComing));
+                      });
+                }, childCount: movieList.orEmpty.length),
               ),
             ),
           ],
@@ -98,17 +157,17 @@ class _NowAndComingTabViewSectionState extends State<NowAndComingTabViewSection>
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.symmetric(
+      margin: const EdgeInsets.symmetric(
         horizontal: MARGIN_MEDIUM_3,
         vertical: MARGIN_MEDIUM_2,
       ),
-      padding: EdgeInsets.all(MARGIN_6),
+      padding: const EdgeInsets.all(MARGIN_6),
       decoration: BoxDecoration(
           color: SEARCH_BOX_COLOR,
           borderRadius: BorderRadius.circular(MARGIN_MEDIUM)),
       child: TabBar(
         controller: _tabController,
-        labelStyle: TextStyle(
+        labelStyle: const TextStyle(
           fontWeight: FontWeight.w600,
           fontSize: TEXT_REGULAR,
         ),
@@ -118,10 +177,10 @@ class _NowAndComingTabViewSectionState extends State<NowAndComingTabViewSection>
             color: PRIMARY_COLOR,
             borderRadius: BorderRadius.circular(MARGIN_SMALL)),
         tabs: [
-          Tab(
+          const Tab(
             text: MOVIE_NOW_SHOWING,
           ),
-          Tab(
+          const Tab(
             text: MOVIE_COMING_SOON,
           ),
         ],
@@ -131,7 +190,9 @@ class _NowAndComingTabViewSectionState extends State<NowAndComingTabViewSection>
 }
 
 class CarouselSliderViewSection extends StatefulWidget {
-  const CarouselSliderViewSection({Key? key}) : super(key: key);
+  final List<BannerVo> bannerList;
+
+  CarouselSliderViewSection(this.bannerList);
 
   @override
   State<CarouselSliderViewSection> createState() =>
@@ -146,47 +207,34 @@ class _CarouselSliderViewSectionState extends State<CarouselSliderViewSection> {
     return Column(
       children: [
         CarouselSlider(
-            options: CarouselOptions(
-              height: MediaQuery.of(context).size.height / 4.5,
-              viewportFraction: 0.9,
-              initialPage: 0,
-              enableInfiniteScroll: false,
-              enlargeCenterPage: true,
-              enlargeStrategy: CenterPageEnlargeStrategy.scale,
-              enlargeFactor: 0.2,
-              onPageChanged: (index, reason) {
-                setState(() {
-                  _position = index.toDouble();
-                });
-              },
-            ),
-            items: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(MARGIN_CARD_MEDIUM_2),
-                child: Image.network(
-                  "https://www.newcanaanymca.org/wp-content/uploads/2021/11/Moana-Movie-Poster-landscape.jpg",
-                  fit: BoxFit.cover,
-                  width: double.maxFinite,
-                ),
-              ),
-              ClipRRect(
-                borderRadius: BorderRadius.circular(MARGIN_CARD_MEDIUM_2),
-                child: Image.network(
-                  "https://s.yimg.com/ny/api/res/1.2/IZa_5rVom.ExKWD6zBAEew--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD02NzY-/https://media.zenfs.com/en/vibe_128/ae6003a55d6a40fd6df4b45f079b9cde",
-                  fit: BoxFit.cover,
-                  width: double.maxFinite,
-                ),
-              ),
-              ClipRRect(
-                borderRadius: BorderRadius.circular(MARGIN_CARD_MEDIUM_2),
-                child: Image.network(
-                  "https://www.vitalthrills.com/wp-content/uploads/2021/07/duning5.jpg.webp",
-                  fit: BoxFit.cover,
-                  width: double.maxFinite,
+          options: CarouselOptions(
+            height: MediaQuery.of(context).size.height / 4.5,
+            viewportFraction: 0.9,
+            initialPage: 0,
+            enableInfiniteScroll: false,
+            enlargeCenterPage: true,
+            enlargeStrategy: CenterPageEnlargeStrategy.scale,
+            enlargeFactor: 0.2,
+            onPageChanged: (index, reason) {
+              setState(() {
+                _position = index.toDouble();
+              });
+            },
+          ),
+          items: widget.bannerList
+              .map(
+                (banner) => ClipRRect(
+                  borderRadius: BorderRadius.circular(MARGIN_CARD_MEDIUM_2),
+                  child: Image.network(
+                    banner.url.orEmpty,
+                    fit: BoxFit.cover,
+                    width: double.maxFinite,
+                  ),
                 ),
               )
-            ]),
-        SizedBox(height: MARGIN_SMALL),
+              .toList(),
+        ),
+        const SizedBox(height: MARGIN_SMALL),
         DotsIndicatorView(position: _position)
       ],
     );
@@ -207,7 +255,7 @@ class DotsIndicatorView extends StatelessWidget {
     return DotsIndicator(
       dotsCount: 3,
       position: _position,
-      decorator: DotsDecorator(
+      decorator: const DotsDecorator(
           color: TEXT_GREY_COLOR,
           activeColor: PRIMARY_COLOR,
           size: Size(MARGIN_6, MARGIN_6),

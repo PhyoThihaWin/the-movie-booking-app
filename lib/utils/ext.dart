@@ -57,27 +57,25 @@ extension StringFormat on String? {
   String toAssetImage() => "assets/images/$this";
 
   String toAssetIcon() => "assets/icons/$this";
-
-  String orEmpty() => this ?? "";
 }
 
 extension NullIntExtension on int? {
-  int orZero() => this ?? 0;
+  int get orZero => this ?? 0;
 }
 
 extension NullDoubleExtension on double? {
-  double orZero() => this ?? 0;
+  double get orZero => this ?? 0;
 }
 
 extension NullBoolExtension on bool? {
-  bool orTrue() => this ?? true;
+  bool get orTrue => this ?? true;
 
-  bool orFalse() => this ?? false;
+  bool get orFalse => this ?? false;
 }
 
 extension ListNullSafetyExtension<T> on List<T?>? {
-  List<T?> orEmpty() => this ?? [];
+  List<T?> get orEmpty => this ?? [];
 
-  List<T> orEmptyBoth() =>
+  List<T> get orEmptyObject =>
       this?.where((element) => element != null).toList().cast() ?? [];
 }

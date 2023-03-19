@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:dart_extensions/dart_extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:moviebooking/page/auth/pick_region_page.dart';
 import 'package:moviebooking/resource/colors.dart';
@@ -91,7 +92,7 @@ class OtpConfirmContentSection extends StatelessWidget {
         ResendOtpCodeView(),
         SizedBox(height: MARGIN_XLARGE + MARGIN_MEDIUM),
         ConfirmOtpBtnView(() {
-          onClick(otpCode.orEmpty());
+          onClick(otpCode.orEmpty);
         }),
       ],
     );

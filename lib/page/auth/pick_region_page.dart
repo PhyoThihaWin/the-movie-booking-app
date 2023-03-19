@@ -63,7 +63,7 @@ class _PickRegionPageState extends State<PickRegionPage> {
             ),
             RegionListHeaderView(),
             Expanded(
-              child: CityListBuilderView(cities.orEmptyBoth()),
+              child: CityListBuilderView(cities.orEmptyObject),
             )
           ],
         ),

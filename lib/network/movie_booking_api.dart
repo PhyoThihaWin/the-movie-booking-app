@@ -1,5 +1,7 @@
 import 'package:dio/dio.dart';
+import 'package:moviebooking/data/model/vos/banner_vo.dart';
 import 'package:moviebooking/data/model/vos/city_vo.dart';
+import 'package:moviebooking/data/model/vos/movie_vo.dart';
 import 'package:moviebooking/data/model/vos/user_data_vo.dart';
 import 'package:moviebooking/network/api_constants.dart';
 import 'package:moviebooking/network/response/data_response.dart';
@@ -27,4 +29,11 @@ abstract class MovieBookingApi {
   @GET(ENDPOINT_GET_CITIES)
   Future<DataResponse<List<CityVo>>> getCities();
 
+  @GET(ENDPOINT_GET_BANNERS)
+  Future<DataResponse<List<BannerVo>>> getBanner();
+
+  @GET(ENDPOINT_GET_MOVIES)
+  Future<DataResponse<List<MovieVo>>> getMovies(
+    @Query("status") String status,
+  );
 }

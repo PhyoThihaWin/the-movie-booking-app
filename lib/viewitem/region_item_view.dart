@@ -1,3 +1,4 @@
+import 'package:dart_extensions/dart_extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:moviebooking/resource/colors.dart';
 import 'package:moviebooking/utils/ext.dart';
@@ -27,7 +28,7 @@ class RegionItemView extends StatelessWidget {
                 vertical: MARGIN_MEDIUM_3,
               ),
               child: Text(
-                city.name.orEmpty(),
+                city.name.orEmpty,
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: TEXT_REGULAR_2X,

@@ -76,10 +76,11 @@ class _MovieSearchPageState extends State<MovieSearchPage> {
                         crossAxisCount: 2,
                         childAspectRatio: 0.7,
                         crossAxisSpacing: MARGIN_MEDIUM_3 / 2),
-                    itemBuilder: (context, index) =>
-                        MovieCardItemView(widget.tabIndex, (isUpComing) {
-                      context.next(MovieDetailPage(isUpComing));
-                    }),
+                    itemBuilder: (context, index) => MovieCardItemView(
+                        movie: null,
+                        onClickItem: (isUpComing) {
+                          context.next(MovieDetailPage(isUpComing));
+                        }),
                   ),
                 )
               : EmptyDataView()

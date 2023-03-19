@@ -1,4 +1,7 @@
+import 'package:dart_extensions/dart_extensions.dart';
 import 'package:flutter/material.dart';
+import 'package:moviebooking/data/model/vos/movie_vo.dart';
+import 'package:moviebooking/network/api_constants.dart';
 import 'package:moviebooking/resource/colors.dart';
 import 'package:moviebooking/utils/ext.dart';
 import 'package:moviebooking/widget/ripple_effect.dart';
@@ -7,16 +10,16 @@ import '../resource/dimens.dart';
 import '../widget/gradient_view.dart';
 
 class MovieCardItemView extends StatelessWidget {
-  final tabIndex;
+  final MovieVo? movie;
   final Function(bool isUpComing) onClickItem;
 
-  MovieCardItemView(this.tabIndex, this.onClickItem);
+  MovieCardItemView({required this.movie, required this.onClickItem});
 
   @override
   Widget build(BuildContext context) {
     return RippleTap(
       onTap: () {
-        onClickItem((tabIndex == 0) ? false : true);
+        onClickItem((movie?.isComingSoon).orFalse);
       },
       child: Card(
         color: Colors.black,
@@ -27,7 +30,7 @@ class MovieCardItemView extends StatelessWidget {
         child: Column(
           children: [
             Expanded(
-              child: MovieImageView(tabIndex),
+              child: MovieImageView(movie),
             ),
             Padding(
               padding: const EdgeInsets.only(
@@ -37,9 +40,9 @@ class MovieCardItemView extends StatelessWidget {
               ),
               child: Column(
                 children: [
-                  MovieTitleAndImdbView(),
-                  SizedBox(height: MARGIN_MEDIUM),
-                  MovieResolutionTypeView()
+                  const MovieTitleAndImdbView(),
+                  const SizedBox(height: MARGIN_MEDIUM),
+                  const MovieResolutionTypeView()
                 ],
               ),
             )
@@ -59,7 +62,7 @@ class MovieResolutionTypeView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Text(
+        const Text(
           "U/A",
           style: TextStyle(
             color: Colors.white,
@@ -70,12 +73,12 @@ class MovieResolutionTypeView extends StatelessWidget {
         Container(
           height: MARGIN_6,
           width: MARGIN_MEDIUM_3,
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             shape: BoxShape.circle,
             color: Colors.white,
           ),
         ),
-        Text(
+        const Text(
           "2D, 3D, 3D IMAX",
           style: TextStyle(
             color: Colors.white,
@@ -96,20 +99,20 @@ class MovieTitleAndImdbView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Text(
+        const Text(
           "Moana II",
           style: TextStyle(
               color: Colors.white,
               fontSize: TEXT_REGULAR,
               fontWeight: FontWeight.w500),
         ),
-        Spacer(),
+        const Spacer(),
         Image.asset(
           "imdb_logo.png".toAssetImage(),
           height: MARGIN_XLARGE,
         ),
-        SizedBox(width: 2),
-        Text(
+        const SizedBox(width: 2),
+        const Text(
           "9.0",
           style: TextStyle(
               color: Colors.white,
@@ -123,9 +126,9 @@ class MovieTitleAndImdbView extends StatelessWidget {
 }
 
 class MovieImageView extends StatelessWidget {
-  final tabIndex;
+  final MovieVo? movie;
 
-  MovieImageView(this.tabIndex);
+  MovieImageView(this.movie);
 
   @override
   Widget build(BuildContext context) {
@@ -133,9 +136,7 @@ class MovieImageView extends StatelessWidget {
       children: [
         Positioned.fill(
           child: Image.network(
-            (tabIndex == 0)
-                ? "https://cdn.shopify.com/s/files/1/0969/9128/products/Oppenheimer-CillianMurphy-ChristopherNolan-HollywoodMoviePoster_1_f2b4d54a-6a90-4df1-b2e8-5cd7949d4c2c.jpg?v=1647424460"
-                : "https://cdn.programadoresbrasil.com.br/wp-content/uploads/2022/11/22093548934085-600x694.jpeg",
+            "$IMAGE_BASE_URL${(movie?.posterPath).orEmpty}",
             fit: BoxFit.cover,
           ),
         ),
@@ -148,24 +149,24 @@ class MovieImageView extends StatelessWidget {
         Align(
           alignment: Alignment.topRight,
           child: Visibility(
-            visible: (tabIndex == 0) ? false : true,
+            visible: (movie?.isComingSoon).orFalse,
             child: Container(
-              margin: EdgeInsets.all(MARGIN_MEDIUM),
-              padding: EdgeInsets.symmetric(
+              margin: const EdgeInsets.all(MARGIN_MEDIUM),
+              padding: const EdgeInsets.symmetric(
                 horizontal: MARGIN_10,
                 vertical: MARGIN_SMALL,
               ),
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(MARGIN_MEDIUM),
+                  color: PRIMARY_COLOR),
               child: Text(
-                "9th\nAug",
-                style: TextStyle(
+                (movie?.releaseDate).orEmpty,
+                style: const TextStyle(
                   color: Colors.black,
                   fontSize: TEXT_SMALL,
                   fontWeight: FontWeight.w500,
                 ),
               ),
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(MARGIN_MEDIUM),
-                  color: PRIMARY_COLOR),
             ),
           ),
         )
