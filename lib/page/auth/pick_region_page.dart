@@ -7,7 +7,7 @@ import 'package:moviebooking/utils/ext.dart';
 
 import '../../data/model/movie_booking_model.dart';
 import '../../data/model/movie_booking_model_impl.dart';
-import '../../data/model/vos/city_vo.dart';
+import '../../data/vos/city_vo.dart';
 import '../../resource/colors.dart';
 import '../../resource/strings.dart';
 import '../../viewitem/region_item_view.dart';

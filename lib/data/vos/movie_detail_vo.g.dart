@@ -31,18 +31,17 @@ class MovieDetailVoAdapter extends TypeAdapter<MovieDetailVo> {
       fields[11] as bool?,
       fields[12] as double?,
       fields[13] as int?,
-      fields[15] as double?,
-      (fields[16] as List?)?.cast<GenreVo>(),
+      fields[14] as double?,
+      fields[16] as String?,
       fields[17] as String?,
-      fields[18] as String?,
-      fields[21] as int?,
-      fields[22] as int?,
-      fields[24] as String?,
-      fields[25] as String?,
-      fields[26] as bool?,
-      fields[27] as bool?,
-      fields[28] as bool?,
-    );
+      fields[18] as int?,
+      fields[19] as int?,
+      fields[20] as String?,
+      fields[21] as String?,
+      fields[22] as bool?,
+      fields[23] as bool?,
+      fields[24] as bool?,
+    )..genres = (fields[15] as List?)?.cast<GenreVo>();
   }
 
   @override
@@ -77,27 +76,27 @@ class MovieDetailVoAdapter extends TypeAdapter<MovieDetailVo> {
       ..write(obj.voteAverage)
       ..writeByte(13)
       ..write(obj.voteCount)
-      ..writeByte(15)
+      ..writeByte(14)
       ..write(obj.budget)
-      ..writeByte(16)
+      ..writeByte(15)
       ..write(obj.genres)
-      ..writeByte(17)
+      ..writeByte(16)
       ..write(obj.homePage)
-      ..writeByte(18)
+      ..writeByte(17)
       ..write(obj.imdbId)
-      ..writeByte(21)
+      ..writeByte(18)
       ..write(obj.revenue)
-      ..writeByte(22)
+      ..writeByte(19)
       ..write(obj.runTime)
-      ..writeByte(24)
+      ..writeByte(20)
       ..write(obj.status)
-      ..writeByte(25)
+      ..writeByte(21)
       ..write(obj.tagLine)
-      ..writeByte(26)
+      ..writeByte(22)
       ..write(obj.isNowPlaying)
-      ..writeByte(27)
+      ..writeByte(23)
       ..write(obj.isPopular)
-      ..writeByte(28)
+      ..writeByte(24)
       ..write(obj.isTopRated);
   }
 
@@ -133,9 +132,6 @@ MovieDetailVo _$MovieDetailVoFromJson(Map<String, dynamic> json) =>
       (json['vote_average'] as num?)?.toDouble(),
       json['vote_count'] as int?,
       (json['budget'] as num?)?.toDouble(),
-      (json['genres'] as List<dynamic>?)
-          ?.map((e) => GenreVo.fromJson(e as Map<String, dynamic>))
-          .toList(),
       json['homepage'] as String?,
       json['imdb_id'] as String?,
       json['revenue'] as int?,
@@ -145,7 +141,9 @@ MovieDetailVo _$MovieDetailVoFromJson(Map<String, dynamic> json) =>
       json['isNowPlaying'] as bool?,
       json['isPopular'] as bool?,
       json['isTopRated'] as bool?,
-    );
+    )..genres = (json['genres'] as List<dynamic>?)
+        ?.map((e) => GenreVo.fromJson(e as Map<String, dynamic>))
+        .toList();
 
 Map<String, dynamic> _$MovieDetailVoToJson(MovieDetailVo instance) =>
     <String, dynamic>{

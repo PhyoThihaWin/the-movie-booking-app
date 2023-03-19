@@ -3,7 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:moviebooking/resource/strings.dart';
 import 'package:moviebooking/utils/ext.dart';
 
-import '../../data/model/vos/booking_date.dart';
+import '../../data/vos/booking_date.dart';
 import '../../resource/colors.dart';
 import '../../resource/dimens.dart';
 import '../../viewitem/booking_date_item_view.dart';

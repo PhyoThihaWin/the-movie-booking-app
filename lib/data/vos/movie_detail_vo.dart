@@ -1,7 +1,7 @@
 import 'package:hive/hive.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-import '../../../persistence/hive_constants.dart';
+import '../../persistence/hive_constants.dart';
 import 'genre_vo.dart';
 
 part 'movie_detail_vo.g.dart';
@@ -66,47 +66,46 @@ class MovieDetailVo {
   int? voteCount;
 
 
-
   @JsonKey(name: "budget")
-  @HiveField(15)
+  @HiveField(14)
   double? budget;
 
   @JsonKey(name: "genres")
-  @HiveField(16)
+  @HiveField(15)
   List<GenreVo>? genres;
 
   @JsonKey(name: "homepage")
-  @HiveField(17)
+  @HiveField(16)
   String? homePage;
 
   @JsonKey(name: "imdb_id")
-  @HiveField(18)
+  @HiveField(17)
   String? imdbId;
 
 
   @JsonKey(name: "revenue")
-  @HiveField(21)
+  @HiveField(18)
   int? revenue;
 
   @JsonKey(name: "runtime")
-  @HiveField(22)
+  @HiveField(19)
   int? runTime;
 
   @JsonKey(name: "status")
-  @HiveField(24)
+  @HiveField(20)
   String? status;
 
   @JsonKey(name: "tagline")
-  @HiveField(25)
+  @HiveField(21)
   String? tagLine;
 
-  @HiveField(26)
+  @HiveField(22)
   bool? isNowPlaying;
 
-  @HiveField(27)
+  @HiveField(23)
   bool? isPopular;
 
-  @HiveField(28)
+  @HiveField(24)
   bool? isTopRated;
 
 
@@ -126,7 +125,6 @@ class MovieDetailVo {
       this.voteAverage,
       this.voteCount,
       this.budget,
-      this.genres,
       this.homePage,
       this.imdbId,
       this.revenue,
@@ -153,6 +151,6 @@ class MovieDetailVo {
 
   @override
   String toString() {
-    return 'MovieDetailVo{adult: $adult, backdropPath: $backdropPath, genreIds: $genreIds, id: $id, originalLanguage: $originalLanguage, originalTitle: $originalTitle, overview: $overview, popularity: $popularity, posterPath: $posterPath, releaseDate: $releaseDate, title: $title, video: $video, voteAverage: $voteAverage, voteCount: $voteCount}';
+    return 'MovieDetailVo{adult: $adult, backdropPath: $backdropPath, genreIds: $genreIds, id: $id, originalLanguage: $originalLanguage, originalTitle: $originalTitle, overview: $overview, popularity: $popularity, posterPath: $posterPath, releaseDate: $releaseDate, title: $title, video: $video, voteAverage: $voteAverage, voteCount: $voteCount, budget: $budget, genres: $genres, homePage: $homePage, imdbId: $imdbId, revenue: $revenue, runTime: $runTime, status: $status, tagLine: $tagLine, isNowPlaying: $isNowPlaying, isPopular: $isPopular, isTopRated: $isTopRated}';
   }
 }

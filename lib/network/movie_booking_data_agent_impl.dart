@@ -1,14 +1,14 @@
 import 'package:dio/dio.dart';
 import 'package:dart_extensions/dart_extensions.dart';
-import 'package:moviebooking/data/model/vos/banner_vo.dart';
-import 'package:moviebooking/data/model/vos/city_vo.dart';
-import 'package:moviebooking/data/model/vos/movie_detail_vo.dart';
-import 'package:moviebooking/data/model/vos/movie_vo.dart';
-import 'package:moviebooking/data/model/vos/user_data_vo.dart';
+import 'package:moviebooking/data/vos/banner_vo.dart';
+import 'package:moviebooking/data/vos/city_vo.dart';
+import 'package:moviebooking/data/vos/movie_detail_vo.dart';
+import 'package:moviebooking/data/vos/movie_vo.dart';
+import 'package:moviebooking/data/vos/user_data_vo.dart';
 import 'package:moviebooking/network/movie_booking_data_agent.dart';
 import 'package:moviebooking/utils/ext.dart';
 
-import '../data/model/vos/actor_vo.dart';
+import '../data/vos/actor_vo.dart';
 import 'api_constants.dart';
 import 'movie_booking_api.dart';
 

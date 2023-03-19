@@ -4,7 +4,7 @@ import 'package:moviebooking/resource/colors.dart';
 import 'package:moviebooking/utils/ext.dart';
 import 'package:moviebooking/widget/ripple_effect.dart';
 
-import '../data/model/vos/city_vo.dart';
+import '../data/vos/city_vo.dart';
 import '../resource/dimens.dart';
 
 class RegionItemView extends StatelessWidget {

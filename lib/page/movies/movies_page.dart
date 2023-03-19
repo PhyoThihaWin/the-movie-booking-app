@@ -10,8 +10,8 @@ import 'package:moviebooking/utils/ext.dart';
 
 import '../../data/model/movie_booking_model.dart';
 import '../../data/model/movie_booking_model_impl.dart';
-import '../../data/model/vos/banner_vo.dart';
-import '../../data/model/vos/movie_vo.dart';
+import '../../data/vos/banner_vo.dart';
+import '../../data/vos/movie_vo.dart';
 import '../../resource/dimens.dart';
 import '../../resource/strings.dart';
 import '../../viewitem/movie_card_item_view.dart';

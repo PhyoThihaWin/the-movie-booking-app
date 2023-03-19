@@ -1,7 +1,7 @@
 import 'package:dart_extensions/dart_extensions.dart';
 import 'package:flick_video_player/flick_video_player.dart';
 import 'package:flutter/material.dart';
-import 'package:moviebooking/data/model/vos/movie_detail_vo.dart';
+import 'package:moviebooking/data/vos/movie_detail_vo.dart';
 import 'package:moviebooking/network/api_constants.dart';
 import 'package:moviebooking/page/booking/booking_cinema_page.dart';
 import 'package:moviebooking/resource/colors.dart';
@@ -12,7 +12,7 @@ import 'package:video_player/video_player.dart';
 
 import '../../data/model/movie_booking_model.dart';
 import '../../data/model/movie_booking_model_impl.dart';
-import '../../data/model/vos/actor_vo.dart';
+import '../../data/vos/actor_vo.dart';
 import '../../resource/dimens.dart';
 import '../../resource/strings.dart';
 import '../../viewitem/actor_item_view.dart';
@@ -35,6 +35,7 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
 
   @override
   void initState() {
+    /// Network
     movieBookingModel.getMovieDetails(widget.movieId).then((value) {
       setState(() {
         movieDetail = value;
@@ -44,6 +45,14 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
     movieBookingModel.getCreditsByMovie(widget.movieId).then((value) {
       setState(() {
         actorList = value;
+      });
+    }).catchError((error) => debugPrint(error.toString()));
+
+    /// Db
+    movieBookingModel.getMovieDetailFromDb(widget.movieId).then((value) {
+      setState(() {
+        movieDetail = value;
+        debugPrint("Data ==> " + movieDetail.toString());
       });
     }).catchError((error) => debugPrint(error.toString()));
 
@@ -100,7 +109,7 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
                             (movieDetail?.overview).orEmpty),
                         const SizedBox(height: MARGIN_XLARGE),
                         actorList == null
-                            ? CircularProgressIndicator()
+                            ? const CircularProgressIndicator()
                             : ActorListSection(actorList!),
                         const SizedBox(height: MARGIN_XXLARGE * 2)
                       ],
@@ -423,7 +432,7 @@ class _MovieLandscapeVideoViewState extends State<_MovieLandscapeVideoView> {
       "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
     );
     flickManager = FlickManager(
-      autoPlay: true,
+      autoPlay: false,
       videoPlayerController: videoController,
     );
     // flickManager.flickVideoManager?.addListener(_videoPlayingListener);

@@ -1,14 +1,15 @@
 import 'package:moviebooking/data/model/movie_booking_model.dart';
-import 'package:moviebooking/data/model/vos/actor_vo.dart';
-import 'package:moviebooking/data/model/vos/banner_vo.dart';
-import 'package:moviebooking/data/model/vos/city_vo.dart';
-import 'package:moviebooking/data/model/vos/movie_detail_vo.dart';
-import 'package:moviebooking/data/model/vos/movie_vo.dart';
-import 'package:moviebooking/data/model/vos/user_data_vo.dart';
+import 'package:moviebooking/data/vos/actor_vo.dart';
+import 'package:moviebooking/data/vos/banner_vo.dart';
+import 'package:moviebooking/data/vos/city_vo.dart';
+import 'package:moviebooking/data/vos/movie_detail_vo.dart';
+import 'package:moviebooking/data/vos/movie_vo.dart';
+import 'package:moviebooking/data/vos/user_data_vo.dart';
 import 'package:moviebooking/network/movie_booking_data_agent.dart';
 import 'package:moviebooking/network/movie_booking_data_agent_impl.dart';
 import 'package:moviebooking/persistence/daos/banner_dao.dart';
 import 'package:moviebooking/persistence/daos/movie_dao.dart';
+import 'package:moviebooking/persistence/daos/movie_detail_dao.dart';
 import 'package:moviebooking/utils/ext.dart';
 
 class MovieBookingModelImpl extends MovieBookingModel {
@@ -23,6 +24,7 @@ class MovieBookingModelImpl extends MovieBookingModel {
 
   BannerDao bannerDao = BannerDao();
   MovieDao movieDao = MovieDao();
+  MovieDetailDao movieDetailDao = MovieDetailDao();
 
   @override
   Future<String> getOTP(String phone) {
@@ -71,7 +73,10 @@ class MovieBookingModelImpl extends MovieBookingModel {
 
   @override
   Future<MovieDetailVo> getMovieDetails(int movieId) {
-    return movieBookingDataAgent.getMovieDetails(movieId);
+    return movieBookingDataAgent.getMovieDetails(movieId).then((value) {
+      movieDetailDao.saveMovieDetail(value);
+      return Future.value(value);
+    });
   }
 
   @override
@@ -89,5 +94,10 @@ class MovieBookingModelImpl extends MovieBookingModel {
   @override
   Future<List<MovieVo?>> getMoviesFromDb(String status) {
     return Future.value(movieDao.getMoviesByStatus(status));
+  }
+
+  @override
+  Future<MovieDetailVo?> getMovieDetailFromDb(int movieId) {
+    return Future.value(movieDetailDao.getMovieDetail(movieId));
   }
 }

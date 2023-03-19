@@ -3,8 +3,8 @@ import 'package:hive/hive.dart';
 import 'package:moviebooking/persistence/hive_constants.dart';
 import 'package:moviebooking/utils/ext.dart';
 
-import '../../data/model/vos/banner_vo.dart';
-import '../../data/model/vos/movie_vo.dart';
+import '../../data/vos/banner_vo.dart';
+import '../../data/vos/movie_vo.dart';
 
 class MovieDao {
   MovieDao._internal();

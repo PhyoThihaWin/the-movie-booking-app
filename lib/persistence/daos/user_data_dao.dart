@@ -1,5 +1,5 @@
 import 'package:hive/hive.dart';
-import 'package:moviebooking/data/model/vos/user_data_vo.dart';
+import 'package:moviebooking/data/vos/user_data_vo.dart';
 import 'package:moviebooking/persistence/hive_constants.dart';
 
 class UserDataDao {

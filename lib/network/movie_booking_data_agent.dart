@@ -1,10 +1,10 @@
-import 'package:moviebooking/data/model/vos/banner_vo.dart';
-import 'package:moviebooking/data/model/vos/city_vo.dart';
-import 'package:moviebooking/data/model/vos/movie_vo.dart';
-import 'package:moviebooking/data/model/vos/user_data_vo.dart';
+import 'package:moviebooking/data/vos/banner_vo.dart';
+import 'package:moviebooking/data/vos/city_vo.dart';
+import 'package:moviebooking/data/vos/movie_vo.dart';
+import 'package:moviebooking/data/vos/user_data_vo.dart';
 
-import '../data/model/vos/actor_vo.dart';
-import '../data/model/vos/movie_detail_vo.dart';
+import '../data/vos/actor_vo.dart';
+import '../data/vos/movie_detail_vo.dart';
 
 abstract class MovieBookingDataAgent {
   Future<String> getOTP(String phone);

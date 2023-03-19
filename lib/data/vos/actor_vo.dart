@@ -1,7 +1,7 @@
 import 'package:hive/hive.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-import '../../../persistence/hive_constants.dart';
+import '../../persistence/hive_constants.dart';
 import 'movie_vo.dart';
 
 part 'actor_vo.g.dart';

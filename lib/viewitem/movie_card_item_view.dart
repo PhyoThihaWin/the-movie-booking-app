@@ -1,6 +1,6 @@
 import 'package:dart_extensions/dart_extensions.dart';
 import 'package:flutter/material.dart';
-import 'package:moviebooking/data/model/vos/movie_vo.dart';
+import 'package:moviebooking/data/vos/movie_vo.dart';
 import 'package:moviebooking/network/api_constants.dart';
 import 'package:moviebooking/resource/colors.dart';
 import 'package:moviebooking/utils/ext.dart';
