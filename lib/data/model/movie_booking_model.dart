@@ -5,6 +5,8 @@ import 'package:moviebooking/data/vos/movie_detail_vo.dart';
 import 'package:moviebooking/data/vos/movie_vo.dart';
 import 'package:moviebooking/data/vos/user_data_vo.dart';
 
+import '../vos/trailer_video_vo.dart';
+
 abstract class MovieBookingModel {
   /// Network
   Future<String> getOTP(String phone);
@@ -18,6 +20,8 @@ abstract class MovieBookingModel {
   Future<List<MovieVo?>> getMovies(String status);
 
   Future<MovieDetailVo> getMovieDetails(int movieId);
+
+  Future<TrailerVideoVo?> getTrailerVideo(int movieId);
 
   Future<List<ActorVo>> getCreditsByMovie(int movieId);
 

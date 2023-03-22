@@ -4,6 +4,7 @@ import 'package:moviebooking/data/vos/banner_vo.dart';
 import 'package:moviebooking/data/vos/city_vo.dart';
 import 'package:moviebooking/data/vos/movie_detail_vo.dart';
 import 'package:moviebooking/data/vos/movie_vo.dart';
+import 'package:moviebooking/data/vos/trailer_video_vo.dart';
 import 'package:moviebooking/data/vos/user_data_vo.dart';
 import 'package:moviebooking/network/movie_booking_data_agent.dart';
 import 'package:moviebooking/network/movie_booking_data_agent_impl.dart';
@@ -77,6 +78,11 @@ class MovieBookingModelImpl extends MovieBookingModel {
       movieDetailDao.saveMovieDetail(value);
       return Future.value(value);
     });
+  }
+
+  @override
+  Future<TrailerVideoVo?> getTrailerVideo(int movieId) {
+    return movieBookingDataAgent.getTrailerVideo(movieId);
   }
 
   @override

@@ -44,14 +44,13 @@ dependencies:
   dotted_line: ^3.1.0
   video_player: ^2.5.1
   flick_video_player: ^0.5.0
+  youtube_player_flutter: ^8.1.2
   json_annotation: ^4.8.0
   dio: ^4.0.4
   retrofit: ^3.0.1
   hive: ^2.2.3
   hive_flutter: ^1.1.0
-#  video_player:
-#    git:
-#      url: https://github.com/htetaunglin/video_player
+
 
 dev_dependencies:
   flutter_test:

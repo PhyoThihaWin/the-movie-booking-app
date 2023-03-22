@@ -4,6 +4,7 @@ import 'package:moviebooking/data/vos/banner_vo.dart';
 import 'package:moviebooking/data/vos/city_vo.dart';
 import 'package:moviebooking/data/vos/movie_detail_vo.dart';
 import 'package:moviebooking/data/vos/movie_vo.dart';
+import 'package:moviebooking/data/vos/trailer_video_vo.dart';
 import 'package:moviebooking/data/vos/user_data_vo.dart';
 import 'package:moviebooking/network/movie_booking_data_agent.dart';
 import 'package:moviebooking/utils/ext.dart';
@@ -84,6 +85,15 @@ class MovieBookingDataAgentImpl extends MovieBookingDataAgent {
         .asStream()
         .map(
             (getCreditsByMovieResponse) => getCreditsByMovieResponse.cast ?? [])
+        .first;
+  }
+
+  @override
+  Future<TrailerVideoVo?> getTrailerVideo(int movieId) {
+    return movieBookingApi
+        .getTrailerVideo(API_KEY, LANGUAGE_ENUS, movieId)
+        .asStream()
+        .map((event) => event.results?[0])
         .first;
   }
 }

@@ -2,6 +2,7 @@ import 'package:dart_extensions/dart_extensions.dart';
 import 'package:flick_video_player/flick_video_player.dart';
 import 'package:flutter/material.dart';
 import 'package:moviebooking/data/vos/movie_detail_vo.dart';
+import 'package:moviebooking/data/vos/trailer_video_vo.dart';
 import 'package:moviebooking/network/api_constants.dart';
 import 'package:moviebooking/page/booking/booking_cinema_page.dart';
 import 'package:moviebooking/resource/colors.dart';
@@ -9,6 +10,7 @@ import 'package:moviebooking/utils/ext.dart';
 import 'package:moviebooking/widget/ripple_effect.dart';
 import 'package:moviebooking/widget/title_text.dart';
 import 'package:video_player/video_player.dart';
+import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 import '../../data/model/movie_booking_model.dart';
 import '../../data/model/movie_booking_model_impl.dart';
@@ -31,6 +33,7 @@ class MovieDetailPage extends StatefulWidget {
 class _MovieDetailPageState extends State<MovieDetailPage> {
   final MovieBookingModel movieBookingModel = MovieBookingModelImpl();
   MovieDetailVo? movieDetail;
+  TrailerVideoVo? trailerVideo;
   List<ActorVo>? actorList;
 
   @override
@@ -39,6 +42,12 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
     movieBookingModel.getMovieDetails(widget.movieId).then((value) {
       setState(() {
         movieDetail = value;
+      });
+    }).catchError((error) => debugPrint(error.toString()));
+
+    movieBookingModel.getTrailerVideo(widget.movieId).then((value) {
+      setState(() {
+        trailerVideo = value;
       });
     }).catchError((error) => debugPrint(error.toString()));
 
@@ -76,7 +85,7 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
                         FractionallySizedBox(
                           heightFactor: 0.6,
                           widthFactor: 1,
-                          child: MovieLandscapeVideoSection(),
+                          child: MovieLandscapeVideoSection(trailerVideo),
                         ),
                         Positioned(
                             bottom: 0,
@@ -361,12 +370,18 @@ class MovieDataCardView extends StatelessWidget {
 }
 
 class MovieLandscapeVideoSection extends StatelessWidget {
+  final TrailerVideoVo? trailerVideo;
+
+  MovieLandscapeVideoSection(this.trailerVideo);
+
   @override
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        const Positioned.fill(
-          child: _MovieLandscapeVideoView(),
+        Positioned.fill(
+          child: trailerVideo != null
+              ? _MovieLandscapeVideoView(trailerVideo!)
+              : Container(),
         ),
         IgnorePointer(
           child: Positioned.fill(
@@ -413,9 +428,9 @@ class MovieLandscapeVideoSection extends StatelessWidget {
 }
 
 class _MovieLandscapeVideoView extends StatefulWidget {
-  const _MovieLandscapeVideoView({
-    Key? key,
-  }) : super(key: key);
+  final TrailerVideoVo trailerVideo;
+
+  _MovieLandscapeVideoView(this.trailerVideo);
 
   @override
   State<_MovieLandscapeVideoView> createState() =>
@@ -423,44 +438,49 @@ class _MovieLandscapeVideoView extends StatefulWidget {
 }
 
 class _MovieLandscapeVideoViewState extends State<_MovieLandscapeVideoView> {
-  late FlickManager flickManager;
+  late YoutubePlayerController _controller;
+  late PlayerState _playerState;
+  late YoutubeMetaData _videoMetaData;
+  double _volume = 100;
+  bool _muted = false;
+  bool _isPlayerReady = false;
 
   @override
   void initState() {
+    _controller = YoutubePlayerController(
+      initialVideoId: widget.trailerVideo.key.orEmpty,
+      flags: YoutubePlayerFlags(
+        autoPlay: true,
+        mute: true,
+      ),
+    )..addListener(listener);
     super.initState();
-    var videoController = VideoPlayerController.network(
-      "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
-    );
-    flickManager = FlickManager(
-      autoPlay: false,
-      videoPlayerController: videoController,
-    );
-    // flickManager.flickVideoManager?.addListener(_videoPlayingListener);
   }
 
-  _videoPlayingListener() async {
-    if (flickManager.flickVideoManager?.isVideoInitialized ?? false) {
-      flickManager.flickControlManager?.seekTo(const Duration(seconds: 10));
+  void listener() {
+    if (_isPlayerReady && mounted && !_controller.value.isFullScreen) {
+      setState(() {
+        _playerState = _controller.value.playerState;
+        _videoMetaData = _controller.metadata;
+      });
     }
   }
 
   @override
   void dispose() {
-    flickManager.dispose();
+    _controller.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return FlickVideoPlayer(
-      flickManager: flickManager,
-      flickVideoWithControls: const FlickVideoWithControls(
-        closedCaptionTextStyle: TextStyle(fontSize: 8),
-        controls: FlickPortraitControls(),
-      ),
-      flickVideoWithControlsFullscreen: const FlickVideoWithControls(
-        controls: FlickLandscapeControls(),
-      ),
+    return YoutubePlayer(
+      controller: _controller,
+      showVideoProgressIndicator: true,
+      progressIndicatorColor: Colors.red,
+      onReady: () {
+        _controller.addListener(listener);
+      },
     );
   }
 }
