@@ -1,17 +1,46 @@
+import 'package:dart_extensions/dart_extensions.dart';
 import 'package:flutter/material.dart';
+import 'package:moviebooking/data/vos/seating_plan_vo.dart';
 import 'package:moviebooking/page/booking/buy_snack_page.dart';
 import 'package:moviebooking/resource/colors.dart';
 import 'package:moviebooking/resource/dimens.dart';
+import 'package:moviebooking/utils/app_constants.dart';
 import 'package:moviebooking/utils/ext.dart';
 
+import '../../data/model/movie_booking_model.dart';
+import '../../data/model/movie_booking_model_impl.dart';
 import '../../widget/booking_available_info_view.dart';
 import '../../widget/booking_button_view.dart';
 import '../../widget/ripple_effect.dart';
 
-class BookingChairPage extends StatelessWidget {
-  BookingChairPage({Key? key}) : super(key: key);
+class BookingSeatingPlanPage extends StatefulWidget {
+  final int timeSlotId;
+  final String bookingDate;
 
-  final List<int> chairList = [0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 2];
+  BookingSeatingPlanPage(this.timeSlotId, this.bookingDate);
+
+  @override
+  State<BookingSeatingPlanPage> createState() => _BookingSeatingPlanPageState();
+}
+
+class _BookingSeatingPlanPageState extends State<BookingSeatingPlanPage> {
+  final MovieBookingModel movieBookingModel = MovieBookingModelImpl();
+  List<SeatingPlanVo>? seatPlanList;
+
+  @override
+  void initState() {
+    movieBookingModel
+        .getSeatingPlanByShowTime(widget.timeSlotId, widget.bookingDate)
+        .then((value) {
+      setState(() {
+        seatPlanList = value;
+        debugPrint("List length ==> ${seatPlanList?.length}");
+      });
+    });
+    // .catchError((error) => debugPrint("List ==> ${error.toString()}"));
+
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +54,7 @@ class BookingChairPage extends StatelessWidget {
             context.popBack();
           },
           isCircle: true,
-          child: Icon(
+          child: const Icon(
             Icons.arrow_back_ios_new,
             color: Colors.white,
           ),
@@ -38,23 +67,38 @@ class BookingChairPage extends StatelessWidget {
               child: Column(
                 children: [
                   Image.asset("cinema_screen.png".toAssetImage()),
-                  ChairListViewSection(chairList),
-                  SizedBox(height: MARGIN_LARGE),
+                  ChairPriceTextView("Normal Price"),
+                  const SizedBox(height: MARGIN_MEDIUM),
+                  seatPlanList == null
+                      ? const SizedBox(
+                          height: 200,
+                          child: Center(child: CircularProgressIndicator()))
+                      : SeatPlanGridViewSection(
+                          seatPlanList: seatPlanList!,
+                          seatSelected: (index, seatPlanVo) {
+                            setState(() {
+                              seatPlanList?.removeAt(index);
+                              seatPlanList?.insert(index, seatPlanVo);
+                            });
+                          }),
+                  const SizedBox(height: MARGIN_LARGE),
                 ],
               ),
             ),
           ),
           Column(
             children: [
-              BookingAvailableInfoRowSection(),
+              const BookingAvailableInfoRowSection(),
               ZoomSeekBarView(),
-              const Padding(
-                padding: EdgeInsets.only(
+              Padding(
+                padding: const EdgeInsets.only(
                   left: MARGIN_MEDIUM_3,
                   right: MARGIN_MEDIUM_3,
                   bottom: MARGIN_XLARGE,
                 ),
-                child: BuyTicketViewSection(),
+                child: seatPlanList == null
+                    ? Container()
+                    : BuyTicketViewSection(seatPlanList!),
               ),
             ],
           )
@@ -65,28 +109,37 @@ class BookingChairPage extends StatelessWidget {
 }
 
 class BuyTicketViewSection extends StatelessWidget {
-  const BuyTicketViewSection({
-    Key? key,
-  }) : super(key: key);
+  final List<SeatingPlanVo> seatPlanList;
+
+  BuyTicketViewSection(this.seatPlanList);
 
   @override
   Widget build(BuildContext context) {
+    int ticketCount =
+        seatPlanList.where((element) => element.isSelected ?? false).length;
+    int totalPrice = 0;
+    for (SeatingPlanVo element in seatPlanList) {
+      if (element.isSelected.orFalse) {
+        totalPrice += element.price.orZero;
+      }
+    }
+
     return Row(
       children: [
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "2 Tickets",
-              style: TextStyle(
+              "$ticketCount Tickets",
+              style: const TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.w700,
                 fontSize: TEXT_REGULAR_3X,
               ),
             ),
             Text(
-              "17,000KS",
-              style: TextStyle(
+              "$totalPrice \$",
+              style: const TextStyle(
                 color: PRIMARY_COLOR,
                 fontWeight: FontWeight.w700,
                 fontSize: TEXT_REGULAR_4X,
@@ -94,7 +147,7 @@ class BuyTicketViewSection extends StatelessWidget {
             )
           ],
         ),
-        Spacer(),
+        const Spacer(),
         BookingButtonView(
           btnText: "Buy Ticket",
           btnClick: () {
@@ -117,10 +170,10 @@ class _ZoomSeekBarViewState extends State<ZoomSeekBarView> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.all(MARGIN_MEDIUM_3),
+      padding: const EdgeInsets.all(MARGIN_MEDIUM_3),
       child: Row(
         children: [
-          Icon(
+          const Icon(
             Icons.add,
             color: TEXT_GREY_COLOR,
           ),
@@ -142,7 +195,7 @@ class _ZoomSeekBarViewState extends State<ZoomSeekBarView> {
               },
             ),
           ),
-          Icon(
+          const Icon(
             Icons.remove,
             color: TEXT_GREY_COLOR,
           ),
@@ -161,7 +214,7 @@ class BookingAvailableInfoRowSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       color: SEARCH_BOX_COLOR,
-      padding: EdgeInsets.symmetric(vertical: MARGIN_6),
+      padding: const EdgeInsets.symmetric(vertical: MARGIN_6),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
@@ -174,89 +227,49 @@ class BookingAvailableInfoRowSection extends StatelessWidget {
   }
 }
 
-class ChairListViewSection extends StatelessWidget {
-  ChairListViewSection(this.chairList);
+class SeatPlanGridViewSection extends StatelessWidget {
+  final List<SeatingPlanVo> seatPlanList;
+  final Function(int, SeatingPlanVo) seatSelected;
 
-  final List<int> chairList;
+  SeatPlanGridViewSection(
+      {required this.seatPlanList, required this.seatSelected});
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: chairList.length,
+    return GridView.builder(
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 16, childAspectRatio: 1),
+      itemCount: seatPlanList.length,
+      physics: const NeverScrollableScrollPhysics(),
       shrinkWrap: true,
-      physics: NeverScrollableScrollPhysics(),
-      itemBuilder: (context, index) => (chairList[index] == 0)
-          ? ChairPriceTextView()
-          : (chairList[index] == 1)
-              ? ChairSingleRowView()
-              : ChairMixRowView(),
-    );
-  }
-}
-
-class ChairMixRowView extends StatelessWidget {
-  const ChairMixRowView({
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        SizedBox(width: MARGIN_MEDIUM),
-        RowTitleTextView(),
-        ChairCoupleImageView(),
-        Spacer(),
-        ChairSingleImageView(),
-        ChairSingleImageView(),
-        ChairSingleImageView(),
-        ChairSingleImageView(),
-        ChairSingleImageView(),
-        Spacer(),
-        ChairCoupleImageView(),
-        RowTitleTextView(),
-        SizedBox(width: MARGIN_MEDIUM),
-      ],
-    );
-  }
-}
-
-class ChairSingleRowView extends StatelessWidget {
-  const ChairSingleRowView({
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        SizedBox(width: MARGIN_MEDIUM),
-        RowTitleTextView(),
-        ChairSingleImageView(),
-        ChairSingleImageView(),
-        ChairSingleImageView(),
-        ChairSingleImageView(),
-        Spacer(),
-        ChairSingleImageView(),
-        ChairSingleImageView(),
-        ChairSingleImageView(),
-        ChairSingleImageView(),
-        RowTitleTextView(),
-        SizedBox(width: MARGIN_MEDIUM),
-      ],
+      itemBuilder: (context, index) => seatPlanList[index].type ==
+              SEAT_TYPE_TEXT
+          ? Center(child: RowTitleTextView(seatPlanList[index].symbol.orEmpty))
+          : seatPlanList[index].type == SEAT_TYPE_SPACE
+              ? const Spacer()
+              : ChairSingleImageView(
+                  seatingPlan: seatPlanList[index],
+                  seatSelected: (seatPlanVo) {
+                    seatSelected(index, seatPlanVo);
+                  },
+                ),
     );
   }
 }
 
 class ChairPriceTextView extends StatelessWidget {
+  final String text;
+
+  ChairPriceTextView(this.text); //
+
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(MARGIN_10),
       child: Text(
-        "Normal (4500Ks)",
+        text,
         textAlign: TextAlign.center,
-        style: TextStyle(
+        style: const TextStyle(
           color: TEXT_GREY_COLOR,
           fontSize: TEXT_REGULAR_2X,
         ),
@@ -266,11 +279,15 @@ class ChairPriceTextView extends StatelessWidget {
 }
 
 class RowTitleTextView extends StatelessWidget {
+  final String text;
+
+  RowTitleTextView(this.text);
+
   @override
   Widget build(BuildContext context) {
     return Text(
-      "A",
-      style: TextStyle(
+      text,
+      style: const TextStyle(
         color: TEXT_GREY_COLOR,
         fontSize: TEXT_SMALL,
       ),
@@ -311,29 +328,46 @@ class _ChairCoupleImageViewState extends State<ChairCoupleImageView> {
 }
 
 class ChairSingleImageView extends StatefulWidget {
+  final SeatingPlanVo seatingPlan;
+  final Function(SeatingPlanVo) seatSelected;
+
+  ChairSingleImageView({
+    required this.seatingPlan,
+    required this.seatSelected,
+  });
+
   @override
   State<ChairSingleImageView> createState() => _ChairSingleImageViewState();
 }
 
 class _ChairSingleImageViewState extends State<ChairSingleImageView> {
-  bool? _isSelected;
+  bool _isSelected = false;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
         setState(() {
-          (_isSelected ?? false) ? _isSelected = false : _isSelected = true;
+          if (widget.seatingPlan.type != SEAT_TYPE_TAKEN) {
+            if (_isSelected) {
+              _isSelected = false;
+              widget.seatingPlan.isSelected = _isSelected;
+            } else {
+              _isSelected = true;
+              widget.seatingPlan.isSelected = _isSelected;
+            }
+            widget.seatSelected.call(widget.seatingPlan);
+          }
         });
       },
       child: Padding(
-        padding: const EdgeInsets.all(MARGIN_6),
+        padding: const EdgeInsets.all(MARGIN_3),
         child: Image.asset(
           "ic_chair_single.png".toAssetIcon(),
           width: MARGIN_XLARGE,
-          color: _isSelected == null
+          color: widget.seatingPlan.type == SEAT_TYPE_TAKEN
               ? SEARCH_BOX_COLOR
-              : _isSelected!
+              : _isSelected
                   ? PRIMARY_COLOR
                   : Colors.white,
         ),

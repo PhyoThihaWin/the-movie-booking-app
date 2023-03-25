@@ -1,5 +1,6 @@
 import 'dart:ffi';
 
+import 'package:flutter/cupertino.dart';
 import 'package:moviebooking/data/model/movie_booking_model.dart';
 import 'package:moviebooking/data/vos/actor_vo.dart';
 import 'package:moviebooking/data/vos/banner_vo.dart';
@@ -111,10 +112,37 @@ class MovieBookingModelImpl extends MovieBookingModel {
   }
 
   @override
-  Future<List<List<SeatingPlanVo>?>> getSeatingPlanByShowTime(
+  Future<List<SeatingPlanVo>> getSeatingPlanByShowTime(
       int cinemaTimeSlotId, String bookingDate) {
-    return movieBookingDataAgent.getSeatingPlanByShowTime(
-        cinemaTimeSlotId, bookingDate);
+    return movieBookingDataAgent
+        .getSeatingPlanByShowTime(cinemaTimeSlotId, bookingDate)
+        .asStream()
+        .map((event) {
+      return event.expand((element) {
+        List<SeatingPlanVo> childList = element.orEmptyObject;
+        debugPrint("ChildList size ==> ${childList.length}");
+        childList.insert(
+            5,
+            SeatingPlanVo(
+              id: 1,
+              type: "space",
+              seatName: "",
+              symbol: "",
+              price: 1,
+            ));
+        childList.insert(
+            10,
+            SeatingPlanVo(
+              id: 1,
+              type: "space",
+              seatName: "",
+              symbol: "",
+              price: 1,
+            ));
+
+        return childList;
+      }).toList();
+    }).first;
   }
 
   /// From Database

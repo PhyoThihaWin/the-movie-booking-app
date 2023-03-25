@@ -80,3 +80,11 @@ abstract class MovieBookingApi {
 
 
 }
+
+
+// (json) => (json as List<dynamic>)
+//     .map<List<SeatingPlanVo>>((i) => (i as List<dynamic>)
+//     .map<SeatingPlanVo>(
+// (j) => SeatingPlanVo.fromJson(j as Map<String, dynamic>))
+//     .toList())
+// .toList(),

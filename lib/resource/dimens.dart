@@ -1,4 +1,6 @@
 /// Generic Dimensions
+const MARGIN_XSMALL = 2.0;
+const MARGIN_3 = 3.0;
 const MARGIN_SMALL = 4.0;
 const MARGIN_6 = 6.0;
 const MARGIN_MEDIUM = 8.0;

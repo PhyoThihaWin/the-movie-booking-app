@@ -25,24 +25,15 @@ class _BookingCinemaPageState extends State<BookingCinemaPage> {
   List<String> movieTypeList = ["2D", "3D", "3D IMAX", "3D DBOX"];
   final MovieBookingModel movieBookingModel = MovieBookingModelImpl();
 
-  // List<String> cinemaList = [
-  //   CINEMA_SOLD_OUT,
-  //   CINEMA_SOLD_OUT,
-  //   CINEMA_AVAILABLE,
-  //   CINEMA_ALMOST_FULL,
-  //   CINEMA_AVAILABLE,
-  //   CINEMA_FILLING_FAST,
-  //   CINEMA_AVAILABLE,
-  //   CINEMA_FILLING_FAST
-  // ];
-
   List<CinemaShowTimeVo>? cinemaShowTimeList;
+  String bookingDate = "";
 
   @override
   void initState() {
-    final _currentDate = DateTime.now();
-    final _formatter = DateFormat('yyyy-MM-dd');
-    getCinemaShowTimeList(_formatter.format(_currentDate));
+    final currentDate = DateTime.now();
+    final formatter = DateFormat('yyyy-MM-dd');
+    bookingDate = formatter.format(currentDate);
+    getCinemaShowTimeList(bookingDate);
 
     super.initState();
   }
@@ -76,16 +67,16 @@ class _BookingCinemaPageState extends State<BookingCinemaPage> {
                 getCinemaShowTimeList(date);
               }),
             ),
-            SizedBox(height: MARGIN_MEDIUM_2),
+            const SizedBox(height: MARGIN_MEDIUM_2),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children:
                   movieTypeList.map((e) => MovieTypeContainerView(e)).toList(),
             ),
-            SizedBox(height: MARGIN_XLARGE),
+            const SizedBox(height: MARGIN_XLARGE),
             Container(
               color: SEARCH_BOX_COLOR,
-              padding: EdgeInsets.symmetric(vertical: MARGIN_6),
+              padding: const EdgeInsets.symmetric(vertical: MARGIN_6),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
@@ -96,14 +87,20 @@ class _BookingCinemaPageState extends State<BookingCinemaPage> {
                 ],
               ),
             ),
-            SizedBox(height: MARGIN_MEDIUM),
-            ListView.builder(
-              itemCount: cinemaShowTimeList.orEmpty.length,
-              shrinkWrap: true,
-              physics: NeverScrollableScrollPhysics(),
-              itemBuilder: (context, index) =>
-                  CinemaParentItemView(cinemaShowTimeList.orEmpty[index]!),
-            )
+            const SizedBox(height: MARGIN_MEDIUM),
+            cinemaShowTimeList == null
+                ? const SizedBox(
+                    height: 200,
+                    child: Center(child: CircularProgressIndicator()))
+                : ListView.builder(
+                    itemCount: cinemaShowTimeList.orEmpty.length,
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemBuilder: (context, index) => CinemaParentItemView(
+                      cinemaShowTime: cinemaShowTimeList![index]!,
+                      bookingDate: bookingDate,
+                    ),
+                  )
           ],
         ),
       ),
@@ -112,15 +109,15 @@ class _BookingCinemaPageState extends State<BookingCinemaPage> {
 
   List<Widget> appBarActionIconList() {
     return [
-      AppBarCityTitleView(),
+      const AppBarCityTitleView(),
       AppBarActionIconView(
-        child: Icon(
+        child: const Icon(
           Icons.search,
           color: Colors.white,
         ),
       ),
       AppBarActionIconView(
-        child: Icon(
+        child: const Icon(
           Icons.filter_alt,
           color: Colors.white,
         ),
@@ -151,7 +148,7 @@ class MovieTypeContainerView extends StatelessWidget {
         ),
         child: Text(
           movieType,
-          style: TextStyle(
+          style: const TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.w700,
             fontSize: TEXT_REGULAR_2X,
@@ -199,16 +196,16 @@ class _BookingDateListViewSectionState
   }
 
   List<BookingDate> getBookingDateList(int length) {
-    final _currentDate = DateTime.now();
-    final _dayNameFormatter = DateFormat('EEE');
-    final _shortDateFormatter = DateFormat('d');
-    final _dateFormatter = DateFormat('yyyy-MM-dd');
-    final _monthFormatter = DateFormat('MMM');
+    final currentDate = DateTime.now();
+    final dayNameFormatter = DateFormat('EEE');
+    final shortDateFormatter = DateFormat('d');
+    final dateFormatter = DateFormat('yyyy-MM-dd');
+    final monthFormatter = DateFormat('MMM');
     final bookingDateList = <BookingDate>[];
 
     for (int i = 0; i < length; i++) {
-      final date = _currentDate.add(Duration(days: i));
-      var dayName = _dayNameFormatter.format(date).toUpperCase();
+      final date = currentDate.add(Duration(days: i));
+      var dayName = dayNameFormatter.format(date).toUpperCase();
       switch (i) {
         case 0:
           dayName = "Today";
@@ -220,9 +217,9 @@ class _BookingDateListViewSectionState
       bookingDateList.add(
         BookingDate(
             dayName: dayName,
-            monthName: _monthFormatter.format(date),
-            date: _shortDateFormatter.format(date),
-            fullDate: _dateFormatter.format(date)),
+            monthName: monthFormatter.format(date),
+            date: shortDateFormatter.format(date),
+            fullDate: dateFormatter.format(date)),
       );
     }
     return bookingDateList;

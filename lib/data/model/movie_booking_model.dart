@@ -35,7 +35,7 @@ abstract class MovieBookingModel {
 
   Future<List<CinemaShowTimeVo?>> getCinemaShowTimeByDate(String date);
 
-  Future<List<List<SeatingPlanVo>?>> getSeatingPlanByShowTime(
+  Future<List<SeatingPlanVo>> getSeatingPlanByShowTime(
       int cinemaTimeSlotId, String bookingDate);
 
   /// Database

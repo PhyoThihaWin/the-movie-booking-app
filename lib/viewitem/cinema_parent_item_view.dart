@@ -1,7 +1,7 @@
 import 'package:dart_extensions/dart_extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:moviebooking/data/vos/cinema_show_time_vo.dart';
-import 'package:moviebooking/page/booking/booking_chair_page.dart';
+import 'package:moviebooking/page/booking/booking_seating_plan_page.dart';
 import 'package:moviebooking/page/cinema/cinema_detail_page.dart';
 import 'package:moviebooking/utils/ext.dart';
 import 'package:moviebooking/widget/ripple_effect.dart';
@@ -13,8 +13,10 @@ import 'cinema_grid_item_view.dart';
 
 class CinemaParentItemView extends StatefulWidget {
   final CinemaShowTimeVo cinemaShowTime;
+  final String bookingDate;
 
-  CinemaParentItemView(this.cinemaShowTime);
+  CinemaParentItemView(
+      {required this.cinemaShowTime, required this.bookingDate});
 
   @override
   State<CinemaParentItemView> createState() => _CinemaParentItemViewState();
@@ -55,7 +57,10 @@ class _CinemaParentItemViewState extends State<CinemaParentItemView> {
             children: [
               widget.cinemaShowTime.timeslots == null
                   ? Center(child: CircularProgressIndicator())
-                  : CinemaScreenGridView(widget.cinemaShowTime.timeslots!),
+                  : CinemaScreenGridView(
+                      timeSlotList: widget.cinemaShowTime.timeslots!,
+                      bookingDate: widget.bookingDate,
+                    ),
               const SizedBox(height: MARGIN_LARGE),
               const Padding(
                 padding: EdgeInsets.symmetric(
@@ -75,8 +80,9 @@ class _CinemaParentItemViewState extends State<CinemaParentItemView> {
 
 class CinemaScreenGridView extends StatelessWidget {
   final List<Timeslots> timeSlotList;
+  final String bookingDate;
 
-  CinemaScreenGridView(this.timeSlotList);
+  CinemaScreenGridView({required this.timeSlotList, required this.bookingDate});
 
   @override
   Widget build(BuildContext context) {
@@ -93,7 +99,8 @@ class CinemaScreenGridView extends StatelessWidget {
       itemBuilder: (context, index) => CinemaGridItemView(
         timeSlotList[index],
         () {
-          context.next(BookingChairPage());
+          context.next(BookingSeatingPlanPage(
+              timeSlotList[index].cinemaDayTimeslotId.orZero, bookingDate));
         },
       ),
     );

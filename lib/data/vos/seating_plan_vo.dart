@@ -11,13 +11,15 @@ class SeatingPlanVo {
   final String? symbol;
   final int? price;
 
-  const SeatingPlanVo({
-    this.id,
-    this.type,
-    this.seatName,
-    this.symbol,
-    this.price,
-  });
+  bool? isSelected;
+
+  SeatingPlanVo(
+      {this.id,
+      this.type,
+      this.seatName,
+      this.symbol,
+      this.price,
+      this.isSelected});
 
   factory SeatingPlanVo.fromJson(Map<String, dynamic> json) =>
       _$SeatingPlanVoFromJson(json);
