@@ -7,6 +7,8 @@ import 'package:moviebooking/data/vos/city_vo.dart';
 import 'package:moviebooking/data/vos/movie_detail_vo.dart';
 import 'package:moviebooking/data/vos/movie_vo.dart';
 import 'package:moviebooking/data/vos/seating_plan_vo.dart';
+import 'package:moviebooking/data/vos/snack_category_vo.dart';
+import 'package:moviebooking/data/vos/snack_vo.dart';
 import 'package:moviebooking/data/vos/trailer_video_vo.dart';
 import 'package:moviebooking/data/vos/user_data_vo.dart';
 import 'package:moviebooking/network/movie_booking_data_agent.dart';
@@ -134,6 +136,24 @@ class MovieBookingDataAgentImpl extends MovieBookingDataAgent {
         .getSeatingPlanByShowTime(cinemaTimeSlotId, bookingDate)
         .asStream()
         .map((event) => event.data.orEmpty)
+        .first;
+  }
+
+  @override
+  Future<List<SnackCategoryVo>> getSnackCategories() {
+    return movieBookingApi
+        .getSnackCategories()
+        .asStream()
+        .map((event) => event.data.orEmptyObject)
+        .first;
+  }
+
+  @override
+  Future<List<SnackVo>> getSnacksByCategory(int categoryId) {
+    return movieBookingApi
+        .getSnacksByCategory(categoryId)
+        .asStream()
+        .map((event) => event.data.orEmptyObject)
         .first;
   }
 }

@@ -10,6 +10,8 @@ import 'package:moviebooking/data/vos/city_vo.dart';
 import 'package:moviebooking/data/vos/movie_detail_vo.dart';
 import 'package:moviebooking/data/vos/movie_vo.dart';
 import 'package:moviebooking/data/vos/seating_plan_vo.dart';
+import 'package:moviebooking/data/vos/snack_category_vo.dart';
+import 'package:moviebooking/data/vos/snack_vo.dart';
 import 'package:moviebooking/data/vos/time_slot_config_vo.dart';
 import 'package:moviebooking/data/vos/trailer_video_vo.dart';
 import 'package:moviebooking/data/vos/user_data_vo.dart';
@@ -120,7 +122,15 @@ class MovieBookingModelImpl extends MovieBookingModel {
         .map((event) {
       return event.expand((element) {
         List<SeatingPlanVo> childList = element.orEmptyObject;
-        debugPrint("ChildList size ==> ${childList.length}");
+        childList.insert(
+            4,
+            SeatingPlanVo(
+              id: 1,
+              type: "space",
+              seatName: "",
+              symbol: "",
+              price: 1,
+            ));
         childList.insert(
             5,
             SeatingPlanVo(
@@ -131,7 +141,16 @@ class MovieBookingModelImpl extends MovieBookingModel {
               price: 1,
             ));
         childList.insert(
-            10,
+            12,
+            SeatingPlanVo(
+              id: 1,
+              type: "space",
+              seatName: "",
+              symbol: "",
+              price: 1,
+            ));
+        childList.insert(
+            13,
             SeatingPlanVo(
               id: 1,
               type: "space",
@@ -143,6 +162,27 @@ class MovieBookingModelImpl extends MovieBookingModel {
         return childList;
       }).toList();
     }).first;
+  }
+
+  @override
+  Future<List<SnackCategoryVo>> getSnackCategories() {
+    return movieBookingDataAgent.getSnackCategories().asStream().map((event) {
+      event.insert(
+          0,
+          SnackCategoryVo(
+              id: 0,
+              title: "All",
+              titleMm: "All",
+              createdAt: "",
+              updatedAt: "",
+              deletedAt: ""));
+      return event;
+    }).first;
+  }
+
+  @override
+  Future<List<SnackVo>> getSnacksByCategory(int categoryId) {
+    return movieBookingDataAgent.getSnacksByCategory(categoryId);
   }
 
   /// From Database

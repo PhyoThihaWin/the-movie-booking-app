@@ -1,10 +1,15 @@
+import 'package:dart_extensions/dart_extensions.dart';
 import 'package:flutter/material.dart';
+import 'package:moviebooking/data/vos/snack_category_vo.dart';
+import 'package:moviebooking/data/vos/snack_vo.dart';
 import 'package:moviebooking/page/booking/booking_checkout_page.dart';
 import 'package:moviebooking/resource/colors.dart';
 import 'package:moviebooking/resource/dimens.dart';
 import 'package:moviebooking/utils/ext.dart';
 import 'package:moviebooking/widget/ripple_effect.dart';
 
+import '../../data/model/movie_booking_model.dart';
+import '../../data/model/movie_booking_model_impl.dart';
 import '../../viewitem/food_drink_item_view.dart';
 import '../../widget/appbar_action_icon_view.dart';
 import '../../widget/appbar_back_icon_view.dart';
@@ -12,16 +17,40 @@ import '../../widget/appbar_title_view.dart';
 import '../../widget/booking_available_info_view.dart';
 import '../../widget/quantity_control_view.dart';
 
-class BuySnackPage extends StatelessWidget {
-  final List<String> tabList = [
-    "All",
-    "Combo",
-    "Snack",
-    "Pop Corn",
-    "Beverage",
-    "Drink",
-    "Alcohol"
-  ];
+class BuySnackPage extends StatefulWidget {
+  @override
+  State<BuySnackPage> createState() => _BuySnackPageState();
+}
+
+class _BuySnackPageState extends State<BuySnackPage> {
+  final MovieBookingModel movieBookingModel = MovieBookingModelImpl();
+  List<SnackCategoryVo>? tabList;
+  List<SnackVo>? snackList;
+  List<SnackVo> snackCartList = [];
+
+  @override
+  void initState() {
+    movieBookingModel.getSnackCategories().then((value) {
+      setState(() {
+        tabList = value;
+        _getSnacksByCategory(0);
+      });
+    }).catchError((error) => debugPrint(error.toString()));
+
+    super.initState();
+  }
+
+  void _getSnacksByCategory(int categoryId) {
+    movieBookingModel.getSnacksByCategory(categoryId).then((value) {
+      setState(() {
+        snackList = value;
+        for (var element in snackCartList) {
+          snackList?.where((item) => item.id == element.id).firstOrNull?.qty =
+              element.qty;
+        }
+      });
+    }).catchError((error) => debugPrint(error.toString()));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,10 +68,46 @@ class BuySnackPage extends StatelessWidget {
         children: [
           Container(
             color: Colors.black,
-            child: FoodTypeTabBarView(tabList: tabList),
+            child: tabList == null
+                ? Container()
+                : FoodTypeTabBarView(
+                    tabList: tabList!,
+                    onTapChanged: (index) {
+                      _getSnacksByCategory(tabList![index].id.orZero);
+                    },
+                  ),
           ),
           Expanded(
-            child: FoodDrinkGridView(),
+            child: snackList == null
+                ? const Center(child: CircularProgressIndicator())
+                : FoodDrinkGridView(
+                    snackList: snackList!,
+                    onQtyChanged: (snack) {
+                      setState(() {
+                        debugPrint("snack ==> ${snack.qty}");
+                        snackList
+                            ?.where((element) => element.id == snack.id)
+                            .first
+                            .qty = snack.qty;
+
+                        if (snack.qty == 0) {
+                          snackCartList
+                              .removeWhere((element) => element.id == snack.id);
+                        } else {
+                          if (snackCartList.find(
+                                  (selector) => selector.id == snack.id) ==
+                              null) {
+                            snackCartList.add(snack);
+                          } else {
+                            snackCartList
+                                .where((element) => element.id == snack.id)
+                                .first
+                                .qty = snack.qty;
+                          }
+                        }
+                      });
+                    },
+                  ),
           ),
           Container(
             color: Colors.black,
@@ -52,9 +117,12 @@ class BuySnackPage extends StatelessWidget {
             ),
             child: GestureDetector(
                 onTap: () {
-                  context.next(BookingCheckoutPage());
+                  context.next(const BookingCheckoutPage());
                 },
-                child: FoodDrinkCountAndTotalRowView(false)),
+                child: FoodDrinkCountAndTotalRowView(
+                  isExpand: false,
+                  snackCartList: snackCartList,
+                )),
           ),
           const SizedBox(height: MARGIN_MEDIUM_3)
         ],
@@ -88,6 +156,10 @@ class BuySnackPage extends StatelessWidget {
 }
 
 class FoodDrinkCartView extends StatefulWidget {
+  final List<SnackVo> snackCartList;
+
+  FoodDrinkCartView(this.snackCartList);
+
   @override
   State<FoodDrinkCartView> createState() => _FoodDrinkCartViewState();
 }
@@ -126,7 +198,8 @@ class _FoodDrinkCartViewState extends State<FoodDrinkCartView> {
               onTap: () {
                 context.next(const BookingCheckoutPage());
               },
-              child: FoodDrinkCountAndTotalRowView(true)),
+              child: FoodDrinkCountAndTotalRowView(
+                  snackCartList: widget.snackCartList, isExpand: true)),
         ),
         const SizedBox(height: MARGIN_MEDIUM_3)
       ],
@@ -136,8 +209,10 @@ class _FoodDrinkCartViewState extends State<FoodDrinkCartView> {
 
 class FoodDrinkCountAndTotalRowView extends StatelessWidget {
   final bool isExpand;
+  final List<SnackVo> snackCartList;
 
-  FoodDrinkCountAndTotalRowView(this.isExpand);
+  FoodDrinkCountAndTotalRowView(
+      {required this.snackCartList, required this.isExpand});
 
   @override
   Widget build(BuildContext context) {
@@ -155,9 +230,10 @@ class FoodDrinkCountAndTotalRowView extends StatelessWidget {
                   : showModalBottomSheet(
                       context: context,
                       backgroundColor: Colors.transparent,
-                      builder: (context) => FoodDrinkCartView());
+                      builder: (context) => FoodDrinkCartView(snackCartList));
             },
-            child: FoodCountIconArrowView(isExpand: isExpand),
+            child: FoodCountIconArrowView(
+                qty: snackCartList.length, isExpand: isExpand),
           ),
           const Spacer(),
           const Text(
@@ -176,18 +252,16 @@ class FoodDrinkCountAndTotalRowView extends StatelessWidget {
 }
 
 class FoodCountIconArrowView extends StatelessWidget {
-  const FoodCountIconArrowView({
-    Key? key,
-    required this.isExpand,
-  }) : super(key: key);
-
+  final int qty;
   final bool isExpand;
+
+  FoodCountIconArrowView({required this.qty, required this.isExpand});
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
-        const FoodCountIconView(),
+        FoodCountIconView(qty),
         Icon(this.isExpand
             ? Icons.keyboard_arrow_up_rounded
             : Icons.keyboard_arrow_down_rounded),
@@ -197,9 +271,9 @@ class FoodCountIconArrowView extends StatelessWidget {
 }
 
 class FoodCountIconView extends StatelessWidget {
-  const FoodCountIconView({
-    Key? key,
-  }) : super(key: key);
+  final int qty;
+
+  FoodCountIconView(this.qty);
 
   @override
   Widget build(BuildContext context) {
@@ -222,8 +296,8 @@ class FoodCountIconView extends StatelessWidget {
           child: CircleDotView(
             itemColor: Colors.red,
             padding: MARGIN_6,
-            child: const Text(
-              "1",
+            child: Text(
+              qty.toString(),
               style: TextStyle(
                 color: Colors.white,
                 fontSize: TEXT_REGULAR,
@@ -277,15 +351,19 @@ class FoodDrinkNamePriceRowView extends StatelessWidget {
 }
 
 class FoodTypeTabBarView extends StatelessWidget {
-  FoodTypeTabBarView({required this.tabList});
+  FoodTypeTabBarView({required this.tabList, required this.onTapChanged});
 
-  final List<String> tabList;
+  final List<SnackCategoryVo> tabList;
+  final Function(int index) onTapChanged;
 
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
       length: tabList.length,
       child: TabBar(
+        onTap: (index) {
+          onTapChanged.call(index);
+        },
         labelStyle: const TextStyle(
           fontWeight: FontWeight.w600,
           fontSize: TEXT_REGULAR,
@@ -298,13 +376,18 @@ class FoodTypeTabBarView extends StatelessWidget {
         indicator: const UnderlineTabIndicator(
           borderSide: BorderSide(width: 3, color: PRIMARY_COLOR),
         ),
-        tabs: tabList.map((e) => Tab(text: e)).toList(),
+        tabs: tabList.map((e) => Tab(text: e.title)).toList(),
       ),
     );
   }
 }
 
 class FoodDrinkGridView extends StatelessWidget {
+  final List<SnackVo> snackList;
+  final Function(SnackVo) onQtyChanged;
+
+  FoodDrinkGridView({required this.snackList, required this.onQtyChanged});
+
   @override
   Widget build(BuildContext context) {
     return GridView.builder(
@@ -319,8 +402,9 @@ class FoodDrinkGridView extends StatelessWidget {
         childAspectRatio: 0.66,
         mainAxisSpacing: MARGIN_MEDIUM_2,
       ),
-      itemCount: 10,
-      itemBuilder: (context, index) => FoodDrinkItemView(),
+      itemCount: snackList.length,
+      itemBuilder: (context, index) => FoodDrinkItemView(
+          snack: snackList[index], onQtyChanged: onQtyChanged),
     );
   }
 }

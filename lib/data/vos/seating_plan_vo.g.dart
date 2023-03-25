@@ -13,6 +13,7 @@ SeatingPlanVo _$SeatingPlanVoFromJson(Map<String, dynamic> json) =>
       seatName: json['seat_name'] as String?,
       symbol: json['symbol'] as String?,
       price: json['price'] as int?,
+      isSelected: json['isSelected'] as bool?,
     );
 
 Map<String, dynamic> _$SeatingPlanVoToJson(SeatingPlanVo instance) =>
@@ -22,4 +23,5 @@ Map<String, dynamic> _$SeatingPlanVoToJson(SeatingPlanVo instance) =>
       'seat_name': instance.seatName,
       'symbol': instance.symbol,
       'price': instance.price,
+      'isSelected': instance.isSelected,
     };

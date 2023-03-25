@@ -343,6 +343,63 @@ class _MovieBookingApi implements MovieBookingApi {
     return value;
   }
 
+  @override
+  Future<DataResponse<List<SnackCategoryVo>>> getSnackCategories() async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<DataResponse<List<SnackCategoryVo>>>(Options(
+      method: 'GET',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              '/api/v2/snack-categories',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = DataResponse<List<SnackCategoryVo>>.fromJson(
+      _result.data!,
+      (json) => (json as List<dynamic>)
+          .map<SnackCategoryVo>(
+              (i) => SnackCategoryVo.fromJson(i as Map<String, dynamic>))
+          .toList(),
+    );
+    return value;
+  }
+
+  @override
+  Future<DataResponse<List<SnackVo>>> getSnacksByCategory(categoryId) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{r'category_id': categoryId};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<DataResponse<List<SnackVo>>>(Options(
+      method: 'GET',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              '/api/v2/snacks',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = DataResponse<List<SnackVo>>.fromJson(
+      _result.data!,
+      (json) => (json as List<dynamic>)
+          .map<SnackVo>((i) => SnackVo.fromJson(i as Map<String, dynamic>))
+          .toList(),
+    );
+    return value;
+  }
+
   RequestOptions _setStreamType<T>(RequestOptions requestOptions) {
     if (T != dynamic &&
         !(requestOptions.responseType == ResponseType.bytes ||

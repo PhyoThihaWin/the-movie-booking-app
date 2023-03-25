@@ -13,6 +13,7 @@ const MARGIN_XLARGE = 32.0;
 const MARGIN_XXLARGE = 48.0;
 
 /// Generic Text Dimensions
+const TEXT_XSMALL = 10.0;
 const TEXT_SMALL = 12.0;
 const TEXT_REGULAR = 14.0;
 const TEXT_REGULAR_2X = 16.0;

@@ -67,11 +67,12 @@ extension StringFormat on String {
     var resultFormat = DateFormat(format);
     return resultFormat.format(parseDate);
   }
-
 }
 
 extension NullIntExtension on int? {
   int get orZero => this ?? 0;
+
+  int get toMMK => (this ?? 0) * 2100;
 }
 
 extension NullDoubleExtension on double? {
@@ -90,7 +91,6 @@ extension ListNullSafetyExtension<T> on List<T?>? {
   List<T> get orEmptyObject =>
       this?.where((element) => element != null).toList().cast() ?? [];
 }
-
 
 extension HexColor on Color {
   /// String is in the format "aabbcc" or "ffaabbcc" with an optional leading "#".

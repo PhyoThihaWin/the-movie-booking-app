@@ -6,6 +6,8 @@ import 'package:moviebooking/data/vos/city_vo.dart';
 import 'package:moviebooking/data/vos/movie_detail_vo.dart';
 import 'package:moviebooking/data/vos/movie_vo.dart';
 import 'package:moviebooking/data/vos/seating_plan_vo.dart';
+import 'package:moviebooking/data/vos/snack_category_vo.dart';
+import 'package:moviebooking/data/vos/snack_vo.dart';
 import 'package:moviebooking/data/vos/user_data_vo.dart';
 import 'package:moviebooking/network/api_constants.dart';
 import 'package:moviebooking/network/response/data_response.dart';
@@ -77,10 +79,13 @@ abstract class MovieBookingApi {
     @Query(PARAM_BOOKING_DATE) String bookingDate,
   );
 
+  @GET(ENDPOINT_GET_SNACK_CATEGORYS)
+  Future<DataResponse<List<SnackCategoryVo>>> getSnackCategories();
 
-
+  @GET(ENDPOINT_GET_SNACK_BY_CATEGORYS)
+  Future<DataResponse<List<SnackVo>>> getSnacksByCategory(
+      @Query(PARAM_CATEGORY_ID) int categoryId);
 }
-
 
 // (json) => (json as List<dynamic>)
 //     .map<List<SeatingPlanVo>>((i) => (i as List<dynamic>)

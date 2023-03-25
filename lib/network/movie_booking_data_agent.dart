@@ -4,6 +4,8 @@ import 'package:moviebooking/data/vos/cinema_show_time_vo.dart';
 import 'package:moviebooking/data/vos/city_vo.dart';
 import 'package:moviebooking/data/vos/movie_vo.dart';
 import 'package:moviebooking/data/vos/seating_plan_vo.dart';
+import 'package:moviebooking/data/vos/snack_category_vo.dart';
+import 'package:moviebooking/data/vos/snack_vo.dart';
 import 'package:moviebooking/data/vos/trailer_video_vo.dart';
 import 'package:moviebooking/data/vos/user_data_vo.dart';
 
@@ -33,4 +35,8 @@ abstract class MovieBookingDataAgent {
 
   Future<List<List<SeatingPlanVo>?>> getSeatingPlanByShowTime(
       int cinemaTimeSlotId, String bookingDate);
+
+  Future<List<SnackCategoryVo>> getSnackCategories();
+
+  Future<List<SnackVo>> getSnacksByCategory(int categoryId);
 }

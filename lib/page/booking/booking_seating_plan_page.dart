@@ -117,7 +117,9 @@ class BuyTicketViewSection extends StatelessWidget {
   Widget build(BuildContext context) {
     int ticketCount =
         seatPlanList.where((element) => element.isSelected ?? false).length;
+
     int totalPrice = 0;
+
     for (SeatingPlanVo element in seatPlanList) {
       if (element.isSelected.orFalse) {
         totalPrice += element.price.orZero;
@@ -138,7 +140,7 @@ class BuyTicketViewSection extends StatelessWidget {
               ),
             ),
             Text(
-              "$totalPrice \$",
+              "${totalPrice.toMMK} KS",
               style: const TextStyle(
                 color: PRIMARY_COLOR,
                 fontWeight: FontWeight.w700,
@@ -238,7 +240,9 @@ class SeatPlanGridViewSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return GridView.builder(
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 16, childAspectRatio: 1),
+        crossAxisCount: 18,
+        childAspectRatio: 0.7,
+      ),
       itemCount: seatPlanList.length,
       physics: const NeverScrollableScrollPhysics(),
       shrinkWrap: true,
@@ -247,7 +251,7 @@ class SeatPlanGridViewSection extends StatelessWidget {
           ? Center(child: RowTitleTextView(seatPlanList[index].symbol.orEmpty))
           : seatPlanList[index].type == SEAT_TYPE_SPACE
               ? const Spacer()
-              : ChairSingleImageView(
+              : SeatImageView(
                   seatingPlan: seatPlanList[index],
                   seatSelected: (seatPlanVo) {
                     seatSelected(index, seatPlanVo);
@@ -289,58 +293,26 @@ class RowTitleTextView extends StatelessWidget {
       text,
       style: const TextStyle(
         color: TEXT_GREY_COLOR,
-        fontSize: TEXT_SMALL,
+        fontSize: TEXT_XSMALL,
       ),
     );
   }
 }
 
-class ChairCoupleImageView extends StatefulWidget {
-  @override
-  State<ChairCoupleImageView> createState() => _ChairCoupleImageViewState();
-}
-
-class _ChairCoupleImageViewState extends State<ChairCoupleImageView> {
-  bool? _isSelected;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          (_isSelected ?? false) ? _isSelected = false : _isSelected = true;
-        });
-      },
-      child: Padding(
-        padding: const EdgeInsets.all(MARGIN_MEDIUM),
-        child: Image.asset(
-          "ic_chair_couple.png".toAssetIcon(),
-          width: MARGIN_XXLARGE,
-          color: _isSelected == null
-              ? SEARCH_BOX_COLOR
-              : _isSelected!
-                  ? PRIMARY_COLOR
-                  : Colors.white,
-        ),
-      ),
-    );
-  }
-}
-
-class ChairSingleImageView extends StatefulWidget {
+class SeatImageView extends StatefulWidget {
   final SeatingPlanVo seatingPlan;
   final Function(SeatingPlanVo) seatSelected;
 
-  ChairSingleImageView({
+  SeatImageView({
     required this.seatingPlan,
     required this.seatSelected,
   });
 
   @override
-  State<ChairSingleImageView> createState() => _ChairSingleImageViewState();
+  State<SeatImageView> createState() => _SeatImageViewState();
 }
 
-class _ChairSingleImageViewState extends State<ChairSingleImageView> {
+class _SeatImageViewState extends State<SeatImageView> {
   bool _isSelected = false;
 
   @override
@@ -361,7 +333,7 @@ class _ChairSingleImageViewState extends State<ChairSingleImageView> {
         });
       },
       child: Padding(
-        padding: const EdgeInsets.all(MARGIN_3),
+        padding: const EdgeInsets.all(MARGIN_XSMALL),
         child: Image.asset(
           "ic_chair_single.png".toAssetIcon(),
           width: MARGIN_XLARGE,
@@ -375,3 +347,35 @@ class _ChairSingleImageViewState extends State<ChairSingleImageView> {
     );
   }
 }
+
+// class ChairCoupleImageView extends StatefulWidget {
+//   @override
+//   State<ChairCoupleImageView> createState() => _ChairCoupleImageViewState();
+// }
+//
+// class _ChairCoupleImageViewState extends State<ChairCoupleImageView> {
+//   bool? _isSelected;
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return GestureDetector(
+//       onTap: () {
+//         setState(() {
+//           (_isSelected ?? false) ? _isSelected = false : _isSelected = true;
+//         });
+//       },
+//       child: Padding(
+//         padding: const EdgeInsets.all(MARGIN_MEDIUM),
+//         child: Image.asset(
+//           "ic_chair_couple.png".toAssetIcon(),
+//           width: MARGIN_XXLARGE,
+//           color: _isSelected == null
+//               ? SEARCH_BOX_COLOR
+//               : _isSelected!
+//               ? PRIMARY_COLOR
+//               : Colors.white,
+//         ),
+//       ),
+//     );
+//   }
+// }

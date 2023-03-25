@@ -1,4 +1,6 @@
+import 'package:dart_extensions/dart_extensions.dart';
 import 'package:flutter/material.dart';
+import 'package:moviebooking/data/vos/snack_vo.dart';
 import 'package:moviebooking/utils/ext.dart';
 import 'package:moviebooking/widget/quantity_control_view.dart';
 
@@ -6,12 +8,17 @@ import '../resource/colors.dart';
 import '../resource/dimens.dart';
 
 class FoodDrinkItemView extends StatefulWidget {
+  final SnackVo snack;
+  final Function(SnackVo) onQtyChanged;
+
+  FoodDrinkItemView({required this.snack, required this.onQtyChanged});
+
   @override
   State<FoodDrinkItemView> createState() => _FoodDrinkItemViewState();
 }
 
 class _FoodDrinkItemViewState extends State<FoodDrinkItemView> {
-  int _quantity = 0;
+  // int _quantity = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -34,14 +41,14 @@ class _FoodDrinkItemViewState extends State<FoodDrinkItemView> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Center(
-                child: Image.asset(
-                  "dummy_food.png".toAssetImage(),
-                  scale: 5,
+                child: Image.network(
+                  widget.snack.image.orEmpty,
+                  fit: BoxFit.cover,
                 ),
               ),
               const SizedBox(height: MARGIN_MEDIUM_2),
-              const Text(
-                "Potato Chips",
+              Text(
+                widget.snack.name.orEmpty,
                 style: TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.w600,
@@ -49,32 +56,35 @@ class _FoodDrinkItemViewState extends State<FoodDrinkItemView> {
                 ),
               ),
               const SizedBox(height: MARGIN_MEDIUM),
-              const Text(
-                "10,000KS",
+              Text(
+                "${widget.snack.price.toMMK} KS",
                 style: TextStyle(
                   color: PRIMARY_COLOR,
                   fontWeight: FontWeight.w600,
                 ),
               ),
               const SizedBox(height: MARGIN_MEDIUM),
-              _quantity == 0
+              widget.snack.qty == 0
                   ? AddToCartBtnView(() {
                       setState(() {
-                        _quantity = 1;
+                        widget.snack.qty = 1;
+                        widget.onQtyChanged.call(widget.snack);
                       });
                     })
                   : ItemQuantityControlView(
                       onClickPlus: () {
                         setState(() {
-                          _quantity++;
+                          widget.snack.qty++;
+                          widget.onQtyChanged.call(widget.snack);
                         });
                       },
                       onClickMinus: () {
                         setState(() {
-                          _quantity--;
+                          widget.snack.qty--;
+                          widget.onQtyChanged.call(widget.snack);
                         });
                       },
-                      quantity: _quantity,
+                      quantity: widget.snack.qty,
                     ),
             ],
           ),

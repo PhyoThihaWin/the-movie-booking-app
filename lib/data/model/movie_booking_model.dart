@@ -11,6 +11,8 @@ import 'package:moviebooking/data/vos/user_data_vo.dart';
 
 import '../vos/cinema_config_vo.dart';
 import '../vos/seating_plan_vo.dart';
+import '../vos/snack_category_vo.dart';
+import '../vos/snack_vo.dart';
 import '../vos/trailer_video_vo.dart';
 
 abstract class MovieBookingModel {
@@ -37,6 +39,12 @@ abstract class MovieBookingModel {
 
   Future<List<SeatingPlanVo>> getSeatingPlanByShowTime(
       int cinemaTimeSlotId, String bookingDate);
+
+  Future<List<SnackCategoryVo>> getSnackCategories();
+
+  Future<List<SnackVo>> getSnacksByCategory(int categoryId);
+
+
 
   /// Database
   Future<List<BannerVo?>> getBannersFromDb();
