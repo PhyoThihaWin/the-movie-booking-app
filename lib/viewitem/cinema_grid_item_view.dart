@@ -1,20 +1,28 @@
+import 'package:dart_extensions/dart_extensions.dart';
 import 'package:flutter/material.dart';
+import 'package:moviebooking/data/vos/cinema_show_time_vo.dart';
 import 'package:moviebooking/resource/colors.dart';
 import 'package:moviebooking/resource/strings.dart';
-import 'package:moviebooking/widget/ripple_effect.dart';
+import 'package:moviebooking/utils/ext.dart';
 
+import '../data/model/movie_booking_model.dart';
+import '../data/model/movie_booking_model_impl.dart';
 import '../resource/dimens.dart';
 
 class CinemaGridItemView extends StatelessWidget {
-  final String availability;
+  final Timeslots timeslots;
   final Function onLongPress;
 
-  CinemaGridItemView(this.availability, this.onLongPress);
+  CinemaGridItemView(this.timeslots, this.onLongPress);
 
   @override
   Widget build(BuildContext context) {
-    var bgColor = getContainerBgColor(availability);
-    var textColor = getTextColor(availability);
+    final MovieBookingModel movieBookingModel = MovieBookingModelImpl();
+
+    var config =
+        movieBookingModel.getTimeSlotConfigFromDb(timeslots.status.orZero);
+    var bgColor = HexColor.fromHex((config?.color).orEmpty);
+    // var textColor = Colors.red;
 
     return InkWell(
       onLongPress: () {
@@ -29,9 +37,9 @@ class CinemaGridItemView extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              "9:30 AM",
+              timeslots.startTime.orEmpty,
               style: TextStyle(
-                color: textColor,
+                color: bgColor,
                 fontSize: TEXT_REGULAR_2X,
                 fontWeight: FontWeight.w600,
               ),
@@ -40,7 +48,7 @@ class CinemaGridItemView extends StatelessWidget {
             Text(
               "3D IMAX",
               style: TextStyle(
-                color: textColor,
+                color: bgColor,
                 fontSize: TEXT_REGULAR,
                 fontWeight: FontWeight.w600,
               ),
@@ -49,16 +57,16 @@ class CinemaGridItemView extends StatelessWidget {
             Text(
               "Screen 1",
               style: TextStyle(
-                color: textColor,
+                color: bgColor,
                 fontSize: TEXT_REGULAR,
                 fontWeight: FontWeight.w600,
               ),
             ),
             SizedBox(height: MARGIN_SMALL),
             Text(
-              "2 Available",
+              timeslots.status.orZero.toString(),
               style: TextStyle(
-                color: textColor,
+                color: bgColor,
                 fontSize: TEXT_REGULAR,
                 fontWeight: FontWeight.w600,
               ),
@@ -89,15 +97,15 @@ class CinemaGridItemView extends StatelessWidget {
   }
 
   Color getTextColor(String available) {
-    Color textColor;
+    Color bgColor;
     switch (available) {
       case CINEMA_SOLD_OUT:
-        textColor = TEXT_GREY_COLOR;
+        bgColor = TEXT_GREY_COLOR;
         break;
       default:
-        textColor = Colors.white;
+        bgColor = Colors.white;
         break;
     }
-    return textColor;
+    return bgColor;
   }
 }

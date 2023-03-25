@@ -162,6 +162,35 @@ class _MovieBookingApi implements MovieBookingApi {
   }
 
   @override
+  Future<DataResponse<List<CinemaConfigVo>>> getCinemaConfig() async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<DataResponse<List<CinemaConfigVo>>>(Options(
+      method: 'GET',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              '/api/v2/configurations',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = DataResponse<List<CinemaConfigVo>>.fromJson(
+      _result.data!,
+      (json) => (json as List<dynamic>)
+          .map<CinemaConfigVo>(
+              (i) => CinemaConfigVo.fromJson(i as Map<String, dynamic>))
+          .toList(),
+    );
+    return value;
+  }
+
+  @override
   Future<MovieDetailVo> getMovieDetails(
     apiKey,
     language,
@@ -244,6 +273,73 @@ class _MovieBookingApi implements MovieBookingApi {
             )
             .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
     final value = GetTrailerVideoResponse.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<DataResponse<List<CinemaShowTimeVo>>> getCinemaShowTimeByDate(
+      date) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{r'date': date};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<DataResponse<List<CinemaShowTimeVo>>>(Options(
+      method: 'GET',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              '/api/v2/cinema-day-timeslots',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = DataResponse<List<CinemaShowTimeVo>>.fromJson(
+      _result.data!,
+      (json) => (json as List<dynamic>)
+          .map<CinemaShowTimeVo>(
+              (i) => CinemaShowTimeVo.fromJson(i as Map<String, dynamic>))
+          .toList(),
+    );
+    return value;
+  }
+
+  @override
+  Future<DataResponse<List<List<SeatingPlanVo>>>> getSeatingPlanByShowTime(
+    date,
+    bookingDate,
+  ) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'cinema_day_timeslot_id': date,
+      r'booking_date': bookingDate,
+    };
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<DataResponse<List<List<SeatingPlanVo>>>>(Options(
+      method: 'GET',
+      headers: _headers,
+      extra: _extra,
+    )
+            .compose(
+              _dio.options,
+              '/api/v2/seat-plan',
+              queryParameters: queryParameters,
+              data: _data,
+            )
+            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = DataResponse<List<List<SeatingPlanVo>>>.fromJson(
+      _result.data!,
+      (json) => (json as List<dynamic>)
+          .map<List<SeatingPlanVo>>((i) => (i as List<dynamic>)
+              .map<SeatingPlanVo>(
+                  (j) => SeatingPlanVo.fromJson(j as Map<String, dynamic>))
+              .toList())
+          .toList(),
+    );
     return value;
   }
 

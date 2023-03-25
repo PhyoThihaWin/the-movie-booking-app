@@ -11,7 +11,6 @@ import '../../widget/empty_data_view.dart';
 import '../../widget/filter_dropdown_view.dart';
 
 class CinemaSearchPage extends StatefulWidget {
-
   bool _searchState = false;
 
   @override
@@ -32,7 +31,6 @@ class _CinemaSearchPageState extends State<CinemaSearchPage> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       backgroundColor: HOME_SCREEN_BACKGROUND_COLOR,
       appBar: AppBar(
@@ -97,12 +95,10 @@ class _CinemaSearchPageState extends State<CinemaSearchPage> {
                           ),
                         ),
                         ListView.builder(
-                          itemCount: 3,
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemBuilder: (context, index) =>
-                              CinemaParentItemView(cinemaList),
-                        )
+                            itemCount: 3,
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemBuilder: (context, index) => Container()),
                       ],
                     ),
                   ),

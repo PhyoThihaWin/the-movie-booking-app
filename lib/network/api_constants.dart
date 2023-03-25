@@ -8,17 +8,21 @@ const String ENDPOINT_SIGN_IN_WITH_PHONE = "/api/v2/check-otp";
 const String ENDPOINT_GET_CITIES = "/api/v2/cities";
 const String ENDPOINT_GET_BANNERS = "/api/v2/banners";
 const String ENDPOINT_GET_MOVIES = "/api/v2/movies?status=current";
-
+const String ENDPOINT_GET_CINEMA_CONFIG = "/api/v2/configurations";
+const String ENDPOINT_GET_CINEMA_SHOW_TIME = "/api/v2/cinema-day-timeslots";
+const String ENDPOINT_GET_SEATING_PLAN_BY_SHOW_TIME = "/api/v2/seat-plan";
 
 /// Parameters
 const String PARAM_MOVIE_CURRENT = "current";
 const String PARAM_MOVIE_COMING_SOON = "comingsoon";
 
-
 const String PARAM_API_KEY = "api_key";
 const String PARAM_LANGUAGE = "language";
 const String PARAM_PAGE = "page";
 const String PARAM_GENRE_ID = "with_genres";
+const String PARAM_DATE = "date";
+const String PARAM_CINEMA_DAY_TIME_SLOT_ID = "cinema_day_timeslot_id";
+const String PARAM_BOOKING_DATE = "booking_date";
 
 /// Constant Values
 const String API_KEY = "4b83b4555eea7980a5a2c9814cdb1bc1";

@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:moviebooking/data/vos/cinema_show_time_vo.dart';
 import 'package:moviebooking/resource/strings.dart';
 import 'package:moviebooking/utils/ext.dart';
 
+import '../../data/model/movie_booking_model.dart';
+import '../../data/model/movie_booking_model_impl.dart';
 import '../../data/vos/booking_date.dart';
 import '../../resource/colors.dart';
 import '../../resource/dimens.dart';
@@ -13,18 +16,44 @@ import '../../widget/appbar_back_icon_view.dart';
 import '../../widget/booking_available_info_view.dart';
 import '../home_page.dart';
 
-class BookingCinemaPage extends StatelessWidget {
+class BookingCinemaPage extends StatefulWidget {
+  @override
+  State<BookingCinemaPage> createState() => _BookingCinemaPageState();
+}
+
+class _BookingCinemaPageState extends State<BookingCinemaPage> {
   List<String> movieTypeList = ["2D", "3D", "3D IMAX", "3D DBOX"];
-  List<String> cinemaList = [
-    CINEMA_SOLD_OUT,
-    CINEMA_SOLD_OUT,
-    CINEMA_AVAILABLE,
-    CINEMA_ALMOST_FULL,
-    CINEMA_AVAILABLE,
-    CINEMA_FILLING_FAST,
-    CINEMA_AVAILABLE,
-    CINEMA_FILLING_FAST
-  ];
+  final MovieBookingModel movieBookingModel = MovieBookingModelImpl();
+
+  // List<String> cinemaList = [
+  //   CINEMA_SOLD_OUT,
+  //   CINEMA_SOLD_OUT,
+  //   CINEMA_AVAILABLE,
+  //   CINEMA_ALMOST_FULL,
+  //   CINEMA_AVAILABLE,
+  //   CINEMA_FILLING_FAST,
+  //   CINEMA_AVAILABLE,
+  //   CINEMA_FILLING_FAST
+  // ];
+
+  List<CinemaShowTimeVo>? cinemaShowTimeList;
+
+  @override
+  void initState() {
+    final _currentDate = DateTime.now();
+    final _formatter = DateFormat('yyyy-MM-dd');
+    getCinemaShowTimeList(_formatter.format(_currentDate));
+
+    super.initState();
+  }
+
+  void getCinemaShowTimeList(String date) {
+    movieBookingModel.getCinemaShowTimeByDate(date).then((value) {
+      setState(() {
+        cinemaShowTimeList = value.orEmptyObject;
+      });
+    }).catchError((error) => debugPrint(error.toString()));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +72,9 @@ class BookingCinemaPage extends StatelessWidget {
           children: [
             SizedBox(
               height: context.getScreenHeightBy(6),
-              child: BookingDateListViewSection(),
+              child: BookingDateListViewSection((date) {
+                getCinemaShowTimeList(date);
+              }),
             ),
             SizedBox(height: MARGIN_MEDIUM_2),
             Row(
@@ -67,10 +98,11 @@ class BookingCinemaPage extends StatelessWidget {
             ),
             SizedBox(height: MARGIN_MEDIUM),
             ListView.builder(
-              itemCount: 7,
+              itemCount: cinemaShowTimeList.orEmpty.length,
               shrinkWrap: true,
               physics: NeverScrollableScrollPhysics(),
-              itemBuilder: (context, index) => CinemaParentItemView(cinemaList),
+              itemBuilder: (context, index) =>
+                  CinemaParentItemView(cinemaShowTimeList.orEmpty[index]!),
             )
           ],
         ),
@@ -131,6 +163,10 @@ class MovieTypeContainerView extends StatelessWidget {
 }
 
 class BookingDateListViewSection extends StatefulWidget {
+  final Function(String date) onDateClick;
+
+  BookingDateListViewSection(this.onDateClick);
+
   @override
   State<BookingDateListViewSection> createState() =>
       _BookingDateListViewSectionState();
@@ -142,7 +178,7 @@ class _BookingDateListViewSectionState
 
   @override
   Widget build(BuildContext context) {
-    var dateList = getBookingDateList(10);
+    var dateList = getBookingDateList(14);
     return ListView.builder(
       itemCount: dateList.length,
       padding: const EdgeInsets.symmetric(
@@ -150,9 +186,10 @@ class _BookingDateListViewSectionState
       ),
       scrollDirection: Axis.horizontal,
       itemBuilder: (context, index) => BookingDateItemView(
-        dateList[index],
-        selectedIndex == index,
-        () {
+        bookingDate: dateList[index],
+        isSelected: selectedIndex == index,
+        onClickItem: (date) {
+          widget.onDateClick.call(date);
           setState(() {
             selectedIndex = index;
           });
@@ -164,7 +201,8 @@ class _BookingDateListViewSectionState
   List<BookingDate> getBookingDateList(int length) {
     final _currentDate = DateTime.now();
     final _dayNameFormatter = DateFormat('EEE');
-    final _dateFormatter = DateFormat('d');
+    final _shortDateFormatter = DateFormat('d');
+    final _dateFormatter = DateFormat('yyyy-MM-dd');
     final _monthFormatter = DateFormat('MMM');
     final bookingDateList = <BookingDate>[];
 
@@ -181,10 +219,10 @@ class _BookingDateListViewSectionState
       }
       bookingDateList.add(
         BookingDate(
-          dayName: dayName,
-          monthName: _monthFormatter.format(date),
-          date: _dateFormatter.format(date),
-        ),
+            dayName: dayName,
+            monthName: _monthFormatter.format(date),
+            date: _shortDateFormatter.format(date),
+            fullDate: _dateFormatter.format(date)),
       );
     }
     return bookingDateList;

@@ -20,6 +20,8 @@ class UserDataDao {
   }
 
   UserDataVo? getUserData() {
-    getUserDataBox().getAt(0);
+    return getUserDataBox().values.length > 0
+        ? getUserDataBox().getAt(0)
+        : null;
   }
 }

@@ -8,15 +8,18 @@ import '../resource/dimens.dart';
 class BookingDateItemView extends StatelessWidget {
   final BookingDate bookingDate;
   final bool isSelected;
-  final Function() onClickItem;
+  final Function(String date) onClickItem;
 
-  BookingDateItemView(this.bookingDate, this.isSelected, this.onClickItem);
+  BookingDateItemView(
+      {required this.bookingDate,
+      required this.isSelected,
+      required this.onClickItem});
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        onClickItem();
+        onClickItem(bookingDate.fullDate);
       },
       child: Container(
         width: context.getScreenWidthBy(4.5),

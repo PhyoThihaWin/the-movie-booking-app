@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:moviebooking/data/vos/cinema_show_time_vo.dart';
 import 'package:moviebooking/resource/colors.dart';
 import 'package:moviebooking/viewitem/cinema_parent_item_view.dart';
 
@@ -22,7 +23,7 @@ class CinemaPage extends StatelessWidget {
       backgroundColor: HOME_SCREEN_BACKGROUND_COLOR,
       body: ListView.builder(
         itemCount: 15,
-        itemBuilder: (context, index) => CinemaParentItemView(cinemaList),
+        itemBuilder: (context, index) => Container(),
       ),
     );
   }

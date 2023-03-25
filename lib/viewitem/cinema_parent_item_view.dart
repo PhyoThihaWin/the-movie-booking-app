@@ -1,4 +1,6 @@
+import 'package:dart_extensions/dart_extensions.dart';
 import 'package:flutter/material.dart';
+import 'package:moviebooking/data/vos/cinema_show_time_vo.dart';
 import 'package:moviebooking/page/booking/booking_chair_page.dart';
 import 'package:moviebooking/page/cinema/cinema_detail_page.dart';
 import 'package:moviebooking/utils/ext.dart';
@@ -10,9 +12,9 @@ import 'cinema_facility_item_view.dart';
 import 'cinema_grid_item_view.dart';
 
 class CinemaParentItemView extends StatefulWidget {
-  final List<String> cinemaList;
+  final CinemaShowTimeVo cinemaShowTime;
 
-  CinemaParentItemView(this.cinemaList);
+  CinemaParentItemView(this.cinemaShowTime);
 
   @override
   State<CinemaParentItemView> createState() => _CinemaParentItemViewState();
@@ -39,7 +41,7 @@ class _CinemaParentItemViewState extends State<CinemaParentItemView> {
             ),
             child: Column(
               children: [
-                CinemaTitleView(),
+                CinemaTitleView(widget.cinemaShowTime.cinema.orEmpty),
                 const SizedBox(height: MARGIN_MEDIUM_2),
                 const CinemaServicesRowView(),
                 const SizedBox(height: MARGIN_LARGE),
@@ -51,7 +53,9 @@ class _CinemaParentItemViewState extends State<CinemaParentItemView> {
           visible: _isExpand,
           child: Column(
             children: [
-              CinemaScreenGridView(cinemaList: widget.cinemaList),
+              widget.cinemaShowTime.timeslots == null
+                  ? Center(child: CircularProgressIndicator())
+                  : CinemaScreenGridView(widget.cinemaShowTime.timeslots!),
               const SizedBox(height: MARGIN_LARGE),
               const Padding(
                 padding: EdgeInsets.symmetric(
@@ -70,12 +74,9 @@ class _CinemaParentItemViewState extends State<CinemaParentItemView> {
 }
 
 class CinemaScreenGridView extends StatelessWidget {
-  const CinemaScreenGridView({
-    Key? key,
-    required this.cinemaList,
-  }) : super(key: key);
+  final List<Timeslots> timeSlotList;
 
-  final List<String> cinemaList;
+  CinemaScreenGridView(this.timeSlotList);
 
   @override
   Widget build(BuildContext context) {
@@ -85,12 +86,12 @@ class CinemaScreenGridView extends StatelessWidget {
         mainAxisSpacing: MARGIN_LARGE,
         crossAxisSpacing: MARGIN_LARGE,
       ),
-      itemCount: cinemaList.length,
+      itemCount: timeSlotList.length,
       padding: const EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM_3),
       physics: const NeverScrollableScrollPhysics(),
       shrinkWrap: true,
       itemBuilder: (context, index) => CinemaGridItemView(
-        cinemaList[index],
+        timeSlotList[index],
         () {
           context.next(BookingChairPage());
         },
@@ -100,13 +101,17 @@ class CinemaScreenGridView extends StatelessWidget {
 }
 
 class CinemaTitleView extends StatelessWidget {
+  final String cinemaName;
+
+  CinemaTitleView(this.cinemaName);
+
   @override
   Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        const Text(
-          "JCGV : Junction City",
+        Text(
+          cinemaName,
           style: TextStyle(
             color: Colors.white,
             fontSize: TEXT_REGULAR_2X,

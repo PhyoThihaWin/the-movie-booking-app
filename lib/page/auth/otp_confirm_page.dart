@@ -39,6 +39,9 @@ class OtpConfirmPage extends StatelessWidget {
                       movieBookingModel
                           .signInWithPhone(phoneNumber, otpCode)
                           .then((value) {
+                        if (value != null) {
+                          movieBookingModel.saveUserDataToDb(value);
+                        }
                         Navigator.pop(context);
                         if (value != null) context.next(PickRegionPage());
                       }).catchError((error) {

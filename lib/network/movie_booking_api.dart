@@ -1,8 +1,11 @@
 import 'package:dio/dio.dart';
 import 'package:moviebooking/data/vos/banner_vo.dart';
+import 'package:moviebooking/data/vos/cinema_config_vo.dart';
+import 'package:moviebooking/data/vos/cinema_show_time_vo.dart';
 import 'package:moviebooking/data/vos/city_vo.dart';
 import 'package:moviebooking/data/vos/movie_detail_vo.dart';
 import 'package:moviebooking/data/vos/movie_vo.dart';
+import 'package:moviebooking/data/vos/seating_plan_vo.dart';
 import 'package:moviebooking/data/vos/user_data_vo.dart';
 import 'package:moviebooking/network/api_constants.dart';
 import 'package:moviebooking/network/response/data_response.dart';
@@ -40,6 +43,9 @@ abstract class MovieBookingApi {
     @Query("status") String status,
   );
 
+  @GET(ENDPOINT_GET_CINEMA_CONFIG)
+  Future<DataResponse<List<CinemaConfigVo>>> getCinemaConfig();
+
   @GET("https://api.themoviedb.org/3/movie/{movie_id}")
   Future<MovieDetailVo> getMovieDetails(
     @Query(PARAM_API_KEY) String apiKey,
@@ -59,4 +65,18 @@ abstract class MovieBookingApi {
     @Query(PARAM_LANGUAGE) String language,
     @Path("movie_id") int movieId,
   );
+
+  @GET(ENDPOINT_GET_CINEMA_SHOW_TIME)
+  Future<DataResponse<List<CinemaShowTimeVo>>> getCinemaShowTimeByDate(
+    @Query(PARAM_DATE) String date,
+  );
+
+  @GET(ENDPOINT_GET_SEATING_PLAN_BY_SHOW_TIME)
+  Future<DataResponse<List<List<SeatingPlanVo>>>> getSeatingPlanByShowTime(
+    @Query(PARAM_CINEMA_DAY_TIME_SLOT_ID) int date,
+    @Query(PARAM_BOOKING_DATE) String bookingDate,
+  );
+
+
+
 }

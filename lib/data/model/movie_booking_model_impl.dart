@@ -1,9 +1,15 @@
+import 'dart:ffi';
+
 import 'package:moviebooking/data/model/movie_booking_model.dart';
 import 'package:moviebooking/data/vos/actor_vo.dart';
 import 'package:moviebooking/data/vos/banner_vo.dart';
+import 'package:moviebooking/data/vos/cinema_config_vo.dart';
+import 'package:moviebooking/data/vos/cinema_show_time_vo.dart';
 import 'package:moviebooking/data/vos/city_vo.dart';
 import 'package:moviebooking/data/vos/movie_detail_vo.dart';
 import 'package:moviebooking/data/vos/movie_vo.dart';
+import 'package:moviebooking/data/vos/seating_plan_vo.dart';
+import 'package:moviebooking/data/vos/time_slot_config_vo.dart';
 import 'package:moviebooking/data/vos/trailer_video_vo.dart';
 import 'package:moviebooking/data/vos/user_data_vo.dart';
 import 'package:moviebooking/network/movie_booking_data_agent.dart';
@@ -11,6 +17,8 @@ import 'package:moviebooking/network/movie_booking_data_agent_impl.dart';
 import 'package:moviebooking/persistence/daos/banner_dao.dart';
 import 'package:moviebooking/persistence/daos/movie_dao.dart';
 import 'package:moviebooking/persistence/daos/movie_detail_dao.dart';
+import 'package:moviebooking/persistence/daos/timeslot_config_dao.dart';
+import 'package:moviebooking/persistence/daos/user_data_dao.dart';
 import 'package:moviebooking/utils/ext.dart';
 
 class MovieBookingModelImpl extends MovieBookingModel {
@@ -26,6 +34,8 @@ class MovieBookingModelImpl extends MovieBookingModel {
   BannerDao bannerDao = BannerDao();
   MovieDao movieDao = MovieDao();
   MovieDetailDao movieDetailDao = MovieDetailDao();
+  UserDataDao userDataDao = UserDataDao();
+  TimeSlotConfigDao timeSlotConfigDao = TimeSlotConfigDao();
 
   @override
   Future<String> getOTP(String phone) {
@@ -73,6 +83,11 @@ class MovieBookingModelImpl extends MovieBookingModel {
   }
 
   @override
+  Future<List<CinemaConfigVo?>> getCinemaConfig() {
+    return movieBookingDataAgent.getCinemaConfig();
+  }
+
+  @override
   Future<MovieDetailVo> getMovieDetails(int movieId) {
     return movieBookingDataAgent.getMovieDetails(movieId).then((value) {
       movieDetailDao.saveMovieDetail(value);
@@ -90,6 +105,18 @@ class MovieBookingModelImpl extends MovieBookingModel {
     return movieBookingDataAgent.getCreditsByMovie(movieId);
   }
 
+  @override
+  Future<List<CinemaShowTimeVo?>> getCinemaShowTimeByDate(String date) {
+    return movieBookingDataAgent.getCinemaShowTimeByDate(date);
+  }
+
+  @override
+  Future<List<List<SeatingPlanVo>?>> getSeatingPlanByShowTime(
+      int cinemaTimeSlotId, String bookingDate) {
+    return movieBookingDataAgent.getSeatingPlanByShowTime(
+        cinemaTimeSlotId, bookingDate);
+  }
+
   /// From Database
 
   @override
@@ -105,5 +132,25 @@ class MovieBookingModelImpl extends MovieBookingModel {
   @override
   Future<MovieDetailVo?> getMovieDetailFromDb(int movieId) {
     return Future.value(movieDetailDao.getMovieDetail(movieId));
+  }
+
+  @override
+  UserDataVo? getUserDataFromDb() {
+    return userDataDao.getUserData();
+  }
+
+  @override
+  void saveUserDataToDb(UserDataVo userData) {
+    userDataDao.saveUserData(userData);
+  }
+
+  @override
+  TimeSlotConfigVo? getTimeSlotConfigFromDb(int id) {
+    return timeSlotConfigDao.getById(id);
+  }
+
+  @override
+  void saveTimeSlotConfigsToDb(List<TimeSlotConfigVo> list) {
+    timeSlotConfigDao.saveAll(list);
   }
 }
