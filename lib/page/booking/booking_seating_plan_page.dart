@@ -29,6 +29,10 @@ class _BookingSeatingPlanPageState extends State<BookingSeatingPlanPage> {
   final MovieBookingModel movieBookingModel = MovieBookingModelImpl();
   List<SeatingPlanVo>? seatPlanList;
 
+  TransformationController _transformationController =
+      TransformationController();
+  TapDownDetails? _doubleTapDetails;
+
   @override
   void initState() {
     movieBookingModel
@@ -67,36 +71,41 @@ class _BookingSeatingPlanPageState extends State<BookingSeatingPlanPage> {
       body: Column(
         children: [
           Expanded(
-            child: zoom.Zoom(
-              maxZoomWidth: 800,
-              maxZoomHeight: 1800,
-              initScale: 0.5,
-              doubleTapScaleChange: 0.9,
-              centerOnScale: true,
-              opacityScrollBars: 0,
-              canvasColor: HOME_SCREEN_BACKGROUND_COLOR,
-              backgroundColor: HOME_SCREEN_BACKGROUND_COLOR,
-              child: Column(
-                children: [
-                  Image.asset("cinema_screen.png".toAssetImage()),
-                  ChairPriceTextView("Normal Price"),
-                  const SizedBox(height: MARGIN_MEDIUM),
-                  seatPlanList == null
-                      ? const SizedBox(
-                          height: 200,
-                          child: Center(child: CircularProgressIndicator()))
-                      : SeatPlanGridViewSection(
-                          seatPlanList: seatPlanList!,
-                          seatSelected: (index, seatPlanVo) {
-                            setState(() {
-                              seatPlanList
-                                  ?.whereIndexed((i, item) => i == index)
-                                  .first
-                                  .isSelected = seatPlanVo.isSelected;
-                            });
-                          }),
-                  const SizedBox(height: MARGIN_LARGE),
-                ],
+            child: GestureDetector(
+              onDoubleTapDown: _handleDoubleTapDown,
+              onDoubleTap: _handleDoubleTap,
+              child: InteractiveViewer(
+                transformationController: _transformationController,
+                boundaryMargin: EdgeInsets.all(5.0),
+                onInteractionEnd: (ScaleEndDetails endDetails) {
+                  print(endDetails);
+                  print(endDetails.velocity);
+                  setState(() {
+                    // velocity = endDetails.velocity.toString();
+                  });
+                },
+                child: Column(
+                  children: [
+                    Image.asset("cinema_screen.png".toAssetImage()),
+                    ChairPriceTextView("Normal Price"),
+                    const SizedBox(height: MARGIN_MEDIUM),
+                    seatPlanList == null
+                        ? const SizedBox(
+                            height: 200,
+                            child: Center(child: CircularProgressIndicator()))
+                        : SeatPlanGridViewSection(
+                            seatPlanList: seatPlanList!,
+                            seatSelected: (index, seatPlanVo) {
+                              setState(() {
+                                seatPlanList
+                                    ?.whereIndexed((i, item) => i == index)
+                                    .first
+                                    .isSelected = seatPlanVo.isSelected;
+                              });
+                            }),
+                    const SizedBox(height: MARGIN_LARGE),
+                  ],
+                ),
               ),
             ),
           ),
@@ -105,6 +114,8 @@ class _BookingSeatingPlanPageState extends State<BookingSeatingPlanPage> {
               const BookingAvailableInfoRowSection(),
               ZoomSeekBarView((seekValue) {
                 debugPrint("zoom ==> $seekValue");
+                _transformationController.value =
+                    Matrix4.identity().scaled(seekValue);
               }),
               Padding(
                 padding: const EdgeInsets.only(
@@ -138,6 +149,25 @@ class _BookingSeatingPlanPageState extends State<BookingSeatingPlanPage> {
         ],
       ),
     );
+  }
+
+  void _handleDoubleTapDown(TapDownDetails details) {
+    _doubleTapDetails = details;
+  }
+
+  void _handleDoubleTap() {
+    if (_transformationController.value != Matrix4.identity()) {
+      _transformationController.value = Matrix4.identity();
+    } else {
+      final position = _doubleTapDetails?.localPosition;
+      // For a 3x zoom
+      _transformationController.value = Matrix4.identity()
+        ..translate(-(position?.dx ?? 0) * 2, -(position?.dy ?? 0) * 2)
+        ..scale(3.0);
+      // Fox a 2x zoom
+      // ..translate(-position.dx, -position.dy)
+      // ..scale(2.0);
+    }
   }
 }
 
@@ -233,7 +263,7 @@ class _ZoomSeekBarViewState extends State<ZoomSeekBarView> {
                 });
               },
               semanticFormatterCallback: (double newValue) {
-                return '${newValue.round()}';
+                return '${newValue}';
               },
             ),
           ),
