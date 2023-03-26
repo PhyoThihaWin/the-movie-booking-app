@@ -7,6 +7,8 @@ import 'package:moviebooking/resource/colors.dart';
 import 'package:moviebooking/resource/dimens.dart';
 import 'package:moviebooking/utils/app_constants.dart';
 import 'package:moviebooking/utils/ext.dart';
+import 'package:pinch_zoom/pinch_zoom.dart';
+import 'package:zoom_widget/zoom_widget.dart' as zoom;
 
 import '../../data/model/movie_booking_model.dart';
 import '../../data/model/movie_booking_model_impl.dart';
@@ -65,7 +67,15 @@ class _BookingSeatingPlanPageState extends State<BookingSeatingPlanPage> {
       body: Column(
         children: [
           Expanded(
-            child: SingleChildScrollView(
+            child: zoom.Zoom(
+              maxZoomWidth: 800,
+              maxZoomHeight: 1800,
+              initScale: 0.5,
+              doubleTapScaleChange: 0.9,
+              centerOnScale: true,
+              opacityScrollBars: 0,
+              canvasColor: HOME_SCREEN_BACKGROUND_COLOR,
+              backgroundColor: HOME_SCREEN_BACKGROUND_COLOR,
               child: Column(
                 children: [
                   Image.asset("cinema_screen.png".toAssetImage()),
@@ -93,7 +103,9 @@ class _BookingSeatingPlanPageState extends State<BookingSeatingPlanPage> {
           Column(
             children: [
               const BookingAvailableInfoRowSection(),
-              ZoomSeekBarView(),
+              ZoomSeekBarView((seekValue) {
+                debugPrint("zoom ==> $seekValue");
+              }),
               Padding(
                 padding: const EdgeInsets.only(
                   left: MARGIN_MEDIUM_3,
@@ -185,12 +197,16 @@ class BuyTicketViewSection extends StatelessWidget {
 }
 
 class ZoomSeekBarView extends StatefulWidget {
+  final Function(double) onChanged;
+
+  ZoomSeekBarView(this.onChanged);
+
   @override
   State<ZoomSeekBarView> createState() => _ZoomSeekBarViewState();
 }
 
 class _ZoomSeekBarViewState extends State<ZoomSeekBarView> {
-  int valueHolder = 2;
+  int valueHolder = 1;
 
   @override
   Widget build(BuildContext context) {
@@ -213,6 +229,7 @@ class _ZoomSeekBarViewState extends State<ZoomSeekBarView> {
               onChanged: (double newValue) {
                 setState(() {
                   valueHolder = newValue.round();
+                  widget.onChanged.call(newValue);
                 });
               },
               semanticFormatterCallback: (double newValue) {
@@ -261,25 +278,27 @@ class SeatPlanGridViewSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GridView.builder(
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 18,
-        childAspectRatio: 0.7,
+    return Expanded(
+      child: GridView.builder(
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 18,
+          childAspectRatio: 0.7,
+        ),
+        itemCount: seatPlanList.length,
+        physics: NeverScrollableScrollPhysics(),
+        itemBuilder: (context, index) =>
+            seatPlanList[index].type == SEAT_TYPE_TEXT
+                ? Center(
+                    child: RowTitleTextView(seatPlanList[index].symbol.orEmpty))
+                : seatPlanList[index].type == SEAT_TYPE_SPACE
+                    ? const Spacer()
+                    : SeatImageView(
+                        seatingPlan: seatPlanList[index],
+                        seatSelected: (seatPlanVo) {
+                          seatSelected(index, seatPlanVo);
+                        },
+                      ),
       ),
-      itemCount: seatPlanList.length,
-      physics: const NeverScrollableScrollPhysics(),
-      shrinkWrap: true,
-      itemBuilder: (context, index) => seatPlanList[index].type ==
-              SEAT_TYPE_TEXT
-          ? Center(child: RowTitleTextView(seatPlanList[index].symbol.orEmpty))
-          : seatPlanList[index].type == SEAT_TYPE_SPACE
-              ? const Spacer()
-              : SeatImageView(
-                  seatingPlan: seatPlanList[index],
-                  seatSelected: (seatPlanVo) {
-                    seatSelected(index, seatPlanVo);
-                  },
-                ),
     );
   }
 }

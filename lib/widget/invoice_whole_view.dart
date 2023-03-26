@@ -259,8 +259,18 @@ class _CheckoutSnackColumnViewState
       snackTotalPrice = (widget.snackCartList
           .map((e) => e.qty * e.price.orZero)
           .reduce((value, element) => value + element)).orZero;
-    }
+    } else snackTotalPrice = 0;
     super.initState();
+  }
+
+  @override
+  void didUpdateWidget(covariant _CheckoutSnackColumnListView oldWidget) {
+    if (widget.snackCartList.isNotEmpty) {
+      snackTotalPrice = (widget.snackCartList
+          .map((e) => e.qty * e.price.orZero)
+          .reduce((value, element) => value + element)).orZero;
+    } else snackTotalPrice = 0;
+    super.didUpdateWidget(oldWidget);
   }
 
   @override

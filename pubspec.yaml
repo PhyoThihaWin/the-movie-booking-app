@@ -51,6 +51,8 @@ dependencies:
   hive: ^2.2.3
   hive_flutter: ^1.1.0
   zoom_widget: ^2.0.1
+  pinch_zoom: ^1.0.0
+
 
 dev_dependencies:
   flutter_test:

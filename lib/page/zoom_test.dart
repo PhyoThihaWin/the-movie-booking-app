@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:zoom_widget/zoom_widget.dart';
+import 'package:pinch_zoom/pinch_zoom.dart';
+
 
 class ZoomTestPage extends StatelessWidget {
   const ZoomTestPage({Key? key}) : super(key: key);
@@ -10,20 +11,18 @@ class ZoomTestPage extends StatelessWidget {
       body: Column(
         children: [
           Expanded(
-            child: Zoom(
-              initTotalZoomOut: true,
-              opacityScrollBars: 0,
-              child: Center(
-                child: FlutterLogo(
-                  size: 1000,
-                ),
-              ),
+            child: PinchZoom(
+              resetDuration: const Duration(milliseconds: 100),
+              maxScale: 2.5,
+              onZoomStart: (){print('Start zooming');},
+              onZoomEnd: (){print('Stop zooming');},
+              child: Image.network('https://placekitten.com/640/360'),
             ),
           ),
-          Expanded(
-              child: Container(
+          Container(
+            height: 200,
             color: Colors.red,
-          ))
+          )
         ],
       ),
     );

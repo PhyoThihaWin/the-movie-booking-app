@@ -46,6 +46,7 @@ class _BuySnackPageState extends State<BuySnackPage> {
     super.initState();
   }
 
+
   void _getSnacksByCategory(int categoryId) {
     movieBookingModel.getSnacksByCategory(categoryId).then((value) {
       setState(() {

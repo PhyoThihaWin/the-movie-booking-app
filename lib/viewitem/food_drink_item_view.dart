@@ -40,10 +40,12 @@ class _FoodDrinkItemViewState extends State<FoodDrinkItemView> {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Center(
-                child: Image.network(
-                  widget.snack.image.orEmpty,
-                  fit: BoxFit.cover,
+              Expanded(
+                child: Center(
+                  child: Image.network(
+                    widget.snack.image.orEmpty,
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
               const SizedBox(height: MARGIN_MEDIUM_2),
