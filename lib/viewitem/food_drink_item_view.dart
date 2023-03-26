@@ -72,19 +72,8 @@ class _FoodDrinkItemViewState extends State<FoodDrinkItemView> {
                       });
                     })
                   : ItemQuantityControlView(
-                      onClickPlus: () {
-                        setState(() {
-                          widget.snack.qty++;
-                          widget.onQtyChanged.call(widget.snack);
-                        });
-                      },
-                      onClickMinus: () {
-                        setState(() {
-                          widget.snack.qty--;
-                          widget.onQtyChanged.call(widget.snack);
-                        });
-                      },
-                      quantity: widget.snack.qty,
+                      snackVo: widget.snack,
+                      onQtyChanged: widget.onQtyChanged,
                     ),
             ],
           ),
@@ -124,12 +113,10 @@ class AddToCartBtnView extends StatelessWidget {
 }
 
 class ItemQuantityControlView extends StatelessWidget {
-  final Function? onClickPlus;
-  final Function? onClickMinus;
-  final int? quantity;
+  final SnackVo snackVo;
+  final Function(SnackVo) onQtyChanged;
 
-  ItemQuantityControlView(
-      {this.onClickPlus, this.onClickMinus, this.quantity = 1});
+  ItemQuantityControlView({required this.snackVo, required this.onQtyChanged});
 
   @override
   Widget build(BuildContext context) {
@@ -140,13 +127,8 @@ class ItemQuantityControlView extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             QuantityControlView(
-              onClickPlus: () {
-                onClickPlus?.call();
-              },
-              onClickMinus: () {
-                onClickMinus?.call();
-              },
-              qunatity: quantity,
+              snackVo: snackVo,
+              onQtyChanged: onQtyChanged,
             ),
           ],
         ),

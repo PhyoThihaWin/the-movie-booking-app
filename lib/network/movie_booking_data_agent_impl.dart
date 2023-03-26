@@ -1,11 +1,13 @@
 import 'package:dio/dio.dart';
 import 'package:dart_extensions/dart_extensions.dart';
 import 'package:moviebooking/data/vos/banner_vo.dart';
+import 'package:moviebooking/data/vos/checkout_result_vo.dart';
 import 'package:moviebooking/data/vos/cinema_config_vo.dart';
 import 'package:moviebooking/data/vos/cinema_show_time_vo.dart';
 import 'package:moviebooking/data/vos/city_vo.dart';
 import 'package:moviebooking/data/vos/movie_detail_vo.dart';
 import 'package:moviebooking/data/vos/movie_vo.dart';
+import 'package:moviebooking/data/vos/payment_type_vo.dart';
 import 'package:moviebooking/data/vos/seating_plan_vo.dart';
 import 'package:moviebooking/data/vos/snack_category_vo.dart';
 import 'package:moviebooking/data/vos/snack_vo.dart';
@@ -18,6 +20,7 @@ import 'package:moviebooking/utils/ext.dart';
 import '../data/model/movie_booking_model.dart';
 import '../data/model/movie_booking_model_impl.dart';
 import '../data/vos/actor_vo.dart';
+import '../data/vos/checkout_request_vo.dart';
 import 'api_constants.dart';
 import 'movie_booking_api.dart';
 
@@ -154,6 +157,25 @@ class MovieBookingDataAgentImpl extends MovieBookingDataAgent {
         .getSnacksByCategory(categoryId)
         .asStream()
         .map((event) => event.data.orEmptyObject)
+        .first;
+  }
+
+  @override
+  Future<List<PaymentTypeVo>> getPaymentTypes() {
+    return movieBookingApi
+        .getPaymentTypes()
+        .asStream()
+        .map((event) => event.data.orEmptyObject)
+        .first;
+  }
+
+  @override
+  Future<CheckoutResultVo?> checkoutBookingTicket(
+      CheckoutRequestVo checkoutRequestVo) {
+    return movieBookingApi
+        .checkoutBookingTicket(checkoutRequestVo)
+        .asStream()
+        .map((event) => event.data)
         .first;
   }
 }

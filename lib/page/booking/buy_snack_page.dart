@@ -1,5 +1,6 @@
 import 'package:dart_extensions/dart_extensions.dart';
 import 'package:flutter/material.dart';
+import 'package:moviebooking/data/vos/checkout_request_vo.dart';
 import 'package:moviebooking/data/vos/snack_category_vo.dart';
 import 'package:moviebooking/data/vos/snack_vo.dart';
 import 'package:moviebooking/page/booking/booking_checkout_page.dart';
@@ -18,6 +19,10 @@ import '../../widget/booking_available_info_view.dart';
 import '../../widget/quantity_control_view.dart';
 
 class BuySnackPage extends StatefulWidget {
+  final CheckoutRequestVo checkRequest;
+
+  BuySnackPage(this.checkRequest);
+
   @override
   State<BuySnackPage> createState() => _BuySnackPageState();
 }
@@ -30,6 +35,7 @@ class _BuySnackPageState extends State<BuySnackPage> {
 
   @override
   void initState() {
+    debugPrint("Checkout request ==> ${widget.checkRequest.toJson()}");
     movieBookingModel.getSnackCategories().then((value) {
       setState(() {
         tabList = value;
@@ -84,27 +90,7 @@ class _BuySnackPageState extends State<BuySnackPage> {
                     snackList: snackList!,
                     onQtyChanged: (snack) {
                       setState(() {
-                        debugPrint("snack ==> ${snack.qty}");
-                        snackList
-                            ?.where((element) => element.id == snack.id)
-                            .first
-                            .qty = snack.qty;
-
-                        if (snack.qty == 0) {
-                          snackCartList
-                              .removeWhere((element) => element.id == snack.id);
-                        } else {
-                          if (snackCartList.find(
-                                  (selector) => selector.id == snack.id) ==
-                              null) {
-                            snackCartList.add(snack);
-                          } else {
-                            snackCartList
-                                .where((element) => element.id == snack.id)
-                                .first
-                                .qty = snack.qty;
-                          }
-                        }
+                        _snackListOnQtyChanged(snack);
                       });
                     },
                   ),
@@ -117,17 +103,38 @@ class _BuySnackPageState extends State<BuySnackPage> {
             ),
             child: GestureDetector(
                 onTap: () {
-                  context.next(const BookingCheckoutPage());
+                  /// Prepare checkout request
+                  widget.checkRequest.snackCartList = snackCartList;
+                  context.next(BookingCheckoutPage(widget.checkRequest));
                 },
                 child: FoodDrinkCountAndTotalRowView(
                   isExpand: false,
                   snackCartList: snackCartList,
+                  onQtyChanged: (snack) {
+                    _snackListOnQtyChanged(snack);
+                  },
                 )),
           ),
           const SizedBox(height: MARGIN_MEDIUM_3)
         ],
       ),
     );
+  }
+
+  _snackListOnQtyChanged(SnackVo snack) {
+    debugPrint("snack ==> ${snack.qty}");
+    snackList?.where((element) => element.id == snack.id).first.qty = snack.qty;
+
+    if (snack.qty == 0) {
+      snackCartList.removeWhere((element) => element.id == snack.id);
+    } else {
+      if (snackCartList.find((selector) => selector.id == snack.id) == null) {
+        snackCartList.add(snack);
+      } else {
+        snackCartList.where((element) => element.id == snack.id).first.qty =
+            snack.qty;
+      }
+    }
   }
 
   List<Widget> appBarActionIconList(BuildContext context) {
@@ -140,7 +147,7 @@ class _BuySnackPageState extends State<BuySnackPage> {
       ),
       AppBarActionIconView(
         onTap: () {
-          context.next(const BookingCheckoutPage());
+          // context.next(const BookingCheckoutPage());
         },
         child: const Text(
           "SKIP",
@@ -157,8 +164,9 @@ class _BuySnackPageState extends State<BuySnackPage> {
 
 class FoodDrinkCartView extends StatefulWidget {
   final List<SnackVo> snackCartList;
+  final Function(SnackVo) onQtyChanged;
 
-  FoodDrinkCartView(this.snackCartList);
+  FoodDrinkCartView({required this.snackCartList, required this.onQtyChanged});
 
   @override
   State<FoodDrinkCartView> createState() => _FoodDrinkCartViewState();
@@ -172,20 +180,21 @@ class _FoodDrinkCartViewState extends State<FoodDrinkCartView> {
       children: [
         Container(
           padding: const EdgeInsets.symmetric(
-              horizontal: MARGIN_MEDIUM_3, vertical: MARGIN_MEDIUM_3),
+              horizontal: MARGIN_MEDIUM_3, vertical: MARGIN_MEDIUM_2),
           decoration: const BoxDecoration(
               color: Colors.black,
               borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(MARGIN_MEDIUM_2),
                   topRight: Radius.circular(MARGIN_MEDIUM_2))),
-          child: Column(
-            children: [
-              FoodDrinkNamePriceRowView("Large Colaffff", 1700),
-              const SizedBox(height: MARGIN_CARD_MEDIUM_2),
-              FoodDrinkNamePriceRowView("Large Colaffff", 1700),
-              const SizedBox(height: MARGIN_CARD_MEDIUM_2),
-              FoodDrinkNamePriceRowView("Large Colaffff", 1700)
-            ],
+          child: ListView.builder(
+            itemCount: widget.snackCartList.length,
+            shrinkWrap: true,
+            padding: EdgeInsets.all(0),
+            physics: NeverScrollableScrollPhysics(),
+            itemBuilder: (context, index) => FoodDrinkNamePriceRowView(
+              snackVo: widget.snackCartList[index],
+              onQtyChanged: widget.onQtyChanged,
+            ),
           ),
         ),
         Container(
@@ -196,10 +205,13 @@ class _FoodDrinkCartViewState extends State<FoodDrinkCartView> {
           ),
           child: GestureDetector(
               onTap: () {
-                context.next(const BookingCheckoutPage());
+                context.popBack();
               },
               child: FoodDrinkCountAndTotalRowView(
-                  snackCartList: widget.snackCartList, isExpand: true)),
+                snackCartList: widget.snackCartList,
+                isExpand: true,
+                onQtyChanged: widget.onQtyChanged,
+              )),
         ),
         const SizedBox(height: MARGIN_MEDIUM_3)
       ],
@@ -210,12 +222,23 @@ class _FoodDrinkCartViewState extends State<FoodDrinkCartView> {
 class FoodDrinkCountAndTotalRowView extends StatelessWidget {
   final bool isExpand;
   final List<SnackVo> snackCartList;
+  final Function(SnackVo) onQtyChanged;
 
   FoodDrinkCountAndTotalRowView(
-      {required this.snackCartList, required this.isExpand});
+      {required this.snackCartList,
+      required this.isExpand,
+      required this.onQtyChanged});
 
   @override
   Widget build(BuildContext context) {
+    int quantity = snackCartList.length;
+    int totalPrice = 0;
+    if (snackCartList.isNotEmpty) {
+      totalPrice = snackCartList
+          .map((item) => item.qty.orZero * item.price.toMMK)
+          .reduce((first, second) => first + second);
+    }
+
     return Container(
       padding: const EdgeInsets.symmetric(vertical: MARGIN_SMALL),
       decoration: BoxDecoration(
@@ -230,14 +253,16 @@ class FoodDrinkCountAndTotalRowView extends StatelessWidget {
                   : showModalBottomSheet(
                       context: context,
                       backgroundColor: Colors.transparent,
-                      builder: (context) => FoodDrinkCartView(snackCartList));
+                      builder: (context) => FoodDrinkCartView(
+                            snackCartList: snackCartList,
+                            onQtyChanged: onQtyChanged,
+                          ));
             },
-            child: FoodCountIconArrowView(
-                qty: snackCartList.length, isExpand: isExpand),
+            child: FoodCountIconArrowView(qty: quantity, isExpand: isExpand),
           ),
           const Spacer(),
-          const Text(
-            "2,000KS",
+          Text(
+            "$totalPrice KS",
             style: TextStyle(
                 color: Colors.black,
                 fontSize: TEXT_REGULAR_2X,
@@ -311,40 +336,49 @@ class FoodCountIconView extends StatelessWidget {
 }
 
 class FoodDrinkNamePriceRowView extends StatelessWidget {
-  final String itemName;
-  final int itemPrice;
+  final SnackVo snackVo;
+  final Function(SnackVo) onQtyChanged;
 
-  FoodDrinkNamePriceRowView(this.itemName, this.itemPrice);
+  FoodDrinkNamePriceRowView(
+      {required this.snackVo, required this.onQtyChanged});
 
   @override
   Widget build(BuildContext context) {
-    return Row(
+    return Column(
       children: [
-        Expanded(
-          child: Text(
-            itemName,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: TEXT_REGULAR,
-              fontWeight: FontWeight.w600,
+        Row(
+          children: [
+            Expanded(
+              child: Text(
+                snackVo.name.orEmpty,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: TEXT_REGULAR,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
             ),
-          ),
-        ),
-        Expanded(
-            child: Center(
-          child: QuantityControlView(),
-        )),
-        Expanded(
-          child: Text(
-            "${itemPrice} Ks",
-            textAlign: TextAlign.right,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: TEXT_REGULAR,
-              fontWeight: FontWeight.w800,
+            Expanded(
+                child: Center(
+              child: QuantityControlView(
+                snackVo: snackVo,
+                onQtyChanged: onQtyChanged,
+              ),
+            )),
+            Expanded(
+              child: Text(
+                "${snackVo.price.toMMK} KS",
+                textAlign: TextAlign.right,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: TEXT_REGULAR,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
             ),
-          ),
+          ],
         ),
+        const SizedBox(height: MARGIN_CARD_MEDIUM_2),
       ],
     );
   }

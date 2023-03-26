@@ -1,8 +1,12 @@
+import 'package:dart_extensions/dart_extensions.dart';
 import 'package:flutter/material.dart';
+import 'package:moviebooking/data/vos/checkout_result_vo.dart';
+import 'package:moviebooking/data/vos/movie_vo.dart';
 import 'package:moviebooking/page/ticket/ticket_detail_page.dart';
 import 'package:moviebooking/utils/ext.dart';
 import 'package:moviebooking/widget/ripple_effect.dart';
 
+import '../network/api_constants.dart';
 import '../resource/colors.dart';
 import '../resource/dimens.dart';
 import 'checkout_movie_cinema_info_view.dart';
@@ -11,7 +15,10 @@ import 'invoice_circle_slip_view.dart';
 import 'ticket_count_richtext_view.dart';
 
 class TicketItemView extends StatelessWidget {
-  const TicketItemView({Key? key}) : super(key: key);
+  final CheckoutResultVo? checkoutResultVo;
+  final MovieVo? movieVo;
+
+  TicketItemView({this.checkoutResultVo, this.movieVo});
 
   @override
   Widget build(BuildContext context) {
@@ -26,9 +33,12 @@ class TicketItemView extends StatelessWidget {
           ),
           Column(
             children: [
-              const Padding(
+              Padding(
                 padding: EdgeInsets.all(MARGIN_MEDIUM_3),
-                child: _TicketUpperRowSection(),
+                child: _TicketUpperRowSection(
+                  checkoutResultVo: checkoutResultVo,
+                  movieVo: movieVo,
+                ),
               ),
               const InvoiceCircleSlipView(),
               Padding(
@@ -36,7 +46,10 @@ class TicketItemView extends StatelessWidget {
                   horizontal: MARGIN_MEDIUM_3,
                   vertical: MARGIN_MEDIUM,
                 ),
-                child: CheckoutMovieCinemaInfoView(),
+                child: CheckoutMovieCinemaInfoView(
+                  bookingDate: checkoutResultVo?.bookingDate ?? "",
+                  startTime: checkoutResultVo?.timeslot?.startTime ?? "",
+                ),
               ),
               const SizedBox(height: MARGIN_MEDIUM_3)
             ],
@@ -48,9 +61,11 @@ class TicketItemView extends StatelessWidget {
 }
 
 class _TicketUpperRowSection extends StatelessWidget {
-  const _TicketUpperRowSection({
-    Key? key,
-  }) : super(key: key);
+  final CheckoutResultVo? checkoutResultVo;
+  final MovieVo? movieVo;
+
+  _TicketUpperRowSection(
+      {required this.checkoutResultVo, required this.movieVo});
 
   @override
   Widget build(BuildContext context) {
@@ -59,12 +74,17 @@ class _TicketUpperRowSection extends StatelessWidget {
       children: [
         ClipRRect(
           borderRadius: BorderRadius.circular(MARGIN_MEDIUM),
-          child: Image.network(
-            "https://pbs.twimg.com/media/D7Mw2d2XsAAXiYH.jpg",
-            fit: BoxFit.cover,
-            width: context.getScreenWidthBy(4),
-            height: context.getScreenHeightBy(7.5),
-          ),
+          child: movieVo == null
+              ? SizedBox(
+                  width: context.getScreenWidthBy(4),
+                  height: context.getScreenHeightBy(7.5),
+                  child: Center(child: CircularProgressIndicator()))
+              : Image.network(
+                  "$IMAGE_BASE_URL${(movieVo?.posterPath).orEmpty}",
+                  fit: BoxFit.cover,
+                  width: context.getScreenWidthBy(4),
+                  height: context.getScreenHeightBy(7.5),
+                ),
         ),
         const SizedBox(width: MARGIN_MEDIUM_2),
         Flexible(
@@ -77,10 +97,12 @@ class _TicketUpperRowSection extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               mainAxisSize: MainAxisSize.min,
               children: [
-                const _TicketMovieTitleView(),
-                const _TicketMoiveNameView(),
-                TicketCountRichTextView(fontSize: TEXT_REGULAR),
-                const _TicketChairNumberView(),
+                _TicketMovieTitleView(movieVo?.originalTitle ?? ""),
+                _TicketCinemaNameView(checkoutResultVo?.bookingNo ?? ""),
+                TicketCountRichTextView(
+                    fontSize: TEXT_REGULAR,
+                    count: checkoutResultVo?.totalSeat ?? 0),
+                _TicketChairNumberView(checkoutResultVo?.seat ?? ""),
               ],
             ),
           ),
@@ -91,15 +113,15 @@ class _TicketUpperRowSection extends StatelessWidget {
 }
 
 class _TicketMovieTitleView extends StatelessWidget {
-  const _TicketMovieTitleView({
-    Key? key,
-  }) : super(key: key);
+  final String title;
+
+  _TicketMovieTitleView(this.title);
 
   @override
   Widget build(BuildContext context) {
     return RichText(
-      text: const TextSpan(
-        text: 'Black Window, 20 Century ',
+      text: TextSpan(
+        text: title,
         style: TextStyle(
           color: Colors.white,
           fontSize: TEXT_REGULAR_2X,
@@ -107,7 +129,7 @@ class _TicketMovieTitleView extends StatelessWidget {
         ),
         children: <TextSpan>[
           TextSpan(
-              text: '(3D)(U/A)',
+              text: ' (3D)(U/A)',
               style: TextStyle(
                 color: Colors.white,
                 fontSize: TEXT_REGULAR,
@@ -119,15 +141,15 @@ class _TicketMovieTitleView extends StatelessWidget {
   }
 }
 
-class _TicketMoiveNameView extends StatelessWidget {
-  const _TicketMoiveNameView({
-    Key? key,
-  }) : super(key: key);
+class _TicketCinemaNameView extends StatelessWidget {
+  final String name;
+
+  _TicketCinemaNameView(this.name);
 
   @override
   Widget build(BuildContext context) {
-    return const Text(
-      "JCGV : Junction City",
+    return Text(
+      name,
       style: TextStyle(
         color: PRIMARY_COLOR,
         fontSize: TEXT_REGULAR_2X,
@@ -137,16 +159,16 @@ class _TicketMoiveNameView extends StatelessWidget {
 }
 
 class _TicketChairNumberView extends StatelessWidget {
-  const _TicketChairNumberView({
-    Key? key,
-  }) : super(key: key);
+  final String seatNumber;
+
+  _TicketChairNumberView(this.seatNumber);
 
   @override
   Widget build(BuildContext context) {
     return Row(
-      children: const [
+      children: [
         Text(
-          "Gold-G4,G5",
+          seatNumber,
           style: TextStyle(
             color: Colors.white,
             fontSize: TEXT_REGULAR_2X,

@@ -15,6 +15,7 @@ import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import '../../data/model/movie_booking_model.dart';
 import '../../data/model/movie_booking_model_impl.dart';
 import '../../data/vos/actor_vo.dart';
+import '../../data/vos/checkout_request_vo.dart';
 import '../../resource/dimens.dart';
 import '../../resource/strings.dart';
 import '../../viewitem/actor_item_view.dart';
@@ -139,7 +140,9 @@ class _MovieDetailPageState extends State<MovieDetailPage> {
                     BookingButtonView(
                       btnText: "Booking",
                       btnClick: () {
-                        context.next(BookingCinemaPage());
+                        context.next(BookingCinemaPage(CheckoutRequestVo(
+                            movieId: widget.movieId,
+                            movieName: (movieDetail?.title).orEmpty)));
                       },
                     ),
                   ],

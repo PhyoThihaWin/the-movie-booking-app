@@ -1,5 +1,6 @@
 import 'package:dart_extensions/dart_extensions.dart';
 import 'package:flutter/material.dart';
+import 'package:moviebooking/data/vos/checkout_request_vo.dart';
 import 'package:moviebooking/data/vos/seating_plan_vo.dart';
 import 'package:moviebooking/page/booking/buy_snack_page.dart';
 import 'package:moviebooking/resource/colors.dart';
@@ -14,10 +15,9 @@ import '../../widget/booking_button_view.dart';
 import '../../widget/ripple_effect.dart';
 
 class BookingSeatingPlanPage extends StatefulWidget {
-  final int timeSlotId;
-  final String bookingDate;
+  final CheckoutRequestVo checkoutRequest;
 
-  BookingSeatingPlanPage(this.timeSlotId, this.bookingDate);
+  BookingSeatingPlanPage({required this.checkoutRequest});
 
   @override
   State<BookingSeatingPlanPage> createState() => _BookingSeatingPlanPageState();
@@ -30,7 +30,9 @@ class _BookingSeatingPlanPageState extends State<BookingSeatingPlanPage> {
   @override
   void initState() {
     movieBookingModel
-        .getSeatingPlanByShowTime(widget.timeSlotId, widget.bookingDate)
+        .getSeatingPlanByShowTime(
+            widget.checkoutRequest.cinemaDayTimeslotId.orZero,
+            widget.checkoutRequest.bookingDate.orEmpty)
         .then((value) {
       setState(() {
         seatPlanList = value;
@@ -77,8 +79,10 @@ class _BookingSeatingPlanPageState extends State<BookingSeatingPlanPage> {
                           seatPlanList: seatPlanList!,
                           seatSelected: (index, seatPlanVo) {
                             setState(() {
-                              seatPlanList?.removeAt(index);
-                              seatPlanList?.insert(index, seatPlanVo);
+                              seatPlanList
+                                  ?.whereIndexed((i, item) => i == index)
+                                  .first
+                                  .isSelected = seatPlanVo.isSelected;
                             });
                           }),
                   const SizedBox(height: MARGIN_LARGE),
@@ -98,7 +102,24 @@ class _BookingSeatingPlanPageState extends State<BookingSeatingPlanPage> {
                 ),
                 child: seatPlanList == null
                     ? Container()
-                    : BuyTicketViewSection(seatPlanList!),
+                    : BuyTicketViewSection(
+                        seatPlanList: seatPlanList!,
+                        onBuyClicked: (count, totalPrice) {
+                          /// prepare seat number eg: G-10,G-11
+                          List<String> selectedSeat = [];
+                          for (SeatingPlanVo element
+                              in seatPlanList.orEmptyObject) {
+                            if (element.isSelected.orFalse) {
+                              selectedSeat.add(element.seatName.orEmpty);
+                            }
+                          }
+                          widget.checkoutRequest.seatNumber =
+                              selectedSeat.join(",");
+                          widget.checkoutRequest.ticketCount = count;
+                          widget.checkoutRequest.ticketPrice = totalPrice;
+                          context.next(BuySnackPage(widget.checkoutRequest));
+                        },
+                      ),
               ),
             ],
           )
@@ -110,8 +131,10 @@ class _BookingSeatingPlanPageState extends State<BookingSeatingPlanPage> {
 
 class BuyTicketViewSection extends StatelessWidget {
   final List<SeatingPlanVo> seatPlanList;
+  final Function(int, int) onBuyClicked;
 
-  BuyTicketViewSection(this.seatPlanList);
+  BuyTicketViewSection(
+      {required this.seatPlanList, required this.onBuyClicked});
 
   @override
   Widget build(BuildContext context) {
@@ -153,7 +176,7 @@ class BuyTicketViewSection extends StatelessWidget {
         BookingButtonView(
           btnText: "Buy Ticket",
           btnClick: () {
-            context.next(BuySnackPage());
+            onBuyClicked(ticketCount, totalPrice);
           },
         )
       ],

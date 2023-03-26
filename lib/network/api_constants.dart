@@ -13,6 +13,8 @@ const String ENDPOINT_GET_CINEMA_SHOW_TIME = "/api/v2/cinema-day-timeslots";
 const String ENDPOINT_GET_SEATING_PLAN_BY_SHOW_TIME = "/api/v2/seat-plan";
 const String ENDPOINT_GET_SNACK_CATEGORYS = "/api/v2/snack-categories";
 const String ENDPOINT_GET_SNACK_BY_CATEGORYS = "/api/v2/snacks";
+const String ENDPOINT_GET_PAYMENT_TYPES = "/api/v2/payment-types";
+const String ENDPOINT_GET_CHECKOUT = "/api/v2/checkout";
 
 /// Parameters
 const String PARAM_MOVIE_CURRENT = "current";

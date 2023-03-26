@@ -8,6 +8,7 @@ import 'package:moviebooking/data/vos/movie_vo.dart';
 import 'package:moviebooking/network/movie_booking_data_agent_impl.dart';
 import 'package:moviebooking/page/auth/verify_phone_page.dart';
 import 'package:moviebooking/page/home_page.dart';
+import 'package:moviebooking/page/zoom_test.dart';
 import 'package:moviebooking/persistence/hive_constants.dart';
 import 'package:moviebooking/resource/colors.dart';
 import 'package:moviebooking/utils/ext.dart';
@@ -74,6 +75,7 @@ class _MyAppState extends State<MyApp> {
       home: movieBookingModel.getUserDataFromDb() == null
           ? VerifyPhonePage()
           : HomePage(),
+      // home: ZoomTestPage(),
     );
   }
 }

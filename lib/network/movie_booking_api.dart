@@ -1,10 +1,13 @@
 import 'package:dio/dio.dart';
 import 'package:moviebooking/data/vos/banner_vo.dart';
+import 'package:moviebooking/data/vos/checkout_request_vo.dart';
+import 'package:moviebooking/data/vos/checkout_result_vo.dart';
 import 'package:moviebooking/data/vos/cinema_config_vo.dart';
 import 'package:moviebooking/data/vos/cinema_show_time_vo.dart';
 import 'package:moviebooking/data/vos/city_vo.dart';
 import 'package:moviebooking/data/vos/movie_detail_vo.dart';
 import 'package:moviebooking/data/vos/movie_vo.dart';
+import 'package:moviebooking/data/vos/payment_type_vo.dart';
 import 'package:moviebooking/data/vos/seating_plan_vo.dart';
 import 'package:moviebooking/data/vos/snack_category_vo.dart';
 import 'package:moviebooking/data/vos/snack_vo.dart';
@@ -85,6 +88,13 @@ abstract class MovieBookingApi {
   @GET(ENDPOINT_GET_SNACK_BY_CATEGORYS)
   Future<DataResponse<List<SnackVo>>> getSnacksByCategory(
       @Query(PARAM_CATEGORY_ID) int categoryId);
+
+  @GET(ENDPOINT_GET_PAYMENT_TYPES)
+  Future<DataResponse<List<PaymentTypeVo>>> getPaymentTypes();
+
+  @POST(ENDPOINT_GET_CHECKOUT)
+  Future<DataResponse<CheckoutResultVo>> checkoutBookingTicket(
+      @Body() CheckoutRequestVo checkoutRequest);
 }
 
 // (json) => (json as List<dynamic>)

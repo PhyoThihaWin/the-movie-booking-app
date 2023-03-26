@@ -9,7 +9,10 @@ import 'package:moviebooking/data/vos/movie_vo.dart';
 import 'package:moviebooking/data/vos/time_slot_config_vo.dart';
 import 'package:moviebooking/data/vos/user_data_vo.dart';
 
+import '../vos/checkout_request_vo.dart';
+import '../vos/checkout_result_vo.dart';
 import '../vos/cinema_config_vo.dart';
+import '../vos/payment_type_vo.dart';
 import '../vos/seating_plan_vo.dart';
 import '../vos/snack_category_vo.dart';
 import '../vos/snack_vo.dart';
@@ -44,7 +47,10 @@ abstract class MovieBookingModel {
 
   Future<List<SnackVo>> getSnacksByCategory(int categoryId);
 
+  Future<List<PaymentTypeVo>> getPaymentTypes();
 
+  Future<CheckoutResultVo?> checkoutBookingTicket(
+      CheckoutRequestVo checkoutRequestVo);
 
   /// Database
   Future<List<BannerVo?>> getBannersFromDb();
@@ -60,4 +66,6 @@ abstract class MovieBookingModel {
   void saveTimeSlotConfigsToDb(List<TimeSlotConfigVo> list);
 
   TimeSlotConfigVo? getTimeSlotConfigFromDb(int id);
+
+  Future<MovieVo?> getSingleMovie(int movieId);
 }

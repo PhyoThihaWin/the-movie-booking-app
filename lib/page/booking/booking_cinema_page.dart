@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:moviebooking/data/vos/checkout_request_vo.dart';
 import 'package:moviebooking/data/vos/cinema_show_time_vo.dart';
 import 'package:moviebooking/resource/strings.dart';
 import 'package:moviebooking/utils/ext.dart';
@@ -15,8 +16,13 @@ import '../../widget/appbar_action_icon_view.dart';
 import '../../widget/appbar_back_icon_view.dart';
 import '../../widget/booking_available_info_view.dart';
 import '../home_page.dart';
+import 'booking_seating_plan_page.dart';
 
 class BookingCinemaPage extends StatefulWidget {
+  final CheckoutRequestVo checkoutRequest;
+
+  BookingCinemaPage(this.checkoutRequest);
+
   @override
   State<BookingCinemaPage> createState() => _BookingCinemaPageState();
 }
@@ -97,8 +103,15 @@ class _BookingCinemaPageState extends State<BookingCinemaPage> {
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
                     itemBuilder: (context, index) => CinemaParentItemView(
-                      cinemaShowTime: cinemaShowTimeList![index]!,
-                      bookingDate: bookingDate,
+                      cinemaShowTime: cinemaShowTimeList![index],
+                      onTimeSlotSelected: (timeSlotId) {
+                        /// prepare time-slot-id and booking-date
+                        widget.checkoutRequest.cinemaDayTimeslotId = timeSlotId;
+                        widget.checkoutRequest.bookingDate = bookingDate;
+                        widget.checkoutRequest.cinemaTimeSlot = cinemaShowTimeList![index];
+                        context.next(BookingSeatingPlanPage(
+                            checkoutRequest: widget.checkoutRequest));
+                      },
                     ),
                   )
           ],

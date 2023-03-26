@@ -1,16 +1,21 @@
 import 'package:flutter/material.dart';
 
+import '../data/vos/snack_vo.dart';
 import '../resource/colors.dart';
 import '../resource/dimens.dart';
 import 'booking_available_info_view.dart';
 
-class QuantityControlView extends StatelessWidget {
-  final Function? onClickPlus;
-  final Function? onClickMinus;
-  final int? qunatity;
+class QuantityControlView extends StatefulWidget {
+  final SnackVo snackVo;
+  final Function(SnackVo) onQtyChanged;
 
-  QuantityControlView({this.onClickPlus, this.onClickMinus, this.qunatity = 1});
+  QuantityControlView({required this.snackVo, required this.onQtyChanged});
 
+  @override
+  State<QuantityControlView> createState() => _QuantityControlViewState();
+}
+
+class _QuantityControlViewState extends State<QuantityControlView> {
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -20,7 +25,10 @@ class QuantityControlView extends StatelessWidget {
           itemColor: PRIMARY_COLOR,
           padding: MARGIN_SMALL,
           onTap: () {
-            onClickPlus?.call();
+            setState(() {
+              widget.snackVo.qty++;
+              widget.onQtyChanged(widget.snackVo);
+            });
           },
           child: const Icon(
             Icons.add,
@@ -29,7 +37,7 @@ class QuantityControlView extends StatelessWidget {
         ),
         const SizedBox(width: MARGIN_CARD_MEDIUM_2),
         Text(
-          qunatity.toString(),
+          widget.snackVo.qty.toString(),
           style: const TextStyle(
             color: PRIMARY_COLOR,
             fontSize: TEXT_REGULAR,
@@ -41,7 +49,12 @@ class QuantityControlView extends StatelessWidget {
           itemColor: PRIMARY_COLOR,
           padding: MARGIN_SMALL,
           onTap: () {
-            onClickMinus?.call();
+            setState(() {
+              if (widget.snackVo.qty > 0) {
+                widget.snackVo.qty--;
+                widget.onQtyChanged(widget.snackVo);
+              }
+            });
           },
           child: const Icon(
             Icons.remove,

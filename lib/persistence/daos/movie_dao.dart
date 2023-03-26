@@ -45,4 +45,8 @@ class MovieDao {
     }
     return list;
   }
+
+  MovieVo? getSingleMovie(int movieId) {
+    return getMovieBox().values.firstWhere((element) => element.id == movieId);
+  }
 }

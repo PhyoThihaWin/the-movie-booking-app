@@ -1,9 +1,18 @@
+import 'package:dart_extensions/dart_extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:moviebooking/utils/ext.dart';
 
+import '../data/vos/checkout_request_vo.dart';
+import '../data/vos/cinema_show_time_vo.dart';
 import '../resource/dimens.dart';
 
 class CheckoutMovieCinemaInfoView extends StatelessWidget {
+  final String bookingDate;
+  final String startTime;
+
+  CheckoutMovieCinemaInfoView(
+      {required this.bookingDate, required this.startTime});
+
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -12,13 +21,13 @@ class CheckoutMovieCinemaInfoView extends StatelessWidget {
         Expanded(
           child: _MovieCinemaInfoView(
             "ic_calendar.png",
-            "Sat, 18 Jun, 2022",
+            bookingDate,
           ),
         ),
         Expanded(
             child: _MovieCinemaInfoView(
           "ic_time.png",
-          "3:30PM",
+          startTime,
         )),
         Expanded(
             child: _MovieCinemaInfoView(

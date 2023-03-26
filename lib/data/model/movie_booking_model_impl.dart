@@ -4,11 +4,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:moviebooking/data/model/movie_booking_model.dart';
 import 'package:moviebooking/data/vos/actor_vo.dart';
 import 'package:moviebooking/data/vos/banner_vo.dart';
+import 'package:moviebooking/data/vos/checkout_request_vo.dart';
+import 'package:moviebooking/data/vos/checkout_result_vo.dart';
 import 'package:moviebooking/data/vos/cinema_config_vo.dart';
 import 'package:moviebooking/data/vos/cinema_show_time_vo.dart';
 import 'package:moviebooking/data/vos/city_vo.dart';
 import 'package:moviebooking/data/vos/movie_detail_vo.dart';
 import 'package:moviebooking/data/vos/movie_vo.dart';
+import 'package:moviebooking/data/vos/payment_type_vo.dart';
 import 'package:moviebooking/data/vos/seating_plan_vo.dart';
 import 'package:moviebooking/data/vos/snack_category_vo.dart';
 import 'package:moviebooking/data/vos/snack_vo.dart';
@@ -169,7 +172,7 @@ class MovieBookingModelImpl extends MovieBookingModel {
     return movieBookingDataAgent.getSnackCategories().asStream().map((event) {
       event.insert(
           0,
-          SnackCategoryVo(
+          const SnackCategoryVo(
               id: 0,
               title: "All",
               titleMm: "All",
@@ -183,6 +186,17 @@ class MovieBookingModelImpl extends MovieBookingModel {
   @override
   Future<List<SnackVo>> getSnacksByCategory(int categoryId) {
     return movieBookingDataAgent.getSnacksByCategory(categoryId);
+  }
+
+  @override
+  Future<List<PaymentTypeVo>> getPaymentTypes() {
+    return movieBookingDataAgent.getPaymentTypes();
+  }
+
+  @override
+  Future<CheckoutResultVo?> checkoutBookingTicket(
+      CheckoutRequestVo checkoutRequestVo) {
+    return movieBookingDataAgent.checkoutBookingTicket(checkoutRequestVo);
   }
 
   /// From Database
@@ -220,5 +234,10 @@ class MovieBookingModelImpl extends MovieBookingModel {
   @override
   void saveTimeSlotConfigsToDb(List<TimeSlotConfigVo> list) {
     timeSlotConfigDao.saveAll(list);
+  }
+
+  @override
+  Future<MovieVo?> getSingleMovie(int movieId) {
+    return Future.value(movieDao.getSingleMovie(movieId));
   }
 }

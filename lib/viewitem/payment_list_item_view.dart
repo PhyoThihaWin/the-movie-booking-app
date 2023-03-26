@@ -1,14 +1,16 @@
+import 'package:dart_extensions/dart_extensions.dart';
 import 'package:flutter/material.dart';
-import 'package:moviebooking/page/payment/ticket_confirmation_page.dart';
+import 'package:moviebooking/data/vos/payment_type_vo.dart';
 import 'package:moviebooking/resource/colors.dart';
 import 'package:moviebooking/resource/dimens.dart';
-import 'package:moviebooking/utils/ext.dart';
 import 'package:moviebooking/widget/ripple_effect.dart';
 
 class PaymentListItemView extends StatelessWidget {
-  const PaymentListItemView({
-    Key? key,
-  }) : super(key: key);
+  final PaymentTypeVo paymentType;
+  final Function onPaymentSelected;
+
+  PaymentListItemView(
+      {required this.paymentType, required this.onPaymentSelected});
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +18,7 @@ class PaymentListItemView extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: MARGIN_10),
       child: RippleTap(
         onTap: () {
-          context.next(const TicketConfirmationPage());
+          onPaymentSelected();
         },
         child: Container(
           decoration: BoxDecoration(
@@ -26,14 +28,14 @@ class PaymentListItemView extends StatelessWidget {
           padding: EdgeInsets.all(MARGIN_MEDIUM_2),
           child: Row(
             children: [
-              Image.asset(
-                "ic_gift_payment.png".toAssetIcon(),
+              Image.network(
+                paymentType.icon.orEmpty,
                 width: MARGIN_XLARGE,
                 color: Colors.white,
               ),
               SizedBox(width: MARGIN_MEDIUM_2),
               Text(
-                "Gift Vouncher",
+                paymentType.title.orEmpty,
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: TEXT_REGULAR,

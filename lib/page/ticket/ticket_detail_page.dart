@@ -25,14 +25,14 @@ class TicketDetailPage extends StatelessWidget {
         leading: AppBarBackIconView(),
       ),
       body: Column(
-        children: const [
+        children: [
           Expanded(
             child: SingleChildScrollView(
-              padding: EdgeInsets.only(bottom: MARGIN_LARGE),
+              padding: const EdgeInsets.only(bottom: MARGIN_LARGE),
               child: InvoiceWholeView(),
             ),
           ),
-          Padding(
+          const Padding(
             padding: EdgeInsets.only(
               top: MARGIN_MEDIUM_3,
               left: MARGIN_MEDIUM_3,

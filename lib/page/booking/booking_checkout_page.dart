@@ -7,12 +7,20 @@ import 'package:moviebooking/utils/ext.dart';
 import 'package:moviebooking/widget/appbar_back_icon_view.dart';
 import 'package:moviebooking/widget/booking_button_view.dart';
 
+import '../../data/vos/checkout_request_vo.dart';
 import '../../widget/appbar_title_view.dart';
 import '../../widget/invoice_whole_view.dart';
 
-class BookingCheckoutPage extends StatelessWidget {
-  const BookingCheckoutPage({Key? key}) : super(key: key);
+class BookingCheckoutPage extends StatefulWidget {
+  final CheckoutRequestVo checkoutRequest;
 
+  BookingCheckoutPage(this.checkoutRequest);
+
+  @override
+  State<BookingCheckoutPage> createState() => _BookingCheckoutPageState();
+}
+
+class _BookingCheckoutPageState extends State<BookingCheckoutPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,12 +38,23 @@ class BookingCheckoutPage extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            const InvoiceWholeView(),
+            InvoiceWholeView(
+                checkoutRequest: widget.checkoutRequest,
+                onRemoved: (snack) {
+                  setState(() {
+                    widget.checkoutRequest.snackCartList
+                        ?.removeWhere((element) => element.id == snack.id);
+                  });
+                }),
             const SizedBox(height: MARGIN_MEDIUM_3),
             BookingButtonView(
               btnText: "Continue",
               btnClick: () {
-                context.next(const PaymentPage());
+                widget.checkoutRequest.snacks = widget
+                    .checkoutRequest.snackCartList
+                    ?.map((e) => Snacks(id: e.id, quantity: e.qty))
+                    .toList();
+                context.next(PaymentPage(widget.checkoutRequest));
               },
             ),
             const SizedBox(height: MARGIN_XLARGE),
